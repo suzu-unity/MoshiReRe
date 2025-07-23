@@ -1,0 +1,82 @@
+# ===============================
+# Unity標準除外ファイル
+# ===============================
+
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+sysinfo.txt
+.crashreport/
+
+# ユーザー固有の設定（エディタ設定やローカルのみで使うファイル）
+UserSettings/
+*.userprefs
+
+# Rider IDE 関連
+.idea/
+*.sln
+*.csproj
+*.csproj.user
+
+# Visual Studio Code 関連
+.vscode/
+*.code-workspace
+
+# OSごとの不要ファイル
+.DS_Store
+Thumbs.db
+*.swp
+
+# 自動生成ファイル（スクリプトやパッケージのビルドキャッシュ）
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+
+# Unity Collaborate
+.collab/
+
+# Unity Cloud Build
+.cloud/
+
+# Unity Test Results
+*.xml
+*.apk
+*.aab
+*.ipa
+
+# ===============================
+# Naninovel関連の除外ファイル
+# ===============================
+
+# Naninovelが自動生成・一時保存するTransientデータ
+Assets/NaninovelData/Transient*
+Assets/NaninovelData/.nani/Transient*
+
+# Naninovelのスクリプト変換履歴（変更を避けたい場合は除外）
+Assets/NaninovelData/ScriptRevisions.asset
+
+# Naninovelが生成するシナリオログ、バックログキャッシュなど
+Assets/NaninovelData/Backlogs/
+Assets/NaninovelData/Logs/
+
+# Naninovelの翻訳用一時ファイル（必要に応じて除外）
+Assets/NaninovelData/Localization/Export*
+Assets/NaninovelData/Localization/Import*
+
+# Naninovelのキャッシュ・コンパイル中間ファイル
+Assets/NaninovelData/Cache/
+Assets/NaninovelData/Compiled*
+
+# ===============================
+# Addressables (使用時)
+# ===============================
+# Addressablesが生成するデータ（再構築可能）
+Assets/StreamingAssets/aa/
+Library/com.unity.addressables/
