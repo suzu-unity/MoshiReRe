@@ -154,3 +154,5 @@ MonoBehaviour:
     - name: ReRe/Default
       pathPrefix: Characters/ReRe
       guid: f28223d3d089c4fbeafb9e547fac18a7
+  - Id: Backgrounds/94ecc422-4718-44f3-ad66-024ed91e2053
+    Resources: []
