@@ -149,10 +149,139 @@ MonoBehaviour:
     - name: TestScript
       pathPrefix: Scripts
       guid: 12ce33c5aaed744a7a1bca4df52fdf50
+    - name: scene01
+      pathPrefix: Scripts
+      guid: 0879a665ef6d84c74ad942ad9fb9d5bb
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default
       pathPrefix: Characters/ReRe
       guid: f28223d3d089c4fbeafb9e547fac18a7
   - Id: Backgrounds/94ecc422-4718-44f3-ad66-024ed91e2053
+    Resources:
+    - name: title&eyecatch/kuro
+      pathPrefix: Backgrounds/MainBackground
+      guid: 55caaf09e93a67e4ab1c71751801876d
+    - name: title&eyecatch/Load01
+      pathPrefix: Backgrounds/MainBackground
+      guid: 016c2f5f1ccf764449f7627c3bd3a90e
+    - name: title&eyecatch/Load02
+      pathPrefix: Backgrounds/MainBackground
+      guid: b52fb7d050841fb479f60bb8d8bb6bfb
+    - name: title&eyecatch/siro
+      pathPrefix: Backgrounds/MainBackground
+      guid: d2c33cccddfba8048a0559a97e37d86a
+    - name: title&eyecatch/title01
+      pathPrefix: Backgrounds/MainBackground
+      guid: dc95bfd3aa162814da93568b7a4500b1
+    - name: scene01/1-1
+      pathPrefix: Backgrounds/MainBackground
+      guid: 963084b248efeb54783f144470dfd838
+    - name: scene01/1-2
+      pathPrefix: Backgrounds/MainBackground
+      guid: e88c2b86113d36a4d9b83e6c9b025efa
+    - name: scene01/1-3
+      pathPrefix: Backgrounds/MainBackground
+      guid: 66e88d09d41138744b3ad0e7cf18ab3e
+    - name: scene01/1-4
+      pathPrefix: Backgrounds/MainBackground
+      guid: 43556d485b3840e4a95138605b1daf68
+    - name: scene01/1-5
+      pathPrefix: Backgrounds/MainBackground
+      guid: 61334cb0e89ef8a4e96a3ce66deccf25
+    - name: scene01/1-6
+      pathPrefix: Backgrounds/MainBackground
+      guid: 391ad6906998ca84e9111f65aa4df6c4
+    - name: scene01/1-7
+      pathPrefix: Backgrounds/MainBackground
+      guid: 017a5f90ff46f494f916562e0d0ea5e3
+    - name: scene01/1-8
+      pathPrefix: Backgrounds/MainBackground
+      guid: b394d8622b4644043b521b8068540629
+    - name: scene01/1-9
+      pathPrefix: Backgrounds/MainBackground
+      guid: 4f48ba8c02bf07a45a1575cd64f731c3
+    - name: scene01/sushi
+      pathPrefix: Backgrounds/MainBackground
+      guid: c674398f5425ead409026a31f530c877
+  - Id: Backgrounds/a81d8fb7-d083-44c8-99ef-955018a704ab
+    Resources:
+    - name: scene01/1-1
+      pathPrefix: Backgrounds/scene01
+      guid: 963084b248efeb54783f144470dfd838
+    - name: scene01/1-2
+      pathPrefix: Backgrounds/scene01
+      guid: e88c2b86113d36a4d9b83e6c9b025efa
+    - name: scene01/1-3
+      pathPrefix: Backgrounds/scene01
+      guid: 66e88d09d41138744b3ad0e7cf18ab3e
+    - name: scene01/1-4
+      pathPrefix: Backgrounds/scene01
+      guid: 43556d485b3840e4a95138605b1daf68
+    - name: scene01/1-5
+      pathPrefix: Backgrounds/scene01
+      guid: 61334cb0e89ef8a4e96a3ce66deccf25
+    - name: scene01/1-6
+      pathPrefix: Backgrounds/scene01
+      guid: 391ad6906998ca84e9111f65aa4df6c4
+    - name: scene01/1-7
+      pathPrefix: Backgrounds/scene01
+      guid: 017a5f90ff46f494f916562e0d0ea5e3
+    - name: scene01/1-8
+      pathPrefix: Backgrounds/scene01
+      guid: b394d8622b4644043b521b8068540629
+    - name: scene01/1-9
+      pathPrefix: Backgrounds/scene01
+      guid: 4f48ba8c02bf07a45a1575cd64f731c3
+    - name: scene01/sushi
+      pathPrefix: Backgrounds/scene01
+      guid: c674398f5425ead409026a31f530c877
+  - Id: Characters/8e6d127e-5dc9-4819-be9e-8ffdaad969ac
     Resources: []
+  - Id: Audio
+    Resources:
+    - name: BGM/2_23_AM_2
+      pathPrefix: Audio
+      guid: d2843a865b6bd4e4d8736ae08d628186
+    - name: BGM/Distance
+      pathPrefix: Audio
+      guid: 27d1a02e9d676674390a009f758c1c21
+    - name: BGM/Grumpy_Witch
+      pathPrefix: Audio
+      guid: 164efe9c61592ec40a15708f77292837
+    - name: BGM/music
+      pathPrefix: Audio
+      guid: 744b085d72156d348805bfe978e95406
+    - name: BGM/MusMus-BGM-079
+      pathPrefix: Audio
+      guid: 62ad350fa9bfbdd49add21f0a3a2aa66
+    - name: BGM/MusMus-BGM-CP03
+      pathPrefix: Audio
+      guid: bb5336db13e399c48b7ef24a5fe96057
+    - name: BGM/MusMus-BGM-CP04
+      pathPrefix: Audio
+      guid: e104057119073b948a0ee12e400f9635
+    - name: BGM/You_and_Me_2
+      pathPrefix: Audio
+      guid: 723adbd94df27fa49a01375dc8fd6af6
+    - name: "BGM/\u3054\u6CE8\u6587\u306F\uFF1F"
+      pathPrefix: Audio
+      guid: cb47e206c8e5c2b46afe038b0bfc605d
+    - name: "BGM/\u306A\u3093\u3067\u3057\u3087\u3046\uFF1F"
+      pathPrefix: Audio
+      guid: 9c6d66ab1aec8e842b99c04f2946f890
+    - name: "BGM/\u308F\u304F\u308F\u304F\u30AF\u30C3\u30AD\u30F3\u30AF\u3099\u30BF\u30A4\u30E0\u7684\u306ABGM"
+      pathPrefix: Audio
+      guid: eb907fa94c22fc2499297b9a57ef81ff
+    - name: "BGM/\u30AB\u30D5\u30A7\u3067\u306E\u3072\u3068\u3068\u304D"
+      pathPrefix: Audio
+      guid: 5f4b5d4ac8198414c85bb3ab5808e913
+    - name: "BGM/\u5C0F\u3055\u306A\u52C7\u8005\u306E\u5192\u967A"
+      pathPrefix: Audio
+      guid: 38693ec33df359742b0d41df2f3b038d
+    - name: "BGM/\u65E5\u66DC\u306E\u5348\u5F8C"
+      pathPrefix: Audio
+      guid: 1929e46f5bd7c784695503a05c98a16a
+    - name: SFX/omedetou
+      pathPrefix: Audio
+      guid: 894d08a9c0c3b294fb6e656d875630a6
