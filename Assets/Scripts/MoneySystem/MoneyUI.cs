@@ -35,38 +35,32 @@ public class MoneyUI : MonoBehaviour
         UpdateMoneyText(newAmount, playSound: true);
     }
 
-    private void UpdateMoneyText(int newAmount, bool playSound)
+ private void UpdateMoneyText(int newAmount, bool playSound)
+{
+    if (moneyText != null)
+        moneyText.text = $"所持金:<mspace=0.6em></mspace>¥{newAmount:N0}";
+
+    int diff = newAmount - lastAmount;
+
+    if (diff != 0 && floatingText != null && floatingGroup != null)
     {
-        // 本体は常に静止表示（<mspace>でラベルと金額の間に余裕）
-        if (moneyText != null)
-            moneyText.text = $"所持金:<mspace=0.6em></mspace>¥{newAmount:N0}";
+        string sign = diff > 0 ? "+" : "-";
+        string color = diff > 0 ? "red" : "blue";
+        string animTag = diff > 0 ? "<bounce>" : "<slide y=-20>";
+        string popup = $"{animTag}<color={color}>{sign}¥{Mathf.Abs(diff):N0}</color>";
 
-        // 差分があるときだけポップアップ
-        int diff = newAmount - lastAmount;
-        if (diff != 0 && floatingText != null && floatingGroup != null)
-        {
-            string sign = diff > 0 ? "+" : "-";
-            string color = diff > 0 ? "red" : "blue";
-
-            // TextAnimatorのビルトイン：増＝<bounce>、減＝<slide>（下へ沈むようにyを負に）
-            string animTag = diff > 0 ? "<bounce>" : "<slide y=-20>";
-
-            // 例: <bounce><color=red>+¥1,000</color></bounce>
-            string popup = $"{animTag}<color={color}>{sign}¥{Mathf.Abs(diff):N0}</color>";
-
-            // 表示＆フェード開始
-            floatingGroup.alpha = 1f;
-            floatingText.SetText(popup); // ← TextAnimator経由でタグが効く
-            StopAllCoroutines();
-            StartCoroutine(FadeOutFloatingText());
-        }
-
-        if (playSound && moneySE != null && initialized)
-            moneySE.Play();
-
-        lastAmount = newAmount;
+        floatingGroup.alpha = 1f;
+        floatingText.SetText(popup);
+        StopAllCoroutines();
+        StartCoroutine(FadeOutFloatingText());
     }
 
+    // ★ ここを“diff != 0”でガードする
+    if (diff != 0 && playSound && moneySE != null && initialized)
+        moneySE.Play();
+
+    lastAmount = newAmount;
+}
     private IEnumerator FadeOutFloatingText()
     {
         // 少し見せてからフェード

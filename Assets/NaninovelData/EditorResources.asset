@@ -147,6 +147,12 @@ MonoBehaviour:
     - name: MoneyUI
       pathPrefix: UI
       guid: 5d64f9be5fc9a42dcaab9edd06f7215f
+    - name: LocationCard
+      pathPrefix: UI
+      guid: 846b91656d6444a1a8440e7b547ab4a9
+    - name: LocationHUD
+      pathPrefix: UI
+      guid: f6bec7a46d84d4c7c9c131fe60dfd3d1
   - Id: Scripts
     Resources:
     - name: TestScript
@@ -155,6 +161,9 @@ MonoBehaviour:
     - name: scene01
       pathPrefix: Scripts
       guid: 0879a665ef6d84c74ad942ad9fb9d5bb
+    - name: scene02
+      pathPrefix: Scripts
+      guid: a5461c0319a2244babd963b8e96b2a14
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default
@@ -288,3 +297,12 @@ MonoBehaviour:
     - name: SFX/omedetou
       pathPrefix: Audio
       guid: 894d08a9c0c3b294fb6e656d875630a6
+    - name: "SFX/\u30C1\u30EA\u30F3"
+      pathPrefix: Audio
+      guid: 037ff120a94044ef7824d291367e8d79
+    - name: "SFX/\u30EC\u30B7\u3099\u30B9\u30BF\u30FC\u3066\u3099\u7CBE\u7B97"
+      pathPrefix: Audio
+      guid: bc4211ddead60416ab4f646e40e9066b
+    - name: "SFX/\u5FC3\u81D3\u306E\u9F13\u52D51"
+      pathPrefix: Audio
+      guid: c39c9df7808d14a18bb1451006121b69
