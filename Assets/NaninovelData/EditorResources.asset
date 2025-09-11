@@ -153,6 +153,9 @@ MonoBehaviour:
     - name: LocationHUD
       pathPrefix: UI
       guid: f6bec7a46d84d4c7c9c131fe60dfd3d1
+    - name: MenuRoot
+      pathPrefix: UI
+      guid: 5c31f5b2493524c34be448651c191114
   - Id: Scripts
     Resources:
     - name: TestScript
@@ -216,6 +219,18 @@ MonoBehaviour:
     - name: scene01/sushi
       pathPrefix: Backgrounds/MainBackground
       guid: c674398f5425ead409026a31f530c877
+    - name: scene01/chabasira
+      pathPrefix: Backgrounds/MainBackground
+      guid: 6f74372fffbf6404799728b3ec109ddc
+    - name: scene01/Nasubi
+      pathPrefix: Backgrounds/MainBackground
+      guid: 63a5f02d13b19416b88cd50be9b16981
+    - name: scene01/waribashi
+      pathPrefix: Backgrounds/MainBackground
+      guid: b235bdd1ddc974d1aa3360c00ae509db
+    - name: scene01/fuji_taka
+      pathPrefix: Backgrounds/MainBackground
+      guid: 848c0cb6af7034b48b770b8c4b24c0cb
   - Id: Backgrounds/a81d8fb7-d083-44c8-99ef-955018a704ab
     Resources:
     - name: scene01/1-1

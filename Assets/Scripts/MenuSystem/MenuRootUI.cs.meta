@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 4e61f95379e984bcc81e4f7646e9364a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - frame: {instanceID: 0}
+  - gridItemsRoot: {instanceID: 0}
+  - itemCellPrefab: {instanceID: 0}
+  - adviceBubble: {instanceID: 0}
+  - rerePortraitButton: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -11,10 +11,16 @@ public class MenuRootUI : MonoBehaviour
     [SerializeField] private GameObject itemCellPrefab;
     [SerializeField] private AdviceBubble adviceBubble;
     [SerializeField] private Button rerePortraitButton; // ← 立ち絵の Button
+[SerializeField] private GameObject pageTop;
+[SerializeField] private GameObject pageItems;
+[SerializeField] private GameObject pageCharacters;
+
+
 
     [Header("Advice List")]
-    [TextArea(2,4)]
-    [SerializeField] private string[] adviceMessages = new[]
+    [TextArea(2, 4)]
+    [SerializeField]
+    private string[] adviceMessages = new[]
     {
         "次は『駅前』に行くといいかも！",
         "夜は危ないよ、気をつけてね。",
@@ -38,7 +44,7 @@ public class MenuRootUI : MonoBehaviour
 
         // 最初のアドバイスを出しっぱに
         if (adviceBubble && adviceMessages.Length > 0)
-            adviceBubble.Show(adviceMessages[adviceIndex], autoHideOverride:false);
+            adviceBubble.Show(adviceMessages[adviceIndex], autoHideOverride: false);
     }
 
     void OnDisable()
@@ -68,7 +74,48 @@ public class MenuRootUI : MonoBehaviour
             var img = go.GetComponentInChildren<Image>();
             var label = go.GetComponentInChildren<TMP_Text>();
             if (img) img.sprite = dummyIcons[i];
-            if (label) label.text = i == 0 ? "鍵" : $"アイテム{i+1}";
+            if (label) label.text = i == 0 ? "鍵" : $"アイテム{i + 1}";
         }
     }
+public void ShowPageTop() {
+    pageTop.SetActive(true);
+    pageItems.SetActive(false);
+    pageCharacters.SetActive(false);
+}
+
+public void ShowPageItems() {
+    pageTop.SetActive(false);
+    pageItems.SetActive(true);
+    pageCharacters.SetActive(false);
+}
+
+public void ShowPageCharacters() {
+    pageTop.SetActive(false);
+    pageItems.SetActive(false);
+    pageCharacters.SetActive(true);
+}
+public void OnOjToggleChanged(bool isOn)
+{
+    if (isOn)
+    {
+        Debug.Log("おぢタブON → おぢキャラを表示");
+        // ここで PopulateCharacters(Filter.Oj); などを呼ぶ
+    }
+}
+
+public void OnItadakiToggleChanged(bool isOn)
+{
+    if (isOn)
+    {
+        Debug.Log("頂き女子タブON → 頂き女子キャラを表示");
+        // ここで PopulateCharacters(Filter.Itadaki); などを呼ぶ
+    }
+}
+
+    void Awake() {
+    var cg = GetComponentInChildren<CanvasGroup>(true);
+    if (cg) { cg.alpha = 0; cg.interactable = false; cg.blocksRaycasts = false; }
+    gameObject.SetActive(true); // Custom UI前提。ActiveはtrueでOK、CanvasGroupで隠す。
+}
+
 }
