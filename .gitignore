@@ -80,3 +80,11 @@ Assets/NaninovelData/Compiled*
 # Addressablesが生成するデータ（再構築可能）
 Assets/StreamingAssets/aa/
 Library/com.unity.addressables/
+
+
+# Unity では Assets 以下の SDK ビルド成果物を拾わせない
+Assets/**/obj/
+Assets/**/bin/
+Assets/**/*.csproj
+Assets/**/*.sln
+
