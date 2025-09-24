@@ -1,39 +1,44 @@
-// Assets/Scripts/MenuSystem/AdvicePop.cs
 using UnityEngine;
 
 public class AdvicePop : MonoBehaviour
 {
+    [Header("Refs")]
     [SerializeField] private AdviceBubble adviceBubble;
-    [TextArea] public string firstMessage = "次は『駅前』に行くといいかも？";
-    [Tooltip("true: 一定時間で自動で消える（AdviceBubbleのHold Secondsを使用） / false: 出しっぱ")]
-    public bool autoHide = false;
 
-    void Reset()  { TryCache(); }
-    void Awake()  { TryCache(); }
-    void OnEnable()
+    [Header("Messages")]
+    [TextArea]
+    [SerializeField] private string[] messages;
+
+    // 「最初のメッセージを出しっぱなし」にするか？
+    // Nullable (bool?) だと Show(bool) に渡す時に CS1503 が出るので bool に統一
+    [SerializeField] private bool firstAdviceSticky = true;
+
+    private int index = 0;
+
+    private void OnEnable()
     {
         if (!adviceBubble) return;
-        adviceBubble.Show(firstMessage, autoHide ? (bool?)true : (bool?)false);
+        if (messages == null || messages.Length == 0) return;
+
+        // Show(message, autoHide)
+        // firstAdviceSticky が true なら出しっぱなしにしたいので autoHide=false
+        // false の時は自動で消したければ true に（必要なければ false のままでもOK）
+        bool autoHide = !firstAdviceSticky;
+        adviceBubble.Show(messages[index], autoHide);
     }
 
-    public void ShowAdvice(string msg, bool? auto = null)
+    public void NextAdvice()
     {
         if (!adviceBubble) return;
-        adviceBubble.Show(msg, auto);
+        if (messages == null || messages.Length == 0) return;
+
+        index = (index + 1) % messages.Length;
+        // 次のメッセージは基本出しっぱなし（必要あれば第2引数を true に）
+        adviceBubble.Show(messages[index], false);
     }
 
-    public void UpdateAdvice(string msg)
+    public void HideAdvice()
     {
-        if (!adviceBubble) return;
-        adviceBubble.UpdateText(msg);
-    }
-
-    private void TryCache()
-    {
-#if UNITY_2022_2_OR_NEWER
-        if (!adviceBubble) adviceBubble = FindAnyObjectByType<AdviceBubble>();
-#else
-        if (!adviceBubble) adviceBubble = FindObjectOfType<AdviceBubble>();
-#endif
+        if (adviceBubble) adviceBubble.Hide();
     }
 }

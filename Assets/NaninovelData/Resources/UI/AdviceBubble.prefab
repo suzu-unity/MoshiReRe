@@ -204,7 +204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 11cf7745c7a3a4dd99c240b6eecfbaea, type: 3}
+  m_Sprite: {fileID: -7611086682295976297, guid: d84b0101a382b48269aba6e9ecd71574, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -316,9 +316,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1f3b59f8043e437aa234745cccbb2f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  group: {fileID: 147218298332838261}
   rect: {fileID: 5587200103644637956}
-  text: {fileID: 1311655931925932437}
-  fade: 0.2
+  group: {fileID: 147218298332838261}
+  label: {fileID: 0}
   popScale: 1.1
-  autoHideSeconds: 0
+  popIn: 0.25
+  holdSeconds: 5
+  fadeOut: 0.2

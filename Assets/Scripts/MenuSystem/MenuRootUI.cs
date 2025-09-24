@@ -41,21 +41,17 @@ public class MenuRootUI : MonoBehaviour
 
     void Awake()
     {
-        // 初期はTopページ
         ShowPageTop();
 
-        // 詳細パネルは隠す
         if (itemDetailPanel) itemDetailPanel.SetActive(false);
         if (characterDetailPanel) characterDetailPanel.SetActive(false);
 
-        // 立ち絵クリックで次のアドバイス
         if (rerePortraitButton)
         {
-            rerePortraitButton.onClick.RemoveListener(NextAdvice);
+            rerePortraitButton.onClick.RemoveAllListeners();
             rerePortraitButton.onClick.AddListener(NextAdvice);
         }
 
-        // 詳細パネルの戻る
         if (itemDetailCloseButton)
         {
             itemDetailCloseButton.onClick.RemoveAllListeners();
@@ -70,9 +66,11 @@ public class MenuRootUI : MonoBehaviour
 
     void OnEnable()
     {
-        // 最初のアドバイスを出す（任意）
         if (adviceBubble && adviceMessages != null && adviceMessages.Length > 0)
-            adviceBubble.Show(adviceMessages[adviceIndex], autoHideOverride: !firstAdviceSticky);
+        {
+            // Show(message, autoHide)
+            adviceBubble.Show(adviceMessages[adviceIndex], !firstAdviceSticky);
+        }
     }
 
     void OnDisable()
@@ -85,7 +83,7 @@ public class MenuRootUI : MonoBehaviour
     {
         if (adviceMessages == null || adviceMessages.Length == 0 || adviceBubble == null) return;
         adviceIndex = (adviceIndex + 1) % adviceMessages.Length;
-        adviceBubble.UpdateText(adviceMessages[adviceIndex]);
+        adviceBubble.Show(adviceMessages[adviceIndex], false);
     }
 
     // ===== Top / Items / Characters ページ切替 =====
@@ -111,7 +109,6 @@ public class MenuRootUI : MonoBehaviour
         if (pageItems) pageItems.SetActive(false);
         if (pageCharacters) pageCharacters.SetActive(true);
 
-        // ひとまず全件表示（後でカテゴリフィルタに対応）
         PopulateCharacters();
     }
 
@@ -127,11 +124,10 @@ public class MenuRootUI : MonoBehaviour
 
         foreach (var item in items)
         {
-            var go = Instantiate(itemCellPrefab, gridItemsRoot);
+            var go = Object.Instantiate(itemCellPrefab, gridItemsRoot);
             var img = go.GetComponentInChildren<Image>(true);
             if (img) img.sprite = item.icon;
 
-            // Hoverで吹き出し、Clickで詳細
             var btn = go.GetComponent<Button>();
             if (btn)
             {
@@ -139,10 +135,15 @@ public class MenuRootUI : MonoBehaviour
                 btn.onClick.AddListener(() => ShowItemDetail(item));
             }
 
-            // マウスオーバー時の説明（EventTriggerでも可）
-            var pointer = go.AddComponent<UIPointerEvents>(); // 下に定義
-            pointer.onEnter = () => { if (adviceBubble) adviceBubble.UpdateText(item.summary); };
-            pointer.onExit  = () => { /*必要なら何もしない or 最初のアドバイスに戻す*/ };
+            var pointer = go.AddComponent<UIPointerEvents>();
+            pointer.onEnter = () =>
+            {
+                if (adviceBubble) adviceBubble.Show(item.summary, false);
+            };
+            pointer.onExit = () =>
+            {
+                if (adviceBubble) adviceBubble.Hide();
+            };
         }
     }
 
@@ -156,7 +157,7 @@ public class MenuRootUI : MonoBehaviour
     }
 
     // ====== Characters ======
-    private void PopulateCharacters(CharacterCategory? filter = null)
+    private void PopulateCharacters()
     {
         if (!gridCharactersRoot || !characterCellPrefab) return;
 
@@ -165,11 +166,9 @@ public class MenuRootUI : MonoBehaviour
         var list = characterDB ? characterDB.GetAll() : null;
         if (list == null || list.Count == 0) return;
 
-        var view = (filter.HasValue) ? list.Where(c => c.category == filter.Value) : list;
-
-        foreach (var ch in view)
+        foreach (var ch in list)
         {
-            var go = Instantiate(characterCellPrefab, gridCharactersRoot);
+            var go = Object.Instantiate(characterCellPrefab, gridCharactersRoot);
             var img = go.GetComponentInChildren<Image>(true);
             if (img) img.sprite = ch.icon;
 
@@ -181,38 +180,47 @@ public class MenuRootUI : MonoBehaviour
             }
 
             var pointer = go.AddComponent<UIPointerEvents>();
-            pointer.onEnter = () => { if (adviceBubble) adviceBubble.UpdateText(ch.summary); };
-            pointer.onExit  = () => { /*必要なら何もしない*/ };
+            pointer.onEnter = () =>
+            {
+                if (adviceBubble) adviceBubble.Show(ch.summary, false);
+            };
+            pointer.onExit = () =>
+            {
+                if (adviceBubble) adviceBubble.Hide();
+            };
         }
     }
 
     public void OnOjToggleChanged(bool isOn)
     {
         if (!isOn) return;
-        PopulateCharacters(CharacterCategory.Oj);
+        // PopulateCharacters(CharacterCategory.Oj); // フィルタ実装する場合はここで
+        PopulateCharacters();
     }
 
     public void OnItadakiToggleChanged(bool isOn)
     {
         if (!isOn) return;
-        PopulateCharacters(CharacterCategory.Itadaki);
+        // PopulateCharacters(CharacterCategory.Itadaki);
+        PopulateCharacters();
     }
-// ====== Character Detail ======
-private void ShowCharacterDetail(CharacterInfo ch)
-{
-    if (!characterDetailPanel) return;
 
-    if (characterPortraitImage)
-        characterPortraitImage.sprite = ch.portrait ? ch.portrait : ch.icon;
+    // ====== Character Detail ======
+    private void ShowCharacterDetail(CharacterInfo ch)
+    {
+        if (!characterDetailPanel) return;
 
-    if (characterNameText)
-        characterNameText.text = string.IsNullOrEmpty(ch.displayName) ? ch.id : ch.displayName;
+        if (characterPortraitImage)
+            characterPortraitImage.sprite = ch.portrait ? ch.portrait : ch.icon;
 
-    if (characterDescriptionText)
-        characterDescriptionText.text = ch.description;
+        if (characterNameText)
+            characterNameText.text = string.IsNullOrEmpty(ch.displayName) ? ch.id : ch.displayName;
 
-    characterDetailPanel.SetActive(true);
-}
+        if (characterDescriptionText)
+            characterDescriptionText.text = ch.description;
+
+        characterDetailPanel.SetActive(true);
+    }
 
     private static void ClearChildren(Transform root)
     {
@@ -222,7 +230,7 @@ private void ShowCharacterDetail(CharacterInfo ch)
 }
 
 /// <summary>
-/// 簡易マウスオーバー検知（EventTrigger代替の最小実装）
+/// 簡易マウスオーバー検知
 /// </summary>
 public class UIPointerEvents : MonoBehaviour,
     UnityEngine.EventSystems.IPointerEnterHandler,

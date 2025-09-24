@@ -1,89 +1,134 @@
-using UnityEngine;
-using TMPro;
 using DG.Tweening;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public class AdviceBubble : MonoBehaviour
 {
     [Header("Refs")]
-    [SerializeField] private RectTransform rect;
-    [SerializeField] private CanvasGroup group;
-    [SerializeField] private TMP_Text label;
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private RectTransform rect;      // あれば使う
+    [SerializeField] private Transform scaleTarget;   // rect が無ければ Transform で代用
+    [SerializeField] private Image background;        // 9-slice スプライト
+    [SerializeField] private TextMeshProUGUI label;   // 吹き出しテキスト
 
-    [Header("Timings")]
-    [SerializeField] private float popScale    = 1.0f;
-    [SerializeField] private float popIn       = 0.25f;
-    [SerializeField] private float holdSeconds = 5.0f; // ← ここで表示時間を長めに調整
-    [SerializeField] private float fadeOut     = 0.20f;
-    private Tween _fadeTween, _scaleTween, _delayTween;
+    [Header("Anim")]
+    [SerializeField] private float showDuration = 0.18f;
+    [SerializeField] private float hideDuration = 0.12f;
+    [SerializeField] private float targetScale = 1.00f; // 表示後の最終スケール
+    [SerializeField] private float fromScale   = 0.85f; // 表示開始スケール
+    [SerializeField] private Ease  easeIn      = Ease.OutSine;
+    [SerializeField] private Ease  easeOut     = Ease.InSine;
 
-    void Reset()  { CacheRefs(); SetupHidden(); }
-    void Awake()  { CacheRefs(); SetupHidden(); }
+    Sequence _showSeq;
+    Sequence _hideSeq;
+    bool _initialized;
 
-    private void CacheRefs()
+    void Reset()
     {
-        if (!rect)  rect  = GetComponent<RectTransform>();
-        if (!group) group = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
-        if (!label) label = GetComponentInChildren<TMP_Text>(true);
+        canvasGroup = GetComponent<CanvasGroup>();
+        rect        = GetComponent<RectTransform>();
+        scaleTarget = rect ? (Transform)rect : transform;
+        label       = GetComponentInChildren<TextMeshProUGUI>(true);
+        background  = GetComponentInChildren<Image>(true);
     }
 
-    private void SetupHidden()
+    void Awake()
     {
-        KillTweens();
-        if (!group) return;
-        group.alpha = 0f;
-        group.interactable = false;
-        group.blocksRaycasts = false;
-        if (rect) rect.localScale = Vector3.one * 0.8f;
+        InitIfNeeded();
+        HideImmediate(); // 実行開始時は非表示
     }
 
-    private void KillTweens()
+    void OnDisable()  => KillSequences();
+    void OnDestroy()  => KillSequences();
+
+    void InitIfNeeded()
     {
-        _fadeTween?.Kill(); _fadeTween = null;
-        _scaleTween?.Kill(); _scaleTween = null;
-        _delayTween?.Kill(); _delayTween = null;
+        if (_initialized) return;
+        _initialized = true;
+
+        // Refs
+        if (!canvasGroup)
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+            if (!canvasGroup) canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+        if (!rect) rect = GetComponent<RectTransform>();
+        if (!scaleTarget) scaleTarget = rect ? (Transform)rect : transform;
+        if (!label) label = GetComponentInChildren<TextMeshProUGUI>(true);
+        if (!background) background = GetComponentInChildren<Image>(true);
+
+        // 9-slice 推奨
+        if (background && background.type != Image.Type.Sliced)
+            background.type = Image.Type.Sliced;
+
+        // 既存シーケンス破棄
+        KillSequences();
+
+        // Show シーケンス（再利用）
+        _showSeq = DOTween.Sequence().SetAutoKill(false).Pause();
+        _showSeq.OnPlay(() => { if (!gameObject.activeSelf) gameObject.SetActive(true); });
+
+        _showSeq.Append(canvasGroup.DOFade(1f, showDuration))
+                .Join(scaleTarget.DOScale(targetScale, showDuration)
+                                 .From(fromScale)
+                                 .SetEase(easeIn));
+
+        // Hide シーケンス（再利用）
+        _hideSeq = DOTween.Sequence().SetAutoKill(false).Pause();
+        _hideSeq.OnComplete(() => { gameObject.SetActive(false); });
+
+        _hideSeq.Append(scaleTarget.DOScale(fromScale, hideDuration).SetEase(easeOut))
+                .Join(canvasGroup.DOFade(0f, hideDuration));
     }
 
-    /// <summary>
-    /// アドバイス表示。autoHideOverride=true なら一定時間で自動クローズ、
-    /// false なら出しっぱ。null のときはデフォルト（holdSeconds）。
-    /// </summary>
-    public void Show(string msg, bool? autoHideOverride = null)
+    void KillSequences()
     {
-        CacheRefs();
-        KillTweens();
+        if (_showSeq != null) { _showSeq.Kill(); _showSeq = null; }
+        if (_hideSeq != null) { _hideSeq.Kill(); _hideSeq = null; }
+    }
 
-        if (label) label.text = msg;
+    void HideImmediate()
+    {
+        if (!canvasGroup) return;
+        canvasGroup.alpha = 0f;
+        if (!scaleTarget) scaleTarget = rect ? (Transform)rect : transform;
+        if (scaleTarget) scaleTarget.localScale = Vector3.one * fromScale;
+        gameObject.SetActive(false);
+    }
 
-        group.alpha = 1f;
-        group.interactable = false;
-        group.blocksRaycasts = false;
+    /// <summary>吹き出しを表示（autoHide=false で出しっぱなし）</summary>
+    public void Show(string message, bool autoHide = false, float autoHideDelay = 0f)
+    {
+        InitIfNeeded();
+            if (label) { label.enabled = true; label.text = message ?? string.Empty; }
+    if (background) background.enabled = true;
+    if (!gameObject.activeSelf) gameObject.SetActive(true);
+    canvasGroup.alpha = 1f;
+    
+        if (label) label.text = message ?? string.Empty;
 
-        if (rect) rect.localScale = Vector3.one * 0.8f;
-        _scaleTween = rect?.DOScale(popScale, popIn).SetUpdate(true);
+        // 先に逆側を止める
+        if (_hideSeq != null && _hideSeq.IsActive()) _hideSeq.Pause();
 
-        bool autoHide = autoHideOverride ?? true;
+        // 値を整える
+        canvasGroup.alpha = 1f;
+        if (!gameObject.activeSelf) gameObject.SetActive(true);
+
+        _showSeq?.Restart();
+
         if (autoHide)
-            _delayTween = DOVirtual.DelayedCall(holdSeconds, Hide).SetUpdate(true);
+        {
+            DOVirtual.DelayedCall(autoHideDelay <= 0f ? 1.5f : autoHideDelay, Hide)
+                     .SetTarget(this);
+        }
     }
 
     public void Hide()
     {
-        CacheRefs();
-        KillTweens();
-        _fadeTween = group.DOFade(0f, fadeOut).SetUpdate(true)
-            .OnComplete(SetupHidden);
-    }
-
-    /// <summary>内容だけ差し替えて軽くポップ（消さない）。</summary>
-    public void UpdateText(string msg)
-    {
-        CacheRefs();
-        if (label) label.text = msg;
-        if (rect)
-        {
-            rect.localScale = Vector3.one * 0.95f;
-            _scaleTween?.Kill();
-            _scaleTween = rect.DOScale(popScale, 0.12f).SetUpdate(true);
-        }
+        InitIfNeeded();
+        if (_showSeq != null && _showSeq.IsActive()) _showSeq.Pause();
+        _hideSeq?.Restart();
     }
 }
