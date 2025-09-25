@@ -5177,7 +5177,7 @@ MonoBehaviour:
   pageItems: {fileID: 577912904244604460}
   pageCharacters: {fileID: 6286719291881155344}
   rerePortraitButton: {fileID: 5257064446972666923}
-  adviceBubble: {fileID: 8813746012775359284}
+  sharedAdviceTrigger: {fileID: 0}
   gridItemsRoot: {fileID: 4997560534211408947}
   itemCellPrefab: {fileID: 1181506472160852225, guid: a5338e5d07332498b81b6459fa3529c9, type: 3}
   inventoryDB: {fileID: 11400000, guid: 538b9346db7894ae8a0dd7406f64b3ef, type: 2}
@@ -6132,8 +6132,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a52f9d0d8844917b5a4b711117f4d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubble: {fileID: 741379863684649087}
+  advicePanel: {fileID: 0}
+  adviceText: {fileID: 0}
   message: 
+  autoHideDelay: 3
 --- !u!1 &7676107797962329325
 GameObject:
   m_ObjectHideFlags: 0
@@ -7422,17 +7424,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27ba175556afe4896b07eef6e12865a8, type: 3}
---- !u!114 &741379863684649087 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6897660992657209806, guid: 27ba175556afe4896b07eef6e12865a8, type: 3}
-  m_PrefabInstance: {fileID: 6192593723288431025}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1f3b59f8043e437aa234745cccbb2f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &1763506468401185461 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5587200103644637956, guid: 27ba175556afe4896b07eef6e12865a8, type: 3}
