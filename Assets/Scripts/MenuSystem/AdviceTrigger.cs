@@ -8,11 +8,11 @@ public class AdviceTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        bubble.Show(message, autoHide:false, typewriter:true);
+        if (bubble) bubble.Show(message, autoHide: false, forceTypewriter: false);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        bubble.Hide();
+        if (bubble) bubble.Hide();
     }
 }

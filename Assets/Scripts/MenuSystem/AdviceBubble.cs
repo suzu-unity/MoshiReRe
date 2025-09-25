@@ -1,30 +1,30 @@
-using System.Collections;                 // ← これが必要（IEnumerator）
+using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;                     // LayoutRebuilder, Image
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class AdviceBubble : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private RectTransform rect;      // バブル本体(ReRetooltip)のRectTransform
-    [SerializeField] private Transform scaleTarget;   // rect が無ければ Transform で代用
-    [SerializeField] private Image background;        // 9-slice スプライト
-    [SerializeField] private TextMeshProUGUI label;   // 吹き出しテキスト
+    [SerializeField] private RectTransform rect;
+    [SerializeField] private Transform scaleTarget;
+    [SerializeField] private Image background;
+    [SerializeField] private TextMeshProUGUI label;
 
     [Header("Anim")]
     [SerializeField] private float showDuration = 0.18f;
     [SerializeField] private float hideDuration = 0.12f;
-    [SerializeField] private float targetScale = 1.00f;
-    [SerializeField] private float fromScale   = 0.85f;
-    [SerializeField] private Ease  easeIn      = Ease.OutSine;
-    [SerializeField] private Ease  easeOut     = Ease.InSine;
+    [SerializeField] private float targetScale = 1.0f;
+    [SerializeField] private float fromScale = 0.85f;
+    [SerializeField] private Ease easeIn = Ease.OutSine;
+    [SerializeField] private Ease easeOut = Ease.InSine;
 
     [Header("Typewriter")]
-    [SerializeField] private bool  useTypewriter = false; // 既定でタイプ表示にしたい場合は true
-    [SerializeField] private float charInterval  = 0.03f; // 1文字の表示間隔(秒)
+    [SerializeField] private bool useTypewriter = false;
+    [SerializeField] private float charInterval = 0.03f;
 
     Sequence _showSeq;
     Sequence _hideSeq;
@@ -54,35 +54,26 @@ public class AdviceBubble : MonoBehaviour
         if (_initialized) return;
         _initialized = true;
 
-        if (!canvasGroup)
-        {
-            canvasGroup = GetComponent<CanvasGroup>();
-            if (!canvasGroup) canvasGroup = gameObject.AddComponent<CanvasGroup>();
-        }
+        if (!canvasGroup) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (!rect) rect = GetComponent<RectTransform>();
         if (!scaleTarget) scaleTarget = rect ? (Transform)rect : transform;
         if (!label) label = GetComponentInChildren<TextMeshProUGUI>(true);
         if (!background) background = GetComponentInChildren<Image>(true);
 
-        // 9-slice 推奨
         if (background && background.type != Image.Type.Sliced)
             background.type = Image.Type.Sliced;
 
-        // シーケンス作り直し
         KillSequences();
 
         _showSeq = DOTween.Sequence().SetAutoKill(false).Pause();
-        _showSeq.OnPlay(() =>
-        {
-            if (!gameObject.activeSelf) gameObject.SetActive(true);
-        });
+        _showSeq.OnPlay(() => gameObject.SetActive(true));
         _showSeq.Append(canvasGroup.DOFade(1f, showDuration))
                 .Join(scaleTarget.DOScale(targetScale, showDuration)
                                  .From(fromScale)
                                  .SetEase(easeIn));
 
         _hideSeq = DOTween.Sequence().SetAutoKill(false).Pause();
-        _hideSeq.OnComplete(() => { gameObject.SetActive(false); });
+        _hideSeq.OnComplete(() => gameObject.SetActive(false));
         _hideSeq.Append(scaleTarget.DOScale(fromScale, hideDuration).SetEase(easeOut))
                 .Join(canvasGroup.DOFade(0f, hideDuration));
     }
@@ -102,44 +93,35 @@ public class AdviceBubble : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-/// <summary>
-/// 吹き出しを表示
-/// autoHide = true のとき autoHideDelay 秒後に消える
-/// typewriter = true ならタイプライター風表示
-/// （引数を省略した場合は Inspector の useTypewriter を参照）
-/// </summary>
-public void Show(string message, bool autoHide = false, float autoHideDelay = 0f, bool? typewriter = null)
-{
-    InitIfNeeded();
-    StopTypewriterIfAny();
-
-    if (background) background.enabled = true;
-    if (!gameObject.activeSelf) gameObject.SetActive(true);
-    canvasGroup.alpha = 1f;
-
-    if (label)
+    /// <summary>
+    /// 吹き出しを表示
+    /// </summary>
+    public void Show(string message, bool autoHide = false, float autoHideDelay = 0f, bool? forceTypewriter = null)
     {
-        label.enableWordWrapping = true;
-        label.textWrappingMode   = TextWrappingModes.Normal;
-        label.overflowMode       = TextOverflowModes.Overflow;
-    }
+        InitIfNeeded();
+        StopTypewriterIfAny();
 
-    // 引数優先。指定がなければ Inspector の useTypewriter を使う
-    bool doTypewriter = typewriter ?? useTypewriter;
+        background.enabled = true;
+        gameObject.SetActive(true);
+        canvasGroup.alpha = 1f;
 
-    if (doTypewriter)
-    {
-        _typeRoutine = StartCoroutine(TypewriterRoutine(message ?? string.Empty, autoHide, autoHideDelay, charInterval));
-    }
-    else
-    {
-        SetTextImmediate(message ?? string.Empty);
-        RebuildLayoutNow();
-        PlayShow();
-        ScheduleAutoHideIfNeeded(autoHide, autoHideDelay);
-    }
-}
+        label.textWrappingMode = TextWrappingModes.Normal;
+        label.overflowMode     = TextOverflowModes.Overflow;
 
+        bool doTypewriter = forceTypewriter ?? useTypewriter;
+
+        if (doTypewriter)
+        {
+            _typeRoutine = StartCoroutine(TypewriterRoutine(message ?? string.Empty, autoHide, autoHideDelay));
+        }
+        else
+        {
+            SetTextImmediate(message ?? string.Empty);
+            RebuildLayoutNow();
+            PlayShow();
+            ScheduleAutoHideIfNeeded(autoHide, autoHideDelay);
+        }
+    }
 
     public void Hide()
     {
@@ -149,7 +131,7 @@ public void Show(string message, bool autoHide = false, float autoHideDelay = 0f
         _hideSeq?.Restart();
     }
 
-    // ========= ここから内部処理 =========
+    // ==== 内部処理 ====
 
     void PlayShow()
     {
@@ -160,8 +142,7 @@ public void Show(string message, bool autoHide = false, float autoHideDelay = 0f
     void ScheduleAutoHideIfNeeded(bool autoHide, float autoHideDelay)
     {
         if (!autoHide) return;
-        DOVirtual.DelayedCall(autoHideDelay <= 0f ? 1.5f : autoHideDelay, Hide)
-                 .SetTarget(this);
+        DOVirtual.DelayedCall(autoHideDelay <= 0f ? 1.5f : autoHideDelay, Hide).SetTarget(this);
     }
 
     void SetTextImmediate(string s)
@@ -171,7 +152,7 @@ public void Show(string message, bool autoHide = false, float autoHideDelay = 0f
         label.ForceMeshUpdate();
     }
 
-    IEnumerator TypewriterRoutine(string s, bool autoHide, float autoHideDelay, float interval)
+    IEnumerator TypewriterRoutine(string s, bool autoHide, float autoHideDelay)
     {
         if (!label)
         {
@@ -180,26 +161,19 @@ public void Show(string message, bool autoHide = false, float autoHideDelay = 0f
             yield break;
         }
 
-        label.text = string.Empty;
-        label.ForceMeshUpdate();
+        label.text = s;                   // 全文セット
+        label.maxVisibleCharacters = 0;   // 非表示状態で開始
         RebuildLayoutNow();
-        PlayShow(); // 先に出しとく（文字が出ながら伸びるようにする）
+        PlayShow();
 
-        for (int i = 0; i < s.Length; i++)
+        for (int i = 0; i <= s.Length; i++)
         {
-            label.text += s[i];
+            label.maxVisibleCharacters = i;
             label.ForceMeshUpdate();
-
-            // 1文字ごとに再計算：バブルが文字量に応じて追従
             RebuildLayoutNow();
-
-            if (interval > 0f)
-                yield return new WaitForSeconds(interval);
-            else
-                yield return null;
+            yield return new WaitForSeconds(charInterval);
         }
 
-        // 全文出し切り後の最終計算
         RebuildLayoutNow();
         ScheduleAutoHideIfNeeded(autoHide, autoHideDelay);
         _typeRoutine = null;
