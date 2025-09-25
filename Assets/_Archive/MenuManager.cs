@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ public class MenuManager : MonoBehaviour
     private AdviceBubble adviceBubble;
     private bool isOpen;
 
-    void Awake ()
+    void Awake()
     {
         // 1) まずシーン上で探す
         var rootGo = GameObject.Find(menuRootName);
@@ -54,7 +55,7 @@ public class MenuManager : MonoBehaviour
         SetOpen(false, true);
     }
 
-    void Update ()
+    void Update()
     {
         if (Input.GetKeyDown(toggleKey))
         {
@@ -63,17 +64,17 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public void Open ()
+    public void Open()
     {
         SetOpen(true, false);
     }
 
-    public void Close ()
+    public void Close()
     {
         SetOpen(false, false);
     }
 
-    private void SetOpen (bool open, bool instant)
+    private void SetOpen(bool open, bool instant)
     {
         if (!menuRoot || !menuGroup)
         {
