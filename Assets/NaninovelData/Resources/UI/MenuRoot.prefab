@@ -4445,17 +4445,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 5083484069712890258}
-  rect: {fileID: 704639505878033176}
-  scaleTarget: {fileID: 704639505878033176}
-  background: {fileID: 5886240505182115187}
-  label: {fileID: 6459893876170074460}
-  showDuration: 0.18
-  hideDuration: 0.12
-  targetScale: 1
-  fromScale: 0.85
-  easeIn: 3
-  easeOut: 2
-  useTypewriter: 1
+  bubbleRoot: {fileID: 0}
+  text: {fileID: 6459893876170074460}
+  textAnimatorPlayer: {fileID: 0}
+  fadeIn: 0.15
+  fadeOut: 0.15
+  popScale: 0.12
+  defaultDelay: 3
   charInterval: 0.03
 --- !u!114 &5886240505182115187
 MonoBehaviour:
@@ -5195,7 +5191,7 @@ MonoBehaviour:
   characterDescriptionText: {fileID: 1020312007455226282}
   characterDetailCloseButton: {fileID: 6475281471789647798}
   adviceMessages:
-  - "\u6B21\u306F\u300E\u99C5\u524D\u300F\u306B\u884C\u304F\u3068\u3044\u3044\u304B\u3082\uFF01"
+  - "\u6B21\u306F\u300E\u99C5\u524D\u300F\u306B\u884C\u304F\u3068\u3044\u3044\u304B\u3082\uFF01\n\u3041s\u3041\u3041s\n\u3041\u3041s\u3041sx\n\u3041\u3041sx\u3055xsx\n\u4E9Csx\u4E9Csx\u3042sx"
   - "\u591C\u306F\u5371\u306A\u3044\u3088\u3001\u6C17\u3092\u3064\u3051\u3066\u306D\u3002"
   - "\u8CA1\u5E03\u306E\u4E2D\u8EAB\u2026\u78BA\u8A8D\u3057\u3066\u304A\u304F\uFF1F"
   firstAdviceSticky: 1
@@ -6132,8 +6128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a52f9d0d8844917b5a4b711117f4d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  advicePanel: {fileID: 5809628055747401761}
-  adviceText: {fileID: 6459893876170074460}
+  adviceBubble: {fileID: 8813746012775359284}
   autoHideDelay: 3
 --- !u!1 &7676107797962329325
 GameObject:

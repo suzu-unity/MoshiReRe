@@ -1,43 +1,30 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using TMPro;
 
+/// <summary>
+/// クリックやホバーで AdviceBubble を表示するトリガー。
+/// </summary>
 public class AdviceClickTrigger : MonoBehaviour
 {
-    [SerializeField] private GameObject advicePanel;           // 吹き出しの箱（Panel等）
-    [SerializeField] private TextMeshProUGUI adviceText;       // 吹き出しの本文
-    [SerializeField] private float autoHideDelay = 3f;         // 自動消去までの秒数
-    private Coroutine hideCoroutine;
+    [SerializeField] private AdviceBubble adviceBubble; // 吹き出しの表示アニメーションを持つコンポーネント
+    [SerializeField] private float autoHideDelay = 3f; // 自動非表示までの秒数
 
+    /// <summary>
+    /// メッセージを吹き出しに表示する。
+    /// autoHide が true の場合は autoHideDelay 秒後に非表示。
+    /// </summary>
     public void ShowAdvice(string message, bool autoHide = true)
     {
-        if (!advicePanel || !adviceText) return;
-
-        adviceText.text = message;
-        advicePanel.SetActive(true);
-
-        if (hideCoroutine != null)
+        if (adviceBubble != null)
         {
-            StopCoroutine(hideCoroutine);
-            hideCoroutine = null;
+            adviceBubble.Show(message, autoHide, autoHideDelay);
         }
-        if (autoHide) hideCoroutine = StartCoroutine(HideAfterDelay());
     }
 
+    /// <summary>
+    /// 吹き出しを即座に隠す。
+    /// </summary>
     public void HideAdvice()
     {
-        if (advicePanel) advicePanel.SetActive(false);
-        if (hideCoroutine != null)
-        {
-            StopCoroutine(hideCoroutine);
-            hideCoroutine = null;
-        }
-    }
-
-    private IEnumerator HideAfterDelay()
-    {
-        yield return new WaitForSeconds(autoHideDelay);
-        HideAdvice();
+        adviceBubble?.Hide();
     }
 }

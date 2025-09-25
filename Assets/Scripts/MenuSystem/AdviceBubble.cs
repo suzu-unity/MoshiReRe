@@ -1,197 +1,254 @@
 using System.Collections;
-using DG.Tweening;
-using TMPro;
+using System.Reflection;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
+
+#if DOTWEEN_ENABLED
+using DG.Tweening;
+#endif
 
 [DisallowMultipleComponent]
 public class AdviceBubble : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private RectTransform rect;
-    [SerializeField] private Transform scaleTarget;
-    [SerializeField] private Image background;
-    [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] private RectTransform bubbleRoot;
+    [SerializeField] private TextMeshProUGUI text;
 
-    [Header("Anim")]
-    [SerializeField] private float showDuration = 0.18f;
-    [SerializeField] private float hideDuration = 0.12f;
-    [SerializeField] private float targetScale = 1.0f;
-    [SerializeField] private float fromScale = 0.85f;
-    [SerializeField] private Ease easeIn = Ease.OutSine;
-    [SerializeField] private Ease easeOut = Ease.InSine;
+    [Header("Optional (Text Animator for Unity)")]
+    [Tooltip("Febucci の TextAnimatorPlayer をここに割り当てると本物のタイプライターを使います。未割り当てなら簡易タイプライターにフォールバックします。")]
+    [SerializeField] private MonoBehaviour textAnimatorPlayer; // 例: Febucci.UI.TextAnimatorPlayer
 
-    [Header("Typewriter")]
-    [SerializeField] private bool useTypewriter = false;
-    [SerializeField] private float charInterval = 0.03f;
+    [Header("Timings")]
+    [SerializeField] private float fadeIn = 0.15f;
+    [SerializeField] private float fadeOut = 0.15f;
+    [SerializeField] private float popScale = 0.12f;   // 0で無効
+    [SerializeField] private float defaultDelay = 3f;  // autoHide のデフォルト秒
 
-    Sequence _showSeq;
-    Sequence _hideSeq;
-    Coroutine _typeRoutine;
-    bool _initialized;
+    [Header("Fallback Typewriter (no TextAnimator)")]
+    [SerializeField, Tooltip("TextAnimator が無い場合の1文字あたり秒")] private float charInterval = 0.03f;
 
-    void Reset()
-    {
-        canvasGroup = GetComponent<CanvasGroup>();
-        rect        = GetComponent<RectTransform>();
-        scaleTarget = rect ? (Transform)rect : transform;
-        label       = GetComponentInChildren<TextMeshProUGUI>(true);
-        background  = GetComponentInChildren<Image>(true);
-    }
+    private Coroutine autoHideCo;
+    private Coroutine fallbackTypeCo;
+
+#if DOTWEEN_ENABLED
+    private Tween fadeTween;
+    private Tween scaleTween;
+#endif
 
     void Awake()
     {
-        InitIfNeeded();
-        HideImmediate();
-    }
+        if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
+        if (!bubbleRoot) bubbleRoot = transform as RectTransform;
+        if (!text) text = GetComponentInChildren<TextMeshProUGUI>(true);
 
-    void OnDisable()  => KillSequences();
-    void OnDestroy()  => KillSequences();
+        if (!text)
+            Debug.LogError("[AdviceBubble] TextMeshProUGUI の参照が見つかりません。Inspector の text フィールドに割り当ててください。", this);
 
-    void InitIfNeeded()
-    {
-        if (_initialized) return;
-        _initialized = true;
+        if (text && text.font == null)
+            Debug.LogError("[AdviceBubble] TextMeshProUGUI の Font Asset が未設定です。TMP フォントを割り当ててください。", text);
 
-        if (!canvasGroup) canvasGroup = gameObject.AddComponent<CanvasGroup>();
-        if (!rect) rect = GetComponent<RectTransform>();
-        if (!scaleTarget) scaleTarget = rect ? (Transform)rect : transform;
-        if (!label) label = GetComponentInChildren<TextMeshProUGUI>(true);
-        if (!background) background = GetComponentInChildren<Image>(true);
-
-        if (background && background.type != Image.Type.Sliced)
-            background.type = Image.Type.Sliced;
-
-        KillSequences();
-
-        _showSeq = DOTween.Sequence().SetAutoKill(false).Pause();
-        _showSeq.OnPlay(() => gameObject.SetActive(true));
-        _showSeq.Append(canvasGroup.DOFade(1f, showDuration))
-                .Join(scaleTarget.DOScale(targetScale, showDuration)
-                                 .From(fromScale)
-                                 .SetEase(easeIn));
-
-        _hideSeq = DOTween.Sequence().SetAutoKill(false).Pause();
-        _hideSeq.OnComplete(() => gameObject.SetActive(false));
-        _hideSeq.Append(scaleTarget.DOScale(fromScale, hideDuration).SetEase(easeOut))
-                .Join(canvasGroup.DOFade(0f, hideDuration));
-    }
-
-    void KillSequences()
-    {
-        if (_showSeq != null) { _showSeq.Kill(); _showSeq = null; }
-        if (_hideSeq != null) { _hideSeq.Kill(); _hideSeq = null; }
-    }
-
-    void HideImmediate()
-    {
-        if (!canvasGroup) return;
-        canvasGroup.alpha = 0f;
-        if (!scaleTarget) scaleTarget = rect ? (Transform)rect : transform;
-        if (scaleTarget) scaleTarget.localScale = Vector3.one * fromScale;
+        if (canvasGroup) canvasGroup.alpha = 0f;
         gameObject.SetActive(false);
     }
 
+    // ===== Public API =====================================================================
+
+    public void Show(string message) => Show(message, true, defaultDelay);
+    public void Show(string message, bool autoHide) => Show(message, autoHide, defaultDelay);
+
     /// <summary>
-    /// 吹き出しを表示
+    /// 表示（autoHide=trueで delay秒後に自動非表示）
     /// </summary>
-    public void Show(string message, bool autoHide = false, float autoHideDelay = 0f, bool? forceTypewriter = null)
+    public void Show(string message, bool autoHide, float delay)
     {
-        InitIfNeeded();
-        StopTypewriterIfAny();
+        // 先行動作の完全停止
+        StopAutoHide();
+        KillTweens();
+        StopFallbackTypewriter();
+        ResetTypewriter(); // TextAnimator 側の再生も停止
 
-        background.enabled = true;
-        gameObject.SetActive(true);
-        canvasGroup.alpha = 1f;
-
-        label.textWrappingMode = TextWrappingModes.Normal;
-        label.overflowMode     = TextOverflowModes.Overflow;
-
-        bool doTypewriter = forceTypewriter ?? useTypewriter;
-
-        if (doTypewriter)
+        // テキストセット（TextAnimator を使う場合は空で開始し、ShowTextに委ねる）
+        if (HasTextAnimator())
         {
-            _typeRoutine = StartCoroutine(TypewriterRoutine(message ?? string.Empty, autoHide, autoHideDelay));
+            if (text) text.text = string.Empty;
         }
         else
         {
-            SetTextImmediate(message ?? string.Empty);
-            RebuildLayoutNow();
-            PlayShow();
-            ScheduleAutoHideIfNeeded(autoHide, autoHideDelay);
+            if (text)
+            {
+                text.text = message;
+                text.maxVisibleCharacters = 0; // フォールバック用に0から始める
+            }
         }
+
+        // 表示準備
+        gameObject.SetActive(true);
+        if (canvasGroup) canvasGroup.alpha = 0f;
+
+#if DOTWEEN_ENABLED
+        if (fadeIn > 0f && canvasGroup)
+            fadeTween = canvasGroup.DOFade(1f, fadeIn).SetUpdate(true);
+
+        if (popScale > 0f && bubbleRoot)
+        {
+            bubbleRoot.localScale = Vector3.one * 0.95f;
+            scaleTween = bubbleRoot
+                .DOScale(1f, popScale)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
+        }
+#else
+        if (canvasGroup) canvasGroup.alpha = 1f;
+        // DOTween 未使用時の未使用警告回避
+        _ = fadeIn; _ = fadeOut; _ = popScale;
+#endif
+
+        // タイプライター再生
+        PlayTypewriter(message);
+
+        // オート消し（開始タイミングは「表示開始基準」）
+        if (autoHide) autoHideCo = StartCoroutine(AutoHide(delay));
     }
 
     public void Hide()
     {
-        InitIfNeeded();
-        StopTypewriterIfAny();
-        if (_showSeq != null && _showSeq.IsActive()) _showSeq.Pause();
-        _hideSeq?.Restart();
-    }
+        StopAutoHide();
+        KillTweens();
+        StopFallbackTypewriter();
+        ResetTypewriter(); // TextAnimator 側も停止
 
-    // ==== 内部処理 ====
-
-    void PlayShow()
-    {
-        if (_hideSeq != null && _hideSeq.IsActive()) _hideSeq.Pause();
-        _showSeq?.Restart();
-    }
-
-    void ScheduleAutoHideIfNeeded(bool autoHide, float autoHideDelay)
-    {
-        if (!autoHide) return;
-        DOVirtual.DelayedCall(autoHideDelay <= 0f ? 1.5f : autoHideDelay, Hide).SetTarget(this);
-    }
-
-    void SetTextImmediate(string s)
-    {
-        if (!label) return;
-        label.text = s;
-        label.ForceMeshUpdate();
-    }
-
-    IEnumerator TypewriterRoutine(string s, bool autoHide, float autoHideDelay)
-    {
-        if (!label)
+#if DOTWEEN_ENABLED
+        if (fadeOut > 0f && canvasGroup)
         {
-            PlayShow();
-            ScheduleAutoHideIfNeeded(autoHide, autoHideDelay);
-            yield break;
+            fadeTween = canvasGroup
+                .DOFade(0f, fadeOut)
+                .SetUpdate(true)
+                .OnComplete(() => SafeDeactivate());
+        }
+        else
+        {
+            if (canvasGroup) canvasGroup.alpha = 0f;
+            SafeDeactivate();
+        }
+#else
+        if (canvasGroup) canvasGroup.alpha = 0f;
+        SafeDeactivate();
+#endif
+    }
+
+    // ===== Internals ======================================================================
+
+    private IEnumerator AutoHide(float delay)
+    {
+        if (delay <= 0f) { Hide(); yield break; }
+        yield return new WaitForSeconds(delay);
+        Hide();
+    }
+
+    private void StopAutoHide()
+    {
+        if (autoHideCo != null)
+        {
+            StopCoroutine(autoHideCo);
+            autoHideCo = null;
+        }
+    }
+
+    private void SafeDeactivate()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void KillTweens()
+    {
+#if DOTWEEN_ENABLED
+        if (fadeTween != null && fadeTween.IsActive()) fadeTween.Kill(true);
+        if (scaleTween != null && scaleTween.IsActive()) scaleTween.Kill(true);
+        fadeTween = null;
+        scaleTween = null;
+#endif
+    }
+
+    // ── Text Animator（Febucci）連携 & フォールバック ─────────────────────────────
+
+    private bool HasTextAnimator() => textAnimatorPlayer != null;
+
+    private void ResetTypewriter()
+    {
+        if (!HasTextAnimator()) return;
+
+        // 可能なら SkipTypewriter / StopShowingText を呼ぶ（リフレクションで安全に）
+        var tp = textAnimatorPlayer;
+        var t = tp.GetType();
+
+        var skip = t.GetMethod("SkipTypewriter", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        skip?.Invoke(tp, null);
+
+        var stop = t.GetMethod("StopShowingText", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        stop?.Invoke(tp, null);
+    }
+
+    private void PlayTypewriter(string message)
+    {
+        if (HasTextAnimator())
+        {
+            // Febucci TextAnimatorPlayer に委譲
+            var tp = textAnimatorPlayer;
+            var t = tp.GetType();
+
+            var show = t.GetMethod("ShowText", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
+            if (show != null)
+            {
+                show.Invoke(tp, new object[] { message });
+            }
+            else
+            {
+                // ShowText が見つからない場合はフォールバック
+                StartFallbackTypewriter(message);
+            }
+        }
+        else
+        {
+            // フォールバックのタイプライター
+            StartFallbackTypewriter(message);
+        }
+    }
+
+    private void StartFallbackTypewriter(string message)
+    {
+        if (!text) return;
+        StopFallbackTypewriter();
+        fallbackTypeCo = StartCoroutine(FallbackTypewriterCo(message));
+    }
+
+    private void StopFallbackTypewriter()
+    {
+        if (fallbackTypeCo != null)
+        {
+            StopCoroutine(fallbackTypeCo);
+            fallbackTypeCo = null;
+        }
+    }
+
+    private IEnumerator FallbackTypewriterCo(string message)
+    {
+        // text.text は Show() で設定済み。maxVisibleCharacters を増やしていく
+        int total = text.textInfo.characterCount;
+        // textInfo は次のフレームで更新されることがあるので初期化待ち
+        if (total == 0)
+        {
+            yield return null;
+            total = text.textInfo.characterCount;
         }
 
-        label.text = s;                   // 全文セット
-        label.maxVisibleCharacters = 0;   // 非表示状態で開始
-        RebuildLayoutNow();
-        PlayShow();
-
-        for (int i = 0; i <= s.Length; i++)
+        int visible = 0;
+        while (visible < total)
         {
-            label.maxVisibleCharacters = i;
-            label.ForceMeshUpdate();
-            RebuildLayoutNow();
+            visible++;
+            text.maxVisibleCharacters = visible;
             yield return new WaitForSeconds(charInterval);
         }
-
-        RebuildLayoutNow();
-        ScheduleAutoHideIfNeeded(autoHide, autoHideDelay);
-        _typeRoutine = null;
-    }
-
-    void RebuildLayoutNow()
-    {
-        Canvas.ForceUpdateCanvases();
-        if (rect) LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
-        if (label) LayoutRebuilder.ForceRebuildLayoutImmediate(label.rectTransform);
-    }
-
-    void StopTypewriterIfAny()
-    {
-        if (_typeRoutine != null)
-        {
-            StopCoroutine(_typeRoutine);
-            _typeRoutine = null;
-        }
+        text.maxVisibleCharacters = total;
     }
 }
