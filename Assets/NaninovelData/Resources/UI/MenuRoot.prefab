@@ -3523,53 +3523,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &4933075471754905432
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1399413771608495707}
-  - component: {fileID: 7101548825348537202}
-  m_Layer: 0
-  m_Name: AdviceSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1399413771608495707
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4933075471754905432}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -122.28201, y: 78.47448, z: 0}
-  m_LocalScale: {x: 2.8372386, y: 2.8372386, z: 2.8372386}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6306036015961478113}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7101548825348537202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4933075471754905432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30a52f9d0d8844917b5a4b711117f4d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  advicePanel: {fileID: 0}
-  adviceText: {fileID: 0}
-  autoHideDelay: 3
 --- !u!1 &5057300691767967005
 GameObject:
   m_ObjectHideFlags: 0
@@ -5126,7 +5079,6 @@ RectTransform:
   - {fileID: 1278151420764306210}
   - {fileID: 704639505878033176}
   - {fileID: 1763506468401185461}
-  - {fileID: 1399413771608495707}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5225,7 +5177,7 @@ MonoBehaviour:
   pageItems: {fileID: 577912904244604460}
   pageCharacters: {fileID: 6286719291881155344}
   rerePortraitButton: {fileID: 5257064446972666923}
-  sharedAdviceTrigger: {fileID: 0}
+  sharedAdviceTrigger: {fileID: 6170665898813468206}
   gridItemsRoot: {fileID: 4997560534211408947}
   itemCellPrefab: {fileID: 1181506472160852225, guid: a5338e5d07332498b81b6459fa3529c9, type: 3}
   inventoryDB: {fileID: 11400000, guid: 538b9346db7894ae8a0dd7406f64b3ef, type: 2}
@@ -6180,8 +6132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a52f9d0d8844917b5a4b711117f4d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  advicePanel: {fileID: 0}
-  adviceText: {fileID: 0}
+  advicePanel: {fileID: 5809628055747401761}
+  adviceText: {fileID: 6459893876170074460}
   autoHideDelay: 3
 --- !u!1 &7676107797962329325
 GameObject:
