@@ -11,16 +11,15 @@ public class MenuRootUI : MonoBehaviour
     [SerializeField] private GameObject pageCharacters;
 
     [Header("Common UI")]
-    [SerializeField] private Button rerePortraitButton;   // ReRe立ち絵のボタン
-
-    // ★ 共有のAdviceClickTrigger（吹き出し制御を一本化する）
+    [SerializeField] private Button rerePortraitButton;   // ReRe 立ち絵のボタン
+    // ★ 吹き出し表示を担当する共通トリガー（AdviceClickTrigger）
     [SerializeField] private AdviceClickTrigger sharedAdviceTrigger;
 
     [Header("Items Page")]
-    [SerializeField] private Transform gridItemsRoot;     // GridLayoutの親
-    [SerializeField] private GameObject itemCellPrefab;   // 小さなセル（Image+Button想定）
+    [SerializeField] private Transform gridItemsRoot;
+    [SerializeField] private GameObject itemCellPrefab;
     [SerializeField] private InventoryDatabase inventoryDB;
-    [SerializeField] private GameObject itemDetailPanel;  // 詳細パネル（非表示スタート）
+    [SerializeField] private GameObject itemDetailPanel;
     [SerializeField] private Image itemDetailImage;
     [SerializeField] private TMP_Text itemDetailTitle;
     [SerializeField] private TMP_Text itemDetailDescription;
@@ -28,7 +27,7 @@ public class MenuRootUI : MonoBehaviour
 
     [Header("Characters Page")]
     [SerializeField] private Transform gridCharactersRoot;
-    [SerializeField] private GameObject characterCellPrefab; // 小さなセル（Image+Button想定）
+    [SerializeField] private GameObject characterCellPrefab;
     [SerializeField] private CharacterDatabase characterDB;
     [SerializeField] private GameObject characterDetailPanel;
     [SerializeField] private Image characterPortraitImage;
@@ -38,10 +37,9 @@ public class MenuRootUI : MonoBehaviour
 
     [Header("Advice (demo messages)")]
     [TextArea] [SerializeField] private string[] adviceMessages;
-    [SerializeField] private bool firstAdviceSticky = true; // 最初のアドバイスを出しっぱにするか
-    private int adviceIndex = 0;
+    [SerializeField] private bool firstAdviceSticky = true; // 最初のアドバイスを自動で消さないかどうか
 
-    void Awake()
+    private void Awake()
     {
         ShowPageTop();
 
@@ -66,36 +64,33 @@ public class MenuRootUI : MonoBehaviour
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        // ★ 初回表示：AdviceClickTrigger に移譲
+        // 初回にアドバイスを表示
         if (sharedAdviceTrigger && adviceMessages != null && adviceMessages.Length > 0)
         {
-            sharedAdviceTrigger.message = adviceMessages[adviceIndex];
-
-            // Sticky を想定：AdviceClickTrigger 側で autoHide を切り替えられる実装を推奨
-            // （提示済みの AdviceClickTrigger.cs を使用する場合は自動非表示のON/OFF対応あり）
-            sharedAdviceTrigger.ShowAdvice();
-
-            // もし現在の AdviceClickTrigger が自動非表示のみ対応の場合は、
-            // sticky を再現できないため autoHideDelay を長くして代替してください。
+            // firstAdviceSticky が true のときは autoHide を false にする
+            bool autoHide = !firstAdviceSticky;
+            sharedAdviceTrigger.ShowAdvice(adviceMessages[0], autoHide);
         }
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (sharedAdviceTrigger) sharedAdviceTrigger.HideAdvice();
         if (rerePortraitButton) rerePortraitButton.onClick.RemoveListener(NextAdvice);
     }
 
+    /// <summary>
+    /// ReReの立ち絵をクリックしたときに呼ばれる。メッセージをランダムに表示する。
+    /// </summary>
     public void NextAdvice()
     {
         if (adviceMessages == null || adviceMessages.Length == 0 || sharedAdviceTrigger == null) return;
-        adviceIndex = (adviceIndex + 1) % adviceMessages.Length;
 
-        // ★ クリック（ReRe立ち絵）もAdviceClickTriggerに一本化
-        sharedAdviceTrigger.message = adviceMessages[adviceIndex];
-        sharedAdviceTrigger.ShowAdvice();
+        // ランダムなインデックスを取得して表示
+        int index = Random.Range(0, adviceMessages.Length);
+        sharedAdviceTrigger.ShowAdvice(adviceMessages[index], true);
     }
 
     // ===== Top / Items / Characters ページ切替 =====
@@ -147,20 +142,18 @@ public class MenuRootUI : MonoBehaviour
                 btn.onClick.AddListener(() => ShowItemDetail(item));
             }
 
-            // ★ マウスオーバー → AdviceClickTrigger に委譲
+            // マウスオーバー時のアドバイス表示
             var pointer = go.GetComponent<UIPointerEvents>();
             if (!pointer) pointer = go.AddComponent<UIPointerEvents>();
 
             pointer.onEnter = () =>
             {
-                if (!sharedAdviceTrigger) return;
-                sharedAdviceTrigger.message = item.summary; // 毎回メッセージを差し替える
-                sharedAdviceTrigger.ShowAdvice();           // 自動で一定秒後に消える（AdviceClickTrigger側の仕様）
+                // Summaryを数秒表示したいので autoHide = true
+                if (sharedAdviceTrigger) sharedAdviceTrigger.ShowAdvice(item.summary, true);
             };
             pointer.onExit = () =>
             {
-                if (!sharedAdviceTrigger) return;
-                sharedAdviceTrigger.HideAdvice();           // カーソルが外れたら即消す
+                sharedAdviceTrigger?.HideAdvice();
             };
         }
     }
@@ -197,20 +190,17 @@ public class MenuRootUI : MonoBehaviour
                 btn.onClick.AddListener(() => ShowCharacterDetail(ch));
             }
 
-            // ★ マウスオーバー → AdviceClickTrigger に委譲
+            // マウスオーバー時のアドバイス表示
             var pointer = go.GetComponent<UIPointerEvents>();
             if (!pointer) pointer = go.AddComponent<UIPointerEvents>();
 
             pointer.onEnter = () =>
             {
-                if (!sharedAdviceTrigger) return;
-                sharedAdviceTrigger.message = ch.summary;
-                sharedAdviceTrigger.ShowAdvice();
+                if (sharedAdviceTrigger) sharedAdviceTrigger.ShowAdvice(ch.summary, true);
             };
             pointer.onExit = () =>
             {
-                if (!sharedAdviceTrigger) return;
-                sharedAdviceTrigger.HideAdvice();
+                sharedAdviceTrigger?.HideAdvice();
             };
         }
     }
@@ -218,14 +208,12 @@ public class MenuRootUI : MonoBehaviour
     public void OnOjToggleChanged(bool isOn)
     {
         if (!isOn) return;
-        // PopulateCharacters(CharacterCategory.Oj); // フィルタ実装する場合はここで
         PopulateCharacters();
     }
 
     public void OnItadakiToggleChanged(bool isOn)
     {
         if (!isOn) return;
-        // PopulateCharacters(CharacterCategory.Itadaki);
         PopulateCharacters();
     }
 
@@ -252,9 +240,10 @@ public class MenuRootUI : MonoBehaviour
             Object.Destroy(root.GetChild(i).gameObject);
     }
 }
-
 /// <summary>
-/// 簡易マウスオーバー検知（既存のまま）
+/// 簡易マウスオーバー検知用コンポーネント。
+/// IPointerEnterHandler / IPointerExitHandler を利用して
+/// onEnter / onExit のコールバックを発火します。
 /// </summary>
 public class UIPointerEvents : MonoBehaviour,
     UnityEngine.EventSystems.IPointerEnterHandler,
@@ -263,6 +252,9 @@ public class UIPointerEvents : MonoBehaviour,
     public System.Action onEnter;
     public System.Action onExit;
 
-    public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData) => onEnter?.Invoke();
-    public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData) => onExit?.Invoke();
+    public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
+        => onEnter?.Invoke();
+
+    public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
+        => onExit?.Invoke();
 }
