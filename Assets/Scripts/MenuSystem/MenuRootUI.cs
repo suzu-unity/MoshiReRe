@@ -1,9 +1,11 @@
 using System.Linq;
+using Naninovel.UI; // Naninovel の CustomUI を利用するため追加
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class MenuRootUI : MonoBehaviour
+ // Naninovel UI マネージャーから管理できるよう CustomUI を継承
+public class MenuRootUI : CustomUI
 {
     [Header("Pages")]
     [SerializeField] private GameObject pageTop;
@@ -39,10 +41,14 @@ public class MenuRootUI : MonoBehaviour
     [TextArea] [SerializeField] private string[] adviceMessages;
     [SerializeField] private bool firstAdviceSticky = true; // 最初のアドバイスを自動で消さないかどうか
 
-    private void Awake()
+    /// <summary>
+    /// Awake 時に Naninovel 側の初期化も行うように変更。
+    /// </summary>
+    protected override void Awake()
     {
+        // CustomUI 基底クラスの初期化
+        base.Awake();
         ShowPageTop();
-
         if (itemDetailPanel) itemDetailPanel.SetActive(false);
         if (characterDetailPanel) characterDetailPanel.SetActive(false);
 
@@ -62,11 +68,16 @@ public class MenuRootUI : MonoBehaviour
             characterDetailCloseButton.onClick.RemoveAllListeners();
             characterDetailCloseButton.onClick.AddListener(() => characterDetailPanel.SetActive(false));
         }
+        Hide();
     }
 
-    private void OnEnable()
+    /// <summary>
+    /// UI が有効になったときに初回メッセージを表示する。
+    /// </summary>
+    protected override void OnEnable()
     {
         // 初回にアドバイスを表示
+        base.OnEnable(); // CustomUI の登録処理
         if (sharedAdviceTrigger && adviceMessages != null && adviceMessages.Length > 0)
         {
             // firstAdviceSticky が true のときは autoHide を false にする
@@ -75,10 +86,24 @@ public class MenuRootUI : MonoBehaviour
         }
     }
 
-    private void OnDisable()
-    {
+
+    /// <summary>
+    /// UI が非表示になるときの後始末。
+    /// </summary>
+    protected override void OnDisable()
+        {
+        base.OnDisable(); // CustomUI の登録解除
         if (sharedAdviceTrigger) sharedAdviceTrigger.HideAdvice();
         if (rerePortraitButton) rerePortraitButton.onClick.RemoveListener(NextAdvice);
+    }
+
+    /// <summary>
+    /// UI マネージャーから表示が要求されたときにトップページを表示する。
+    /// </summary>
+    public override void Show ()
+    {
+        base.Show();
+        ShowPageTop();
     }
 
     /// <summary>

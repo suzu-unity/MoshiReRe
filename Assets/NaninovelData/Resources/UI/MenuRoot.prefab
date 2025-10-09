@@ -5050,7 +5050,6 @@ GameObject:
   - component: {fileID: 6306036015961478117}
   - component: {fileID: 6306036015961478116}
   - component: {fileID: 5419237659591078518}
-  - component: {fileID: 7598427842345880313}
   m_Layer: 5
   m_Name: MenuRoot
   m_TagString: Untagged
@@ -5169,6 +5168,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e61f95379e984bcc81e4f7646e9364a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableInteraction: 0
+  visibleOnAwake: 0
+  controlOpacity: 1
+  fadeTime: 0.3
+  ignoreTimeScale: 1
+  focusObject: {fileID: 0}
+  focusMode: 0
+  onShow:
+    m_PersistentCalls:
+      m_Calls: []
+  onHide:
+    m_PersistentCalls:
+      m_Calls: []
+  hideOnLoad: 1
+  hideInThumbnail: 0
+  saveVisibilityState: 1
+  blockInputWhenVisible: 1
+  adaptToInputMode: 1
+  allowedSamplers: []
+  modalUI: 0
+  modalGroup: 
+  buttonControls: {fileID: 0}
+  controlsLegend: {fileID: 0}
+  fontChangeConfiguration: []
   pageTop: {fileID: 8820685294074518188}
   pageItems: {fileID: 577912904244604460}
   pageCharacters: {fileID: 6286719291881155344}
@@ -5195,42 +5218,6 @@ MonoBehaviour:
   - "\u591C\u306F\u5371\u306A\u3044\u3088\u3001\u6C17\u3092\u3064\u3051\u3066\u306D\u3002"
   - "\u8CA1\u5E03\u306E\u4E2D\u8EAB\u2026\u78BA\u8A8D\u3057\u3066\u304A\u304F\uFF1F"
   firstAdviceSticky: 1
---- !u!114 &7598427842345880313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6306036015961478139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24c749d0c675d3940923d50f77b241d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disableInteraction: 0
-  visibleOnAwake: 0
-  controlOpacity: 1
-  fadeTime: 0.3
-  ignoreTimeScale: 1
-  focusObject: {fileID: 0}
-  focusMode: 0
-  onShow:
-    m_PersistentCalls:
-      m_Calls: []
-  onHide:
-    m_PersistentCalls:
-      m_Calls: []
-  hideOnLoad: 1
-  hideInThumbnail: 0
-  saveVisibilityState: 1
-  blockInputWhenVisible: 1
-  adaptToInputMode: 1
-  allowedSamplers: []
-  modalUI: 1
-  modalGroup: 
-  buttonControls: {fileID: 0}
-  controlsLegend: {fileID: 0}
-  fontChangeConfiguration: []
 --- !u!1 &6378565408528756073
 GameObject:
   m_ObjectHideFlags: 0
