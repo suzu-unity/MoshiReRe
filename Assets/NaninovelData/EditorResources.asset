@@ -321,3 +321,6 @@ MonoBehaviour:
     - name: "SFX/\u5FC3\u81D3\u306E\u9F13\u52D51"
       pathPrefix: Audio
       guid: c39c9df7808d14a18bb1451006121b69
+    - name: "SFX/\u30B7\u30E3\u30AD\u30FC\u30F32"
+      pathPrefix: Audio
+      guid: 7e6349ad735604e8d9b2576199959c94
