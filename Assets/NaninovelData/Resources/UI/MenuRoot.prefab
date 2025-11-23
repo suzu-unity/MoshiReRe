@@ -5195,29 +5195,15 @@ MonoBehaviour:
   pageTop: {fileID: 8820685294074518188}
   pageItems: {fileID: 577912904244604460}
   pageCharacters: {fileID: 6286719291881155344}
+  pageStatus: {fileID: 0}
   rerePortraitButton: {fileID: 5257064446972666923}
   sharedAdviceTrigger: {fileID: 6170665898813468206}
-  gridItemsRoot: {fileID: 4997560534211408947}
-  itemCellPrefab: {fileID: 1181506472160852225, guid: a5338e5d07332498b81b6459fa3529c9, type: 3}
-  inventoryDB: {fileID: 11400000, guid: 538b9346db7894ae8a0dd7406f64b3ef, type: 2}
-  itemDetailPanel: {fileID: 852992555245362385}
-  itemDetailImage: {fileID: 3986299591886181899}
-  itemDetailTitle: {fileID: 6380163204377159152}
-  itemDetailDescription: {fileID: 8679967959141640694}
-  itemDetailCloseButton: {fileID: 1367383898004983881}
-  gridCharactersRoot: {fileID: 764221723922927493}
-  characterCellPrefab: {fileID: 475027591081413211, guid: 1d227a7ec71944fdb8f46f86531ce7d4, type: 3}
-  characterDB: {fileID: 11400000, guid: abb15c6d6c264409fa13aa904e2a88f7, type: 2}
-  characterDetailPanel: {fileID: 2519982236587163067}
-  characterPortraitImage: {fileID: 6083914560351750286}
-  characterNameText: {fileID: 931338303251951909}
-  characterDescriptionText: {fileID: 1020312007455226282}
-  characterDetailCloseButton: {fileID: 6475281471789647798}
   adviceMessages:
   - "\u6B21\u306F\u300E\u99C5\u524D\u300F\u306B\u884C\u304F\u3068\u3044\u3044\u304B\u3082\uFF01\n\u3041s\u3041\u3041s\n\u3041\u3041s\u3041sx\n\u3041\u3041sx\u3055xsx\n\u4E9Csx\u4E9Csx\u3042sx"
   - "\u591C\u306F\u5371\u306A\u3044\u3088\u3001\u6C17\u3092\u3064\u3051\u3066\u306D\u3002"
   - "\u8CA1\u5E03\u306E\u4E2D\u8EAB\u2026\u78BA\u8A8D\u3057\u3066\u304A\u304F\uFF1F"
   firstAdviceSticky: 1
+  commonBackground: {fileID: 8820685294074518188}
 --- !u!1 &6378565408528756073
 GameObject:
   m_ObjectHideFlags: 0

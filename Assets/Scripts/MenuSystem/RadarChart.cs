@@ -17,6 +17,11 @@ public class RadarChart : MaskableGraphic
         value1 = v1;
         value2 = v2;
         value3 = v3;
+        // SetVerticesDirty() is now called in GenerateMesh()
+    }
+
+    public void GenerateMesh()
+    {
         SetVerticesDirty(); // Request redraw
     }
 
@@ -33,6 +38,7 @@ public class RadarChart : MaskableGraphic
         vh.Clear();
 
         Rect rect = rectTransform.rect;
+        Debug.Log($"[RadarChart] OnPopulateMesh called. Rect: {rect}, Values: {value1}, {value2}, {value3}");
         if (rect.width <= 0 || rect.height <= 0)
         {
             Debug.LogWarning($"[RadarChart] Rect size is zero or negative: {rect}. Chart will not be visible.");

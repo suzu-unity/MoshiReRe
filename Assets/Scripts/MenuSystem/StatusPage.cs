@@ -35,15 +35,28 @@ public class StatusPage : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (StatusManager.Instance == null) return;
+        if (StatusManager.Instance == null) 
+        {
+            Debug.LogError("[StatusPage] StatusManager.Instance is null!");
+            return;
+        }
 
         int intel = StatusManager.Instance.Intelligence;
         int courage = StatusManager.Instance.Courage;
         int strength = StatusManager.Instance.Strength;
+        
+        Debug.Log($"[StatusPage] UpdateUI called. Stats: I={intel}, C={courage}, S={strength}. RadarChart assigned? {radarChart != null}");
 
         if (radarChart)
         {
             radarChart.SetValues(intel, courage, strength);
+            // レイアウトが確定していない可能性があるため、強制的に更新
+            Canvas.ForceUpdateCanvases();
+            radarChart.GenerateMesh();
+        }
+        else
+        {
+            Debug.LogError("[StatusPage] RadarChart is NOT assigned!");
         }
 
         if (intelligenceText) intelligenceText.text = $"Intelligence: {intel}";
@@ -53,6 +66,7 @@ public class StatusPage : MonoBehaviour
 
     public void Show()
     {
+        Debug.Log("[StatusPage] Show() called.");
         gameObject.SetActive(true);
         UpdateUI();
     }

@@ -27,11 +27,30 @@ public class MenuToggleInput : MonoBehaviour
             {
                 menu = ui?.GetUI("MenuRoot") as IManagedUI;
                 Debug.Log($"[MenuToggleInput] Try resolve menu => {(menu != null ? "OK" : "NG")}");
+                if (menu != null) Debug.Log($"[MenuToggleInput] Menu Type: {menu.GetType().Name}");
             }
             if (menu == null) return;
 
-            if (menu.Visible) { Debug.Log("[MenuToggleInput] Hide Menu"); menu.Hide(); }
-            else { Debug.Log("[MenuToggleInput] Show Menu"); menu.Show(); }
+            if (menu.Visible) 
+            { 
+                Debug.Log($"[MenuToggleInput] Hide Menu. Instance Type: {menu.GetType().Name}"); 
+                menu.Hide(); 
+            }
+            else 
+            { 
+                Debug.Log($"[MenuToggleInput] Show Menu. Instance Type: {menu.GetType().Name}"); 
+                
+                // Try to cast to MenuRootUI to call OpenMenu explicitly
+                if (menu is MenuRootUI rootUI)
+                {
+                    rootUI.Show(); // Or rootUI.OpenMenu() if Show() is still not working, but Show() now calls OpenMenu()
+                    // If Show() is not virtual/overridden correctly in the interface, calling it on the concrete type works.
+                }
+                else
+                {
+                    menu.Show(); 
+                }
+            }
         }
     }
 }

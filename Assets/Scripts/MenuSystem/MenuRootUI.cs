@@ -27,6 +27,7 @@ public class MenuRootUI : CustomUI
     /// </summary>
     protected override void Awake()
     {
+        Debug.Log("[MenuRootUI] Awake called.");
         // CustomUI 基底クラスの初期化
         base.Awake();
         
@@ -49,8 +50,19 @@ public class MenuRootUI : CustomUI
     /// <summary>
     /// UI が有効になったときに初回メッセージを表示する。
     /// </summary>
+    /// <summary>
+    /// UI が有効になったときに初回メッセージを表示する。
+    /// </summary>
     protected override void OnEnable()
     {
+        Debug.Log("[MenuRootUI] OnEnable called. Resetting to Status Page.");
+        
+        // 共通背景を表示
+        if (commonBackground) commonBackground.SetActive(true);
+        
+        // デフォルトでステータス画面を開く
+        ShowPageStatus();
+
         // 初回にアドバイスを表示
         base.OnEnable(); // CustomUI の登録処理
         if (sharedAdviceTrigger && adviceMessages != null && adviceMessages.Length > 0)
@@ -61,12 +73,12 @@ public class MenuRootUI : CustomUI
         }
     }
 
-
     /// <summary>
     /// UI が非表示になるときの後始末。
     /// </summary>
     protected override void OnDisable()
-        {
+    {
+        Debug.Log("[MenuRootUI] OnDisable called.");
         base.OnDisable(); // CustomUI の登録解除
         if (sharedAdviceTrigger) sharedAdviceTrigger.HideAdvice();
         if (rerePortraitButton) rerePortraitButton.onClick.RemoveListener(NextAdvice);
@@ -77,14 +89,32 @@ public class MenuRootUI : CustomUI
     /// </summary>
     [SerializeField] private GameObject commonBackground; // スマホ枠などの共通背景
 
-    /// <summary>
-    /// UI マネージャーから表示が要求されたときにステータスページを表示する。
-    /// </summary>
+    // Show() override is apparently not called by IManagedUI.Show() extension/interface in some cases,
+    // so we moved the logic to OnEnable. We keep this just in case.
     public override void Show ()
     {
+        Debug.Log("[MenuRootUI] Show() called (Manual).");
         base.Show();
-        if (commonBackground) commonBackground.SetActive(true);
-        ShowPageStatus(); // デフォルトでステータス画面を開く
+        OpenMenu();
+    }
+
+    /// <summary>
+    /// Explicitly open the menu and reset state.
+    /// Called from MenuToggleInput to ensure initialization runs even if Show() override is bypassed.
+    /// </summary>
+    public void OpenMenu()
+    {
+        Debug.Log($"[MenuRootUI] OpenMenu called. Resetting to Status Page. commonBackground assigned? {commonBackground != null}");
+        if (commonBackground) 
+        {
+            commonBackground.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("[MenuRootUI] commonBackground is NOT assigned! If the background is part of PageTop, it might be hidden.");
+        }
+        
+        ShowPageStatus();
     }
 
     /// <summary>
