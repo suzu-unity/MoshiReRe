@@ -1,0 +1,18 @@
+﻿<Solution>
+  <Project Path="Elringus.Naninovel.Runtime.csproj" />
+  <Project Path="Febucci.TextAnimator.Runtime.csproj" />
+  <Project Path="Elringus.Naninovel.Editor.csproj" />
+  <Project Path="MenuSystem.csproj" />
+  <Project Path="Febucci.TextAnimator.Editor.csproj" />
+  <Project Path="Febucci.Attributes.Editor.csproj" />
+  <Project Path="StatusSystem.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="DOTween.Modules.csproj" />
+  <Project Path="Data.csproj" />
+  <Project Path="Febucci.TextAnimator.TMP.Runtime.csproj" />
+  <Project Path="Elringus.Naninovel.E2E.csproj" />
+  <Project Path="DOTweenPro.EditorScripts.csproj" />
+  <Project Path="Febucci.TextAnimator.Demo.Runtime.csproj" />
+  <Project Path="Febucci.Attributes.Runtime.csproj" />
+  <Project Path="DOTweenPro.Scripts.csproj" />
+</Solution>

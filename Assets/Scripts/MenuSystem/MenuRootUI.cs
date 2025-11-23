@@ -9,33 +9,14 @@ public class MenuRootUI : CustomUI
 {
     [Header("Pages")]
     [SerializeField] private GameObject pageTop;
-    [SerializeField] private GameObject pageItems;
-    [SerializeField] private GameObject pageCharacters;
+    [SerializeField] private InventoryPage pageItems;
+    [SerializeField] private CharacterPage pageCharacters;
+    [SerializeField] private StatusPage pageStatus;
 
     [Header("Common UI")]
     [SerializeField] private Button rerePortraitButton;   // ReRe 立ち絵のボタン
     // ★ 吹き出し表示を担当する共通トリガー（AdviceClickTrigger）
     [SerializeField] private AdviceClickTrigger sharedAdviceTrigger;
-
-    [Header("Items Page")]
-    [SerializeField] private Transform gridItemsRoot;
-    [SerializeField] private GameObject itemCellPrefab;
-    [SerializeField] private InventoryDatabase inventoryDB;
-    [SerializeField] private GameObject itemDetailPanel;
-    [SerializeField] private Image itemDetailImage;
-    [SerializeField] private TMP_Text itemDetailTitle;
-    [SerializeField] private TMP_Text itemDetailDescription;
-    [SerializeField] private Button itemDetailCloseButton;
-
-    [Header("Characters Page")]
-    [SerializeField] private Transform gridCharactersRoot;
-    [SerializeField] private GameObject characterCellPrefab;
-    [SerializeField] private CharacterDatabase characterDB;
-    [SerializeField] private GameObject characterDetailPanel;
-    [SerializeField] private Image characterPortraitImage;
-    [SerializeField] private TMP_Text characterNameText;
-    [SerializeField] private TMP_Text characterDescriptionText;
-    [SerializeField] private Button characterDetailCloseButton;
 
     [Header("Advice (demo messages)")]
     [TextArea] [SerializeField] private string[] adviceMessages;
@@ -48,9 +29,13 @@ public class MenuRootUI : CustomUI
     {
         // CustomUI 基底クラスの初期化
         base.Awake();
+        
+        // Initialize pages with advice trigger if needed
+        if (pageItems) pageItems.SetAdviceTrigger(sharedAdviceTrigger);
+        if (pageCharacters) pageCharacters.SetAdviceTrigger(sharedAdviceTrigger);
+        // StatusPage doesn't use advice trigger yet, but we could add it if needed
+
         ShowPageTop();
-        if (itemDetailPanel) itemDetailPanel.SetActive(false);
-        if (characterDetailPanel) characterDetailPanel.SetActive(false);
 
         if (rerePortraitButton)
         {
@@ -58,16 +43,6 @@ public class MenuRootUI : CustomUI
             rerePortraitButton.onClick.AddListener(NextAdvice);
         }
 
-        if (itemDetailCloseButton)
-        {
-            itemDetailCloseButton.onClick.RemoveAllListeners();
-            itemDetailCloseButton.onClick.AddListener(() => itemDetailPanel.SetActive(false));
-        }
-        if (characterDetailCloseButton)
-        {
-            characterDetailCloseButton.onClick.RemoveAllListeners();
-            characterDetailCloseButton.onClick.AddListener(() => characterDetailPanel.SetActive(false));
-        }
         Hide();
     }
 
@@ -100,10 +75,16 @@ public class MenuRootUI : CustomUI
     /// <summary>
     /// UI マネージャーから表示が要求されたときにトップページを表示する。
     /// </summary>
+    [SerializeField] private GameObject commonBackground; // スマホ枠などの共通背景
+
+    /// <summary>
+    /// UI マネージャーから表示が要求されたときにステータスページを表示する。
+    /// </summary>
     public override void Show ()
     {
         base.Show();
-        ShowPageTop();
+        if (commonBackground) commonBackground.SetActive(true);
+        ShowPageStatus(); // デフォルトでステータス画面を開く
     }
 
     /// <summary>
@@ -122,164 +103,45 @@ public class MenuRootUI : CustomUI
     public void ShowPageTop()
     {
         if (pageTop) pageTop.SetActive(true);
-        if (pageItems) pageItems.SetActive(false);
-        if (pageCharacters) pageCharacters.SetActive(false);
+        if (pageItems) pageItems.Hide();
+        if (pageCharacters) pageCharacters.Hide();
+        if (pageStatus) pageStatus.Hide();
     }
 
     public void ShowPageItems()
     {
         if (pageTop) pageTop.SetActive(false);
-        if (pageItems) pageItems.SetActive(true);
-        if (pageCharacters) pageCharacters.SetActive(false);
-
-        PopulateItems();
+        if (pageItems) pageItems.Show();
+        if (pageCharacters) pageCharacters.Hide();
+        if (pageStatus) pageStatus.Hide();
     }
 
     public void ShowPageCharacters()
     {
         if (pageTop) pageTop.SetActive(false);
-        if (pageItems) pageItems.SetActive(false);
-        if (pageCharacters) pageCharacters.SetActive(true);
-
-        PopulateCharacters();
+        if (pageItems) pageItems.Hide();
+        if (pageCharacters) pageCharacters.Show();
+        if (pageStatus) pageStatus.Hide();
     }
 
-    // ====== Items ======
-    private void PopulateItems()
+    public void ShowPageStatus()
     {
-        if (!gridItemsRoot || !itemCellPrefab) return;
-
-        ClearChildren(gridItemsRoot);
-
-        var items = inventoryDB ? inventoryDB.GetAll() : null;
-        if (items == null || items.Count == 0) return;
-
-        foreach (var item in items)
-        {
-            var go = Object.Instantiate(itemCellPrefab, gridItemsRoot);
-            var img = go.GetComponentInChildren<Image>(true);
-            if (img) img.sprite = item.icon;
-
-            var btn = go.GetComponent<Button>();
-            if (btn)
-            {
-                btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(() => ShowItemDetail(item));
-            }
-
-            // マウスオーバー時のアドバイス表示
-            var pointer = go.GetComponent<UIPointerEvents>();
-            if (!pointer) pointer = go.AddComponent<UIPointerEvents>();
-
-            pointer.onEnter = () =>
-            {
-                // Summaryを数秒表示したいので autoHide = true
-                if (sharedAdviceTrigger) sharedAdviceTrigger.ShowAdvice(item.summary, true);
-            };
-            pointer.onExit = () =>
-            {
-                sharedAdviceTrigger?.HideAdvice();
-            };
-        }
-    }
-
-    private void ShowItemDetail(InventoryItem item)
-    {
-        if (!itemDetailPanel) return;
-        if (itemDetailImage) itemDetailImage.sprite = item.detailImage ? item.detailImage : item.icon;
-        if (itemDetailTitle) itemDetailTitle.text = string.IsNullOrEmpty(item.id) ? "Item" : item.id;
-        if (itemDetailDescription) itemDetailDescription.text = item.description;
-        itemDetailPanel.SetActive(true);
-    }
-
-    // ====== Characters ======
-    private void PopulateCharacters()
-    {
-        if (!gridCharactersRoot || !characterCellPrefab) return;
-
-        ClearChildren(gridCharactersRoot);
-
-        var list = characterDB ? characterDB.GetAll() : null;
-        if (list == null || list.Count == 0) return;
-
-        foreach (var ch in list)
-        {
-            var go = Object.Instantiate(characterCellPrefab, gridCharactersRoot);
-            var img = go.GetComponentInChildren<Image>(true);
-            if (img) img.sprite = ch.icon;
-
-            var btn = go.GetComponent<Button>();
-            if (btn)
-            {
-                btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(() => ShowCharacterDetail(ch));
-            }
-
-            // マウスオーバー時のアドバイス表示
-            var pointer = go.GetComponent<UIPointerEvents>();
-            if (!pointer) pointer = go.AddComponent<UIPointerEvents>();
-
-            pointer.onEnter = () =>
-            {
-                if (sharedAdviceTrigger) sharedAdviceTrigger.ShowAdvice(ch.summary, true);
-            };
-            pointer.onExit = () =>
-            {
-                sharedAdviceTrigger?.HideAdvice();
-            };
-        }
+        if (pageTop) pageTop.SetActive(false);
+        if (pageItems) pageItems.Hide();
+        if (pageCharacters) pageCharacters.Hide();
+        if (pageStatus) pageStatus.Show();
     }
 
     public void OnOjToggleChanged(bool isOn)
     {
         if (!isOn) return;
-        PopulateCharacters();
+        // If we had filtering logic, we would pass it to pageCharacters here
+        if (pageCharacters) pageCharacters.Show();
     }
 
     public void OnItadakiToggleChanged(bool isOn)
     {
         if (!isOn) return;
-        PopulateCharacters();
+        if (pageCharacters) pageCharacters.Show();
     }
-
-    // ====== Character Detail ======
-    private void ShowCharacterDetail(CharacterInfo ch)
-    {
-        if (!characterDetailPanel) return;
-
-        if (characterPortraitImage)
-            characterPortraitImage.sprite = ch.portrait ? ch.portrait : ch.icon;
-
-        if (characterNameText)
-            characterNameText.text = string.IsNullOrEmpty(ch.displayName) ? ch.id : ch.displayName;
-
-        if (characterDescriptionText)
-            characterDescriptionText.text = ch.description;
-
-        characterDetailPanel.SetActive(true);
-    }
-
-    private static void ClearChildren(Transform root)
-    {
-        for (int i = root.childCount - 1; i >= 0; i--)
-            Object.Destroy(root.GetChild(i).gameObject);
-    }
-}
-/// <summary>
-/// 簡易マウスオーバー検知用コンポーネント。
-/// IPointerEnterHandler / IPointerExitHandler を利用して
-/// onEnter / onExit のコールバックを発火します。
-/// </summary>
-public class UIPointerEvents : MonoBehaviour,
-    UnityEngine.EventSystems.IPointerEnterHandler,
-    UnityEngine.EventSystems.IPointerExitHandler
-{
-    public System.Action onEnter;
-    public System.Action onExit;
-
-    public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
-        => onEnter?.Invoke();
-
-    public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
-        => onExit?.Invoke();
 }

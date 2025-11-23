@@ -11,22 +11,33 @@ public class AddMoney : Command
 
     public override UniTask Execute(AsyncToken asyncToken = default)
     {
+        // 既存の所持金を MoneyManager から取得し、累積で増減させる。
+        // MoneyManager にインスタンスが存在しない場合は 0 とする。
+        var manager = MoneyManager.Instance;
+        int currentMoney = manager != null ? manager.CurrentMoney : 0;
+
+        // 今回の命令で増減させる金額。負数の場合は減少扱いとする。
+        int delta = Amount.Value;
+
+        // MoneyManager へ累積で増減を反映する。
+        if (manager != null)
+        {
+            if (delta >= 0)
+                manager.AddMoney(delta);
+            else
+                manager.SubtractMoney(-delta);
+
+            currentMoney = manager.CurrentMoney;
+        }
+        else
+        {
+            // MoneyManager が見つからない場合でもローカルで累積計算する
+            currentMoney += delta;
+        }
+
+        // Naninovel のカスタム変数へ現在の金額を保存しておく。
         var vars = Engine.GetService<ICustomVariableManager>();
-
-        // money 変数を取得（CustomVariableValue → string化してから数値へ）
-        var curVal = vars.GetVariableValue("money");
-        var curStr = curVal.ToString(); // ★ ここがポイント
-        int current = 0;
-        if (!string.IsNullOrEmpty(curStr))
-            int.TryParse(curStr, out current);
-
-        var next = current + Amount.Value;
-
-        // 変数へ保存（CustomVariableValueで渡す）
-        vars.SetVariableValue("money", new CustomVariableValue(next));
-
-        // UI（MoneyManager）へ反映
-        MoneyManager.Instance?.SetMoney(next);
+        vars.SetVariableValue("money", new CustomVariableValue(currentMoney));
 
         return UniTask.CompletedTask;
     }
