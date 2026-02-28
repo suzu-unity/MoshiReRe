@@ -6,6 +6,8 @@
 @back title&eyecatch/kuro
 @loadScene GameScene
 @loadScene CommonUIHub additive:true
+@set rereState=0
+@reReMessage "最初のメッセージ"
 @showUI MoneyUI
 @showUI MenuRoot
 @hideUI MenuRoot

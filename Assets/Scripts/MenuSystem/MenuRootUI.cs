@@ -265,21 +265,3 @@ public class MenuRootUI : CustomUI
             Object.Destroy(root.GetChild(i).gameObject);
     }
 }
-/// <summary>
-/// 簡易マウスオーバー検知用コンポーネント。
-/// IPointerEnterHandler / IPointerExitHandler を利用して
-/// onEnter / onExit のコールバックを発火します。
-/// </summary>
-public class UIPointerEvents : MonoBehaviour,
-    UnityEngine.EventSystems.IPointerEnterHandler,
-    UnityEngine.EventSystems.IPointerExitHandler
-{
-    public System.Action onEnter;
-    public System.Action onExit;
-
-    public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
-        => onEnter?.Invoke();
-
-    public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
-        => onExit?.Invoke();
-}
