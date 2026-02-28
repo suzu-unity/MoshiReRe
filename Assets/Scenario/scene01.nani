@@ -4,6 +4,8 @@
 @set money=0
 @syncMoney
 @back title&eyecatch/kuro
+@loadScene GameScene
+@loadScene CommonUIHub additive:true
 @showUI MoneyUI
 @showUI MenuRoot
 @hideUI MenuRoot
