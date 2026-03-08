@@ -513,7 +513,7 @@ RectTransform:
   m_GameObject: {fileID: 6306036015961478139}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 281096867710948753}
@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disableInteraction: 0
-  visibleOnAwake: 0
+  visibleOnAwake: 1
   controlOpacity: 1
   fadeTime: 0.3
   ignoreTimeScale: 1
@@ -574,7 +574,7 @@ MonoBehaviour:
   onHide:
     m_PersistentCalls:
       m_Calls: []
-  hideOnLoad: 1
+  hideOnLoad: 0
   hideInThumbnail: 0
   saveVisibilityState: 1
   blockInputWhenVisible: 0

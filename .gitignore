@@ -88,3 +88,4 @@ Assets/**/bin/
 Assets/**/*.csproj
 Assets/**/*.sln
 
+.aider*

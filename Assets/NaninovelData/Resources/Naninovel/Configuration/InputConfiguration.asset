@@ -29,7 +29,7 @@ MonoBehaviour:
     Swipes: []
   - Name: Cancel
     AlwaysProcess: 1
-    Keys: 1b0000004b010000
+    Keys: 4b010000
     Axes: []
     Swipes: []
   - Name: Delete
@@ -104,7 +104,7 @@ MonoBehaviour:
     Swipes: []
   - Name: ToggleUI
     AlwaysProcess: 0
-    Keys: 200000004d010000
+    Keys: 4d010000
     Axes: []
     Swipes:
     - Direction: 1
