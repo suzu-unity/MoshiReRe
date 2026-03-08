@@ -5,27 +5,29 @@ using UnityEngine.UI;
 public class RadarChart : MaskableGraphic
 {
     [SerializeField] private float radius = 100f;
-    [SerializeField] private float maxValue = 10f; // Max value for the chart (edge of the polygon)
-    
-    // Values for the 3 axes
-    private float value1 = 1f; // Top (Intelligence)
-    private float value2 = 1f; // Bottom Right (Courage)
-    private float value3 = 1f; // Bottom Left (Strength)
+    [SerializeField] private float maxValue = 10f;
+    [SerializeField] private Color backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.35f);
+
+    private readonly float[] values = { 1f, 1f, 1f, 1f, 1f };
 
     public void SetValues(float v1, float v2, float v3)
     {
-        value1 = v1;
-        value2 = v2;
-        value3 = v3;
-        // SetVerticesDirty() is now called in GenerateMesh()
+        SetValues(v1, v2, 1f, 1f, v3);
+    }
+
+    public void SetValues(float v1, float v2, float v3, float v4, float v5)
+    {
+        values[0] = v1;
+        values[1] = v2;
+        values[2] = v3;
+        values[3] = v4;
+        values[4] = v5;
     }
 
     public void GenerateMesh()
     {
-        SetVerticesDirty(); // Request redraw
+        SetVerticesDirty();
     }
-
-    [SerializeField] private Color backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 
     protected override void OnEnable()
     {
@@ -37,54 +39,43 @@ public class RadarChart : MaskableGraphic
     {
         vh.Clear();
 
-        Rect rect = rectTransform.rect;
-        Debug.Log($"[RadarChart] OnPopulateMesh called. Rect: {rect}, Values: {value1}, {value2}, {value3}");
-        if (rect.width <= 0 || rect.height <= 0)
+        Vector2 center = Vector2.zero;
+        const int axisCount = 5;
+
+        int bgCenter = vh.currentVertCount;
+        vh.AddVert(center, backgroundColor, Vector2.zero);
+
+        int bgStart = vh.currentVertCount;
+        for (int i = 0; i < axisCount; i++)
         {
-            Debug.LogWarning($"[RadarChart] Rect size is zero or negative: {rect}. Chart will not be visible.");
+            float angle = Mathf.Deg2Rad * (90f - (360f / axisCount) * i);
+            Vector2 point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+            vh.AddVert(point, backgroundColor, Vector2.zero);
         }
 
-        Vector2 center = Vector2.zero;
+        for (int i = 0; i < axisCount; i++)
+        {
+            int next = (i + 1) % axisCount;
+            vh.AddTriangle(bgCenter, bgStart + i, bgStart + next);
+        }
 
-        // Angles
-        float rad1 = 90f * Mathf.Deg2Rad;
-        float rad2 = -30f * Mathf.Deg2Rad;
-        float rad3 = -150f * Mathf.Deg2Rad;
-
-        // --- Draw Background (Max Value) ---
-        Vector2 b1 = new Vector2(Mathf.Cos(rad1), Mathf.Sin(rad1)) * radius;
-        Vector2 b2 = new Vector2(Mathf.Cos(rad2), Mathf.Sin(rad2)) * radius;
-        Vector2 b3 = new Vector2(Mathf.Cos(rad3), Mathf.Sin(rad3)) * radius;
-
-        // Vertices 0-3 for background
-        vh.AddVert(center, backgroundColor, Vector2.zero);
-        vh.AddVert(b1, backgroundColor, Vector2.zero);
-        vh.AddVert(b2, backgroundColor, Vector2.zero);
-        vh.AddVert(b3, backgroundColor, Vector2.zero);
-
-        vh.AddTriangle(0, 1, 2);
-        vh.AddTriangle(0, 2, 3);
-        vh.AddTriangle(0, 3, 1);
-
-        // --- Draw Value Polygon ---
-        float n1 = Mathf.Clamp01(value1 / maxValue);
-        float n2 = Mathf.Clamp01(value2 / maxValue);
-        float n3 = Mathf.Clamp01(value3 / maxValue);
-
-        Vector2 v1 = new Vector2(Mathf.Cos(rad1), Mathf.Sin(rad1)) * radius * n1;
-        Vector2 v2 = new Vector2(Mathf.Cos(rad2), Mathf.Sin(rad2)) * radius * n2;
-        Vector2 v3 = new Vector2(Mathf.Cos(rad3), Mathf.Sin(rad3)) * radius * n3;
-
-        // Vertices 4-7 for values (Offset by 4)
-        int offset = 4;
+        int valCenter = vh.currentVertCount;
         vh.AddVert(center, color, Vector2.zero);
-        vh.AddVert(v1, color, Vector2.zero);
-        vh.AddVert(v2, color, Vector2.zero);
-        vh.AddVert(v3, color, Vector2.zero);
 
-        vh.AddTriangle(offset + 0, offset + 1, offset + 2);
-        vh.AddTriangle(offset + 0, offset + 2, offset + 3);
-        vh.AddTriangle(offset + 0, offset + 3, offset + 1);
+        int valStart = vh.currentVertCount;
+        for (int i = 0; i < axisCount; i++)
+        {
+            float n = Mathf.Clamp01(values[i] / maxValue);
+            float angle = Mathf.Deg2Rad * (90f - (360f / axisCount) * i);
+            Vector2 point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * n;
+            vh.AddVert(point, color, Vector2.zero);
+        }
+
+        for (int i = 0; i < axisCount; i++)
+        {
+            int next = (i + 1) % axisCount;
+            vh.AddTriangle(valCenter, valStart + i, valStart + next);
+        }
     }
 
 #if UNITY_EDITOR

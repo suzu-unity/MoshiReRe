@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -310,6 +310,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1731274711}
   - component: {fileID: 1731274712}
+  - component: {fileID: 1731274713}
+  - component: {fileID: 1731274714}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: MenuRoot
@@ -344,6 +346,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 616cb2649296045ea93f96c44eac9a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1731274713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731274709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8dd2aef859937146bd61ca52f125adb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moneyUIPrefab: {fileID: 100100000, guid: 5d64f9be5fc9a42dcaab9edd06f7215f, type: 3}
+  reReButtonPrefab: {fileID: 100100000, guid: 1e8aa7d97b164f20bfd7364fb90c7689, type: 3}
+--- !u!114 &1731274714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731274709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e94b106dc849df641a4ddd5bd726e750, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initializeOnAwake: 1
 --- !u!1001 &1816897902
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -462,4 +491,6 @@ SceneRoots:
   - {fileID: 37684441}
   - {fileID: 1731274711}
   - {fileID: 1816897903}
+
+
 

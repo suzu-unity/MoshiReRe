@@ -6,10 +6,14 @@ public class StatusManager : MonoBehaviour
 {
     public static StatusManager Instance { get; private set; }
 
-    // Stats
+    public int Guts { get; private set; } = 1;
     public int Intelligence { get; private set; } = 1;
-    public int Courage { get; private set; } = 1;
+    public int Attention { get; private set; } = 1;
+    public int Technique { get; private set; } = 1;
     public int Strength { get; private set; } = 1;
+
+    // Backward compatibility alias.
+    public int Courage => Guts;
 
     public event Action OnStatusChanged;
 
@@ -18,24 +22,17 @@ public class StatusManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        if (Engine.Initialized)
-        {
-            SyncFromNaninovel();
-        }
-        else
-        {
-            Engine.OnInitializationFinished += SyncFromNaninovel;
-        }
+        if (Engine.Initialized) SyncFromNaninovel();
+        else Engine.OnInitializationFinished += SyncFromNaninovel;
     }
 
     private void OnDestroy()
@@ -48,50 +45,74 @@ public class StatusManager : MonoBehaviour
         var varManager = Engine.GetService<ICustomVariableManager>();
         if (varManager == null) return;
 
-        if (varManager.VariableExists("Intelligence") && int.TryParse(varManager.GetVariableValue("Intelligence").ToString(), out int intelligence))
-        {
-            Intelligence = intelligence;
-        }
-        if (varManager.VariableExists("Courage") && int.TryParse(varManager.GetVariableValue("Courage").ToString(), out int courage))
-        {
-            Courage = courage;
-        }
-        if (varManager.VariableExists("Strength") && int.TryParse(varManager.GetVariableValue("Strength").ToString(), out int strength))
-        {
-            Strength = strength;
-        }
+        Guts = ReadInt(varManager, "Guts", ReadInt(varManager, "Courage", Guts));
+        Intelligence = ReadInt(varManager, "Intelligence", Intelligence);
+        Attention = ReadInt(varManager, "Attention", Attention);
+        Technique = ReadInt(varManager, "Technique", Technique);
+        Strength = ReadInt(varManager, "Strength", Strength);
+
         OnStatusChanged?.Invoke();
     }
 
     private void SyncToNaninovel()
     {
         if (!Engine.Initialized) return;
+
         var varManager = Engine.GetService<ICustomVariableManager>();
         if (varManager == null) return;
 
+        varManager.SetVariableValue("Guts", new CustomVariableValue(Guts.ToString()));
+        varManager.SetVariableValue("Courage", new CustomVariableValue(Guts.ToString()));
         varManager.SetVariableValue("Intelligence", new CustomVariableValue(Intelligence.ToString()));
-        varManager.SetVariableValue("Courage", new CustomVariableValue(Courage.ToString()));
+        varManager.SetVariableValue("Attention", new CustomVariableValue(Attention.ToString()));
+        varManager.SetVariableValue("Technique", new CustomVariableValue(Technique.ToString()));
         varManager.SetVariableValue("Strength", new CustomVariableValue(Strength.ToString()));
+    }
+
+    public void SetGuts(int value)
+    {
+        Guts = value;
+        RaiseAndSync();
     }
 
     public void SetIntelligence(int value)
     {
         Intelligence = value;
-        OnStatusChanged?.Invoke();
-        SyncToNaninovel();
+        RaiseAndSync();
     }
 
-    public void SetCourage(int value)
+    public void SetAttention(int value)
     {
-        Courage = value;
-        OnStatusChanged?.Invoke();
-        SyncToNaninovel();
+        Attention = value;
+        RaiseAndSync();
+    }
+
+    public void SetTechnique(int value)
+    {
+        Technique = value;
+        RaiseAndSync();
     }
 
     public void SetStrength(int value)
     {
         Strength = value;
+        RaiseAndSync();
+    }
+
+    // Backward compatibility
+    public void SetCourage(int value) => SetGuts(value);
+
+    private void RaiseAndSync()
+    {
         OnStatusChanged?.Invoke();
         SyncToNaninovel();
+    }
+
+    private static int ReadInt(ICustomVariableManager vars, string name, int fallback)
+    {
+        if (!vars.VariableExists(name)) return fallback;
+
+        var raw = vars.GetVariableValue(name).ToString();
+        return int.TryParse(raw, out var parsed) ? parsed : fallback;
     }
 }

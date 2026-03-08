@@ -6,67 +6,75 @@ public class StatusPage : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private RadarChart radarChart;
+    [SerializeField] private Image protagonistPortrait;
+    [SerializeField] private TMP_Text gutsText;
     [SerializeField] private TMP_Text intelligenceText;
-    [SerializeField] private TMP_Text courageText;
+    [SerializeField] private TMP_Text attentionText;
+    [SerializeField] private TMP_Text techniqueText;
     [SerializeField] private TMP_Text strengthText;
-
-    private void Start()
-    {
-        if (!radarChart) Debug.LogError("[StatusPage] Radar Chart is not assigned!");
-        if (StatusManager.Instance == null) Debug.LogError("[StatusPage] StatusManager Instance is null! Make sure StatusManager is in the scene.");
-    }
 
     private void OnEnable()
     {
         UpdateUI();
         if (StatusManager.Instance != null)
-        {
             StatusManager.Instance.OnStatusChanged += UpdateUI;
-        }
     }
 
     private void OnDisable()
     {
         if (StatusManager.Instance != null)
-        {
             StatusManager.Instance.OnStatusChanged -= UpdateUI;
-        }
+    }
+
+    public void Configure(
+        RadarChart chart,
+        Image portrait,
+        TMP_Text guts,
+        TMP_Text intelligence,
+        TMP_Text attention,
+        TMP_Text technique,
+        TMP_Text strength)
+    {
+        radarChart = chart;
+        protagonistPortrait = portrait;
+        gutsText = guts;
+        intelligenceText = intelligence;
+        attentionText = attention;
+        techniqueText = technique;
+        strengthText = strength;
+    }
+
+    public void SetPortrait(Sprite sprite)
+    {
+        if (protagonistPortrait)
+            protagonistPortrait.sprite = sprite;
     }
 
     private void UpdateUI()
     {
-        if (StatusManager.Instance == null) 
-        {
-            Debug.LogError("[StatusPage] StatusManager.Instance is null!");
-            return;
-        }
+        if (StatusManager.Instance == null) return;
 
-        int intel = StatusManager.Instance.Intelligence;
-        int courage = StatusManager.Instance.Courage;
+        int guts = StatusManager.Instance.Guts;
+        int intelligence = StatusManager.Instance.Intelligence;
+        int attention = StatusManager.Instance.Attention;
+        int technique = StatusManager.Instance.Technique;
         int strength = StatusManager.Instance.Strength;
-        
-        Debug.Log($"[StatusPage] UpdateUI called. Stats: I={intel}, C={courage}, S={strength}. RadarChart assigned? {radarChart != null}");
 
         if (radarChart)
         {
-            radarChart.SetValues(intel, courage, strength);
-            // レイアウトが確定していない可能性があるため、強制的に更新
-            Canvas.ForceUpdateCanvases();
+            radarChart.SetValues(guts, intelligence, attention, technique, strength);
             radarChart.GenerateMesh();
         }
-        else
-        {
-            Debug.LogError("[StatusPage] RadarChart is NOT assigned!");
-        }
 
-        if (intelligenceText) intelligenceText.text = $"Intelligence: {intel}";
-        if (courageText) courageText.text = $"Courage: {courage}";
-        if (strengthText) strengthText.text = $"Strength: {strength}";
+        if (gutsText) gutsText.text = $"閭・鴨: {guts}";
+        if (intelligenceText) intelligenceText.text = $"遏･蜉・ {intelligence}";
+        if (attentionText) attentionText.text = $"豕ｨ諢丞鴨: {attention}";
+        if (techniqueText) techniqueText.text = $"謚陦灘鴨: {technique}";
+        if (strengthText) strengthText.text = $"遲句鴨: {strength}";
     }
 
     public void Show()
     {
-        Debug.Log("[StatusPage] Show() called.");
         gameObject.SetActive(true);
         UpdateUI();
     }
