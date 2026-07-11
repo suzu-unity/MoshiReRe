@@ -6,7 +6,12 @@ public class RadarChart : MaskableGraphic
 {
     [SerializeField] private float radius = 100f;
     [SerializeField] private float maxValue = 10f;
-    [SerializeField] private Color backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.35f);
+    // The DRESS screen supplies its own radar grid. Drawing another filled pentagon
+    // underneath the values makes the two status layers read as a blurry shape.
+    [SerializeField] private Color backgroundColor = Color.clear;
+    [SerializeField] private bool showGrid;
+    [SerializeField] private Color gridColor = new Color(0.18f, 0.46f, 0.50f, 0.55f);
+    [SerializeField] private float gridLineWidth = 1.5f;
 
     private readonly float[] values = { 1f, 1f, 1f, 1f, 1f };
 
@@ -29,6 +34,26 @@ public class RadarChart : MaskableGraphic
         SetVerticesDirty();
     }
 
+    public void SetRadius(float value)
+    {
+        radius = Mathf.Max(1f, value);
+    }
+
+    public void SetMaxValue(float value)
+    {
+        maxValue = Mathf.Max(1f, value);
+    }
+
+    public void SetGridVisible(bool value)
+    {
+        showGrid = value;
+    }
+
+    public void SetBackgroundColor(Color value)
+    {
+        backgroundColor = value;
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -42,21 +67,35 @@ public class RadarChart : MaskableGraphic
         Vector2 center = Vector2.zero;
         const int axisCount = 5;
 
-        int bgCenter = vh.currentVertCount;
-        vh.AddVert(center, backgroundColor, Vector2.zero);
-
-        int bgStart = vh.currentVertCount;
-        for (int i = 0; i < axisCount; i++)
+        if (showGrid)
         {
-            float angle = Mathf.Deg2Rad * (90f - (360f / axisCount) * i);
-            Vector2 point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
-            vh.AddVert(point, backgroundColor, Vector2.zero);
+            for (int level = 1; level <= 3; level++)
+            {
+                var gridRadius = radius * level / 3f;
+                for (int i = 0; i < axisCount; i++)
+                {
+                    var next = (i + 1) % axisCount;
+                    AddLine(vh, PointAt(i, gridRadius), PointAt(next, gridRadius), gridColor, gridLineWidth);
+                }
+            }
+
+            for (int i = 0; i < axisCount; i++)
+                AddLine(vh, center, PointAt(i, radius), gridColor, gridLineWidth);
         }
 
-        for (int i = 0; i < axisCount; i++)
+        if (backgroundColor.a > 0.001f)
         {
-            int next = (i + 1) % axisCount;
-            vh.AddTriangle(bgCenter, bgStart + i, bgStart + next);
+            int bgCenter = vh.currentVertCount;
+            vh.AddVert(center, backgroundColor, Vector2.zero);
+            int bgStart = vh.currentVertCount;
+            for (int i = 0; i < axisCount; i++)
+                vh.AddVert(PointAt(i, radius), backgroundColor, Vector2.zero);
+
+            for (int i = 0; i < axisCount; i++)
+            {
+                int next = (i + 1) % axisCount;
+                vh.AddTriangle(bgCenter, bgStart + i, bgStart + next);
+            }
         }
 
         int valCenter = vh.currentVertCount;
@@ -66,9 +105,7 @@ public class RadarChart : MaskableGraphic
         for (int i = 0; i < axisCount; i++)
         {
             float n = Mathf.Clamp01(values[i] / maxValue);
-            float angle = Mathf.Deg2Rad * (90f - (360f / axisCount) * i);
-            Vector2 point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * n;
-            vh.AddVert(point, color, Vector2.zero);
+            vh.AddVert(PointAt(i, radius * n), color, Vector2.zero);
         }
 
         for (int i = 0; i < axisCount; i++)
@@ -76,6 +113,26 @@ public class RadarChart : MaskableGraphic
             int next = (i + 1) % axisCount;
             vh.AddTriangle(valCenter, valStart + i, valStart + next);
         }
+    }
+
+    private static Vector2 PointAt(int index, float distance)
+    {
+        const int axisCount = 5;
+        float angle = Mathf.Deg2Rad * (90f - (360f / axisCount) * index);
+        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
+    }
+
+    private static void AddLine(VertexHelper vh, Vector2 from, Vector2 to, Color color, float width)
+    {
+        var direction = (to - from).normalized;
+        var offset = new Vector2(-direction.y, direction.x) * width * 0.5f;
+        int start = vh.currentVertCount;
+        vh.AddVert(from - offset, color, Vector2.zero);
+        vh.AddVert(from + offset, color, Vector2.zero);
+        vh.AddVert(to + offset, color, Vector2.zero);
+        vh.AddVert(to - offset, color, Vector2.zero);
+        vh.AddTriangle(start, start + 1, start + 2);
+        vh.AddTriangle(start, start + 2, start + 3);
     }
 
 #if UNITY_EDITOR

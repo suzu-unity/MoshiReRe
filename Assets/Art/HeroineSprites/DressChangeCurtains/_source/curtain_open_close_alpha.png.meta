@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 20f96f9324e72cf49ac02a5e484390d1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2808139643927838657
+    second: curtain_open_close_alpha_0
+  - first:
+      213: -623658670007826550
+    second: curtain_open_close_alpha_1
+  - first:
+      213: 2721818268844221761
+    second: curtain_open_close_alpha_2
+  - first:
+      213: -7734150480061878574
+    second: curtain_open_close_alpha_3
+  - first:
+      213: 8028645955118116045
+    second: curtain_open_close_alpha_4
+  - first:
+      213: 6938015697053859730
+    second: curtain_open_close_alpha_5
+  - first:
+      213: -8092337056308173481
+    second: curtain_open_close_alpha_6
+  - first:
+      213: -5610350951745032209
+    second: curtain_open_close_alpha_7
+  - first:
+      213: 8986312762223948546
+    second: curtain_open_close_alpha_8
+  - first:
+      213: 1506946779998270005
+    second: curtain_open_close_alpha_9
+  - first:
+      213: -696863494214782013
+    second: curtain_open_close_alpha_10
+  - first:
+      213: -8662244228272227625
+    second: curtain_open_close_alpha_11
+  - first:
+      213: 4587793820507806480
+    second: curtain_open_close_alpha_12
+  - first:
+      213: -3994642636851419604
+    second: curtain_open_close_alpha_13
+  - first:
+      213: 5463604185330998631
+    second: curtain_open_close_alpha_14
+  - first:
+      213: -4048338557849201583
+    second: curtain_open_close_alpha_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_0
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 554
+        width: 132
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f304dfb3fdb7709d0800000000000000
+      internalID: -2808139643927838657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_1
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 554
+        width: 134
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8747117eb15857f0800000000000000
+      internalID: -623658670007826550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_2
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 554
+        width: 123
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 145e0a17b47d5c520800000000000000
+      internalID: 2721818268844221761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_3
+      rect:
+        serializedVersion: 2
+        x: 666
+        y: 554
+        width: 116
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2deae7c9d17caa490800000000000000
+      internalID: -7734150480061878574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_4
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 554
+        width: 111
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcc213665fa7b6f60800000000000000
+      internalID: 8028645955118116045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_5
+      rect:
+        serializedVersion: 2
+        x: 1051
+        y: 554
+        width: 110
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29fbafc6488c84060800000000000000
+      internalID: 6938015697053859730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_6
+      rect:
+        serializedVersion: 2
+        x: 1224
+        y: 554
+        width: 106
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7556504825e32bf80800000000000000
+      internalID: -8092337056308173481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_7
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 554
+        width: 106
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fef66f7c8870422b0800000000000000
+      internalID: -5610350951745032209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_8
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 44
+        width: 132
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 203fae088dbc5bc70800000000000000
+      internalID: 8986312762223948546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_9
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 44
+        width: 127
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 532373dbc10c9e410800000000000000
+      internalID: 1506946779998270005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_10
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 43
+        width: 122
+        height: 437
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c3f36a185e3456f0800000000000000
+      internalID: -696863494214782013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_11
+      rect:
+        serializedVersion: 2
+        x: 669
+        y: 43
+        width: 126
+        height: 437
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7daf728d4c689c780800000000000000
+      internalID: -8662244228272227625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_12
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 44
+        width: 117
+        height: 436
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01b991e2c2e1baf30800000000000000
+      internalID: 4587793820507806480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_13
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 43
+        width: 105
+        height: 437
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2667d1bfad2098c0800000000000000
+      internalID: -3994642636851419604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_14
+      rect:
+        serializedVersion: 2
+        x: 1226
+        y: 44
+        width: 102
+        height: 436
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76dddf32f0f92db40800000000000000
+      internalID: 5463604185330998631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: curtain_open_close_alpha_15
+      rect:
+        serializedVersion: 2
+        x: 1389
+        y: 44
+        width: 101
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15491e8d78961d7c0800000000000000
+      internalID: -4048338557849201583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      curtain_open_close_alpha_0: -2808139643927838657
+      curtain_open_close_alpha_1: -623658670007826550
+      curtain_open_close_alpha_10: -696863494214782013
+      curtain_open_close_alpha_11: -8662244228272227625
+      curtain_open_close_alpha_12: 4587793820507806480
+      curtain_open_close_alpha_13: -3994642636851419604
+      curtain_open_close_alpha_14: 5463604185330998631
+      curtain_open_close_alpha_15: -4048338557849201583
+      curtain_open_close_alpha_2: 2721818268844221761
+      curtain_open_close_alpha_3: -7734150480061878574
+      curtain_open_close_alpha_4: 8028645955118116045
+      curtain_open_close_alpha_5: 6938015697053859730
+      curtain_open_close_alpha_6: -8092337056308173481
+      curtain_open_close_alpha_7: -5610350951745032209
+      curtain_open_close_alpha_8: 8986312762223948546
+      curtain_open_close_alpha_9: 1506946779998270005
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

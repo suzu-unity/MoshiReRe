@@ -1,6 +1,6 @@
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class CharacterPage : MonoBehaviour
 {
@@ -26,7 +26,9 @@ public class CharacterPage : MonoBehaviour
             characterDetailCloseButton.onClick.RemoveAllListeners();
             characterDetailCloseButton.onClick.AddListener(() => characterDetailPanel.SetActive(false));
         }
-        if (characterDetailPanel) characterDetailPanel.SetActive(false);
+
+        if (characterDetailPanel)
+            characterDetailPanel.SetActive(false);
     }
 
     private void Start()
@@ -70,7 +72,6 @@ public class CharacterPage : MonoBehaviour
                 btn.onClick.AddListener(() => ShowCharacterDetail(ch));
             }
 
-            // マウスオーバー時のアドバイス表示
             var pointer = go.GetComponent<UIPointerEvents>();
             if (!pointer) pointer = go.AddComponent<UIPointerEvents>();
 
@@ -99,6 +100,7 @@ public class CharacterPage : MonoBehaviour
             characterDescriptionText.text = ch.description;
 
         characterDetailPanel.SetActive(true);
+        MenuReReAdvisor.Instance?.ShowCharacterHint(ch);
     }
 
     private void ClearChildren(Transform root)

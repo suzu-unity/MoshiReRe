@@ -156,17 +156,23 @@ MonoBehaviour:
     - name: MenuRoot
       pathPrefix: UI
       guid: 5c31f5b2493524c34be448651c191114
+    - name: MenuRootV2
+      pathPrefix: UI
+      guid: 5169b2a4c20da0046b1277b73200a645
   - Id: Scripts
     Resources:
-    - name: TestScript
-      pathPrefix: Scripts
-      guid: 12ce33c5aaed744a7a1bca4df52fdf50
-    - name: scene01
-      pathPrefix: Scripts
-      guid: 0879a665ef6d84c74ad942ad9fb9d5bb
-    - name: scene02
+    - name: Scenario/scene02
       pathPrefix: Scripts
       guid: a5461c0319a2244babd963b8e96b2a14
+    - name: Scenario/TestScript
+      pathPrefix: Scripts
+      guid: 12ce33c5aaed744a7a1bca4df52fdf50
+    - name: Scenario/scene01
+      pathPrefix: Scripts
+      guid: 0879a665ef6d84c74ad942ad9fb9d5bb
+    - name: NaninovelData/Resources/Scripts/ComicDemoDemo
+      pathPrefix: Scripts
+      guid: dae8328948fb7d04eab35b46cfe65e1d
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default

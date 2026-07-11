@@ -1,6 +1,6 @@
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class InventoryPage : MonoBehaviour
 {
@@ -26,7 +26,9 @@ public class InventoryPage : MonoBehaviour
             itemDetailCloseButton.onClick.RemoveAllListeners();
             itemDetailCloseButton.onClick.AddListener(() => itemDetailPanel.SetActive(false));
         }
-        if (itemDetailPanel) itemDetailPanel.SetActive(false);
+
+        if (itemDetailPanel)
+            itemDetailPanel.SetActive(false);
     }
 
     private void Start()
@@ -70,13 +72,11 @@ public class InventoryPage : MonoBehaviour
                 btn.onClick.AddListener(() => ShowItemDetail(item));
             }
 
-            // マウスオーバー時のアドバイス表示
             var pointer = go.GetComponent<UIPointerEvents>();
             if (!pointer) pointer = go.AddComponent<UIPointerEvents>();
 
             pointer.onEnter = () =>
             {
-                // Summaryを数秒表示したいので autoHide = true
                 if (sharedAdviceTrigger) sharedAdviceTrigger.ShowAdvice(item.summary, true);
             };
             pointer.onExit = () =>
@@ -89,10 +89,13 @@ public class InventoryPage : MonoBehaviour
     private void ShowItemDetail(InventoryItem item)
     {
         if (!itemDetailPanel) return;
+
         if (itemDetailImage) itemDetailImage.sprite = item.detailImage ? item.detailImage : item.icon;
         if (itemDetailTitle) itemDetailTitle.text = string.IsNullOrEmpty(item.id) ? "Item" : item.id;
         if (itemDetailDescription) itemDetailDescription.text = item.description;
+
         itemDetailPanel.SetActive(true);
+        MenuReReAdvisor.Instance?.ShowItemHint(item);
     }
 
     private void ClearChildren(Transform root)

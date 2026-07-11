@@ -1,0 +1,585 @@
+fileFormatVersion: 2
+guid: e4b69a4432ff858429fdab258ce256b0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2347179328395458587
+    second: dress_change_left_two_alpha_0
+  - first:
+      213: -9052591546589208441
+    second: dress_change_left_two_alpha_1
+  - first:
+      213: -8930950982061828377
+    second: dress_change_left_two_alpha_2
+  - first:
+      213: -855648728039145989
+    second: dress_change_left_two_alpha_3
+  - first:
+      213: 513829957615413717
+    second: dress_change_left_two_alpha_4
+  - first:
+      213: -3325967698287472471
+    second: dress_change_left_two_alpha_5
+  - first:
+      213: -5231828026123738934
+    second: dress_change_left_two_alpha_6
+  - first:
+      213: -1899204165217307836
+    second: dress_change_left_two_alpha_7
+  - first:
+      213: -1554128317011508910
+    second: dress_change_left_two_alpha_8
+  - first:
+      213: 5029657502392847975
+    second: dress_change_left_two_alpha_9
+  - first:
+      213: -3829757366011194077
+    second: dress_change_left_two_alpha_10
+  - first:
+      213: -456703379770934915
+    second: dress_change_left_two_alpha_11
+  - first:
+      213: 6744080007880170098
+    second: dress_change_left_two_alpha_12
+  - first:
+      213: 6206914808345356136
+    second: dress_change_left_two_alpha_13
+  - first:
+      213: 4849344759250943908
+    second: dress_change_left_two_alpha_14
+  - first:
+      213: -6514382279453095834
+    second: dress_change_left_two_alpha_15
+  - first:
+      213: 8168416352797548646
+    second: dress_change_left_two_alpha_16
+  - first:
+      213: 3510138088134282061
+    second: dress_change_left_two_alpha_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_0
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 486
+        width: 101
+        height: 337
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b18b62dc92bd29020800000000000000
+      internalID: 2347179328395458587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_1
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 486
+        width: 157
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 780a8d873fbbe5280800000000000000
+      internalID: -9052591546589208441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_2
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 486
+        width: 145
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e657c76663ee0480800000000000000
+      internalID: -8930950982061828377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_3
+      rect:
+        serializedVersion: 2
+        x: 714
+        y: 486
+        width: 152
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfd36b8e3002024f0800000000000000
+      internalID: -855648728039145989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_4
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 486
+        width: 119
+        height: 331
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d9ee92cf9d712700800000000000000
+      internalID: 513829957615413717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_5
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 486
+        width: 101
+        height: 337
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a0d629000ac7d1d0800000000000000
+      internalID: -3325967698287472471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_6
+      rect:
+        serializedVersion: 2
+        x: 1366
+        y: 716
+        width: 21
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac026f03120d467b0800000000000000
+      internalID: -5231828026123738934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_7
+      rect:
+        serializedVersion: 2
+        x: 1387
+        y: 486
+        width: 99
+        height: 330
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 443b748cfdba4a5e0800000000000000
+      internalID: -1899204165217307836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_8
+      rect:
+        serializedVersion: 2
+        x: 1586
+        y: 485
+        width: 100
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2514721a780ae6ae0800000000000000
+      internalID: -1554128317011508910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_9
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 67
+        width: 112
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76e0104a9deecc540800000000000000
+      internalID: 5029657502392847975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_10
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 67
+        width: 158
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32597fe67f7f9dac0800000000000000
+      internalID: -3829757366011194077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_11
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 67
+        width: 146
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d79780122b679a9f0800000000000000
+      internalID: -456703379770934915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_12
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 67
+        width: 152
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27ad2861909c79d50800000000000000
+      internalID: 6744080007880170098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_13
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 67
+        width: 120
+        height: 330
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 867698ee124632650800000000000000
+      internalID: 6206914808345356136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_14
+      rect:
+        serializedVersion: 2
+        x: 1163
+        y: 67
+        width: 111
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4affd889d555c4340800000000000000
+      internalID: 4849344759250943908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_15
+      rect:
+        serializedVersion: 2
+        x: 1363
+        y: 298
+        width: 21
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 668491ed4d34895a0800000000000000
+      internalID: -6514382279453095834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_16
+      rect:
+        serializedVersion: 2
+        x: 1385
+        y: 67
+        width: 98
+        height: 332
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6606dfd056b0c5170800000000000000
+      internalID: 8168416352797548646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dress_change_left_two_alpha_17
+      rect:
+        serializedVersion: 2
+        x: 1579
+        y: 67
+        width: 111
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4b00df5ef386b030800000000000000
+      internalID: 3510138088134282061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      dress_change_left_two_alpha_0: 2347179328395458587
+      dress_change_left_two_alpha_1: -9052591546589208441
+      dress_change_left_two_alpha_10: -3829757366011194077
+      dress_change_left_two_alpha_11: -456703379770934915
+      dress_change_left_two_alpha_12: 6744080007880170098
+      dress_change_left_two_alpha_13: 6206914808345356136
+      dress_change_left_two_alpha_14: 4849344759250943908
+      dress_change_left_two_alpha_15: -6514382279453095834
+      dress_change_left_two_alpha_16: 8168416352797548646
+      dress_change_left_two_alpha_17: 3510138088134282061
+      dress_change_left_two_alpha_2: -8930950982061828377
+      dress_change_left_two_alpha_3: -855648728039145989
+      dress_change_left_two_alpha_4: 513829957615413717
+      dress_change_left_two_alpha_5: -3325967698287472471
+      dress_change_left_two_alpha_6: -5231828026123738934
+      dress_change_left_two_alpha_7: -1899204165217307836
+      dress_change_left_two_alpha_8: -1554128317011508910
+      dress_change_left_two_alpha_9: 5029657502392847975
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

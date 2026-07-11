@@ -12,6 +12,7 @@ public class CommonUIHub : MonoBehaviour
 
         SpawnPrefab(moneyUIPrefab, "moneyUIPrefab");
         SpawnPrefab(reReButtonPrefab, "reReButtonPrefab");
+        EnsureComicDemoOverlay();
     }
 
     private void SpawnPrefab(GameObject prefab, string fieldName)
@@ -21,5 +22,14 @@ public class CommonUIHub : MonoBehaviour
         var instance = Object.Instantiate((Object)prefab, transform);
         if (instance == null)
             Debug.LogWarning($"[CommonUIHub] Failed to instantiate {fieldName}.");
+    }
+
+    private void EnsureComicDemoOverlay()
+    {
+        if (ComicDemoOverlayController.Instance) return;
+
+        var overlay = new GameObject("ComicDemoOverlay");
+        overlay.transform.SetParent(transform, false);
+        overlay.AddComponent<ComicDemoOverlayController>();
     }
 }

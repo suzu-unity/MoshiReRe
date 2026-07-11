@@ -28,17 +28,27 @@ public class MenuRootUI : CustomUI
     [TextArea] [SerializeField] private string[] adviceMessages;
     [SerializeField] private bool firstAdviceSticky = true;
 
+    [Header("Runtime Fallback")]
+    [SerializeField] private bool allowRuntimeFallbackBuild = false;
+    [SerializeField] private bool keepPageTopAsBackground = true;
+    [SerializeField] private bool enableWanderingReReSprite = true;
+
     protected override void Awake()
     {
         base.Awake();
 
         ApplyPortraitLayout();
         AutoWirePages();
-        AutoBuildTopTabs();
+        if (allowRuntimeFallbackBuild) AutoBuildTopTabs();
+        EnsureWanderingReReActor();
 
         if (pageItems) pageItems.SetAdviceTrigger(sharedAdviceTrigger);
         if (pageCharacters) pageCharacters.SetAdviceTrigger(sharedAdviceTrigger);
-        if (pageStatus) pageStatus.SetPortrait(protagonistPortrait);
+        if (pageStatus)
+        {
+            pageStatus.SetPortrait(protagonistPortrait);
+            pageStatus.SetNavigationActions(ShowPageItems, ShowPageCharacters, ShowPageMap);
+        }
 
         BindTabButtons();
         ShowPageStatus();
@@ -77,7 +87,7 @@ public class MenuRootUI : CustomUI
 
     public void ShowPageTop()
     {
-        if (pageTop) pageTop.SetActive(true);
+        SetPageTopVisible(true);
         if (pageItems) pageItems.Hide();
         if (pageCharacters) pageCharacters.Hide();
         if (pageStatus) pageStatus.Hide();
@@ -86,7 +96,7 @@ public class MenuRootUI : CustomUI
 
     public void ShowPageStatus()
     {
-        if (pageTop) pageTop.SetActive(false);
+        SetPageTopVisible(false);
         if (pageItems) pageItems.Hide();
         if (pageCharacters) pageCharacters.Hide();
         if (pageMap) pageMap.Hide();
@@ -95,7 +105,7 @@ public class MenuRootUI : CustomUI
 
     public void ShowPageItems()
     {
-        if (pageTop) pageTop.SetActive(false);
+        SetPageTopVisible(false);
         if (pageStatus) pageStatus.Hide();
         if (pageCharacters) pageCharacters.Hide();
         if (pageMap) pageMap.Hide();
@@ -104,7 +114,7 @@ public class MenuRootUI : CustomUI
 
     public void ShowPageCharacters()
     {
-        if (pageTop) pageTop.SetActive(false);
+        SetPageTopVisible(false);
         if (pageItems) pageItems.Hide();
         if (pageStatus) pageStatus.Hide();
         if (pageMap) pageMap.Hide();
@@ -113,7 +123,7 @@ public class MenuRootUI : CustomUI
 
     public void ShowPageMap()
     {
-        if (pageTop) pageTop.SetActive(false);
+        SetPageTopVisible(false);
         if (pageItems) pageItems.Hide();
         if (pageCharacters) pageCharacters.Hide();
         if (pageStatus) pageStatus.Hide();
@@ -151,14 +161,38 @@ public class MenuRootUI : CustomUI
         if (!pageStatus) pageStatus = GetComponentInChildren<StatusPage>(true);
         if (!pageMap) pageMap = GetComponentInChildren<MapPage>(true);
 
+        if (!pageItems)
+        {
+            var itemsGo = FindChildByName("PageItem");
+            if (itemsGo) pageItems = itemsGo.GetComponent<InventoryPage>() ?? itemsGo.AddComponent<InventoryPage>();
+        }
+
+        if (!pageCharacters)
+        {
+            var charactersGo = FindChildByName("PageCharacters");
+            if (charactersGo) pageCharacters = charactersGo.GetComponent<CharacterPage>() ?? charactersGo.AddComponent<CharacterPage>();
+        }
+
         if (!pageStatus)
+        {
+            var statusGo = FindChildByName("PageStatus") ?? FindChildByName("StatusPage");
+            if (statusGo) pageStatus = statusGo.GetComponent<StatusPage>() ?? statusGo.AddComponent<StatusPage>();
+        }
+
+        if (!pageMap)
+        {
+            var mapGo = FindChildByName("PageMap") ?? FindChildByName("MapPage");
+            if (mapGo) pageMap = mapGo.GetComponent<MapPage>() ?? mapGo.AddComponent<MapPage>();
+        }
+
+        if (allowRuntimeFallbackBuild && !pageStatus)
         {
             var statusGo = CreateBasicPage("PageStatus", new Vector2(0f, -120f));
             pageStatus = statusGo.AddComponent<StatusPage>();
             BuildStatusPage(statusGo.transform as RectTransform, pageStatus);
         }
 
-        if (!pageMap)
+        if (allowRuntimeFallbackBuild && !pageMap)
         {
             var mapGo = CreateBasicPage("PageMap", new Vector2(0f, -120f));
             pageMap = mapGo.AddComponent<MapPage>();
@@ -167,6 +201,47 @@ public class MenuRootUI : CustomUI
 
         if (!pageTop)
             pageTop = transform.Find("PageTop")?.gameObject;
+    }
+
+    private void SetPageTopVisible(bool topPageRequested)
+    {
+        if (!pageTop) return;
+        pageTop.SetActive(topPageRequested || keepPageTopAsBackground);
+    }
+
+    private void EnsureWanderingReReActor()
+    {
+        if (!enableWanderingReReSprite) return;
+        if (GetComponentInChildren<MenuReReSpriteAnimator>(true)) return;
+
+        Transform parent = FindChildByName("ContentFrame")?.transform ?? transform;
+        var go = new GameObject("WanderingReReSprite", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(MenuReReSpriteAnimator));
+        go.transform.SetParent(parent, false);
+        go.transform.SetAsLastSibling();
+
+        var rect = go.transform as RectTransform;
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = new Vector2(150f, 430f);
+
+        var image = go.GetComponent<Image>();
+        image.color = Color.white;
+        image.raycastTarget = false;
+        image.preserveAspect = true;
+        image.enabled = false;
+    }
+
+    private GameObject FindChildByName(string name)
+    {
+        var rects = GetComponentsInChildren<RectTransform>(true);
+        foreach (var rect in rects)
+        {
+            if (rect && rect.name == name)
+                return rect.gameObject;
+        }
+
+        return null;
     }
 
     private void AutoBuildTopTabs()
