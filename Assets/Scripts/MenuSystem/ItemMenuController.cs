@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ItemMenuController : MonoBehaviour
@@ -25,6 +26,7 @@ public class ItemMenuController : MonoBehaviour
     [SerializeField] private TMP_Text rereCommentText;
     [SerializeField] private Image[] bagSlotImages;
     [SerializeField] private TMP_Text[] bagSlotTexts;
+    [SerializeField] private RectTransform bagDropArea;
     [SerializeField] private Button addToBagButton;
     [SerializeField] private Button confirmBagButton;
     [SerializeField] private TMP_Text bagStatusText;
@@ -33,10 +35,21 @@ public class ItemMenuController : MonoBehaviour
     [SerializeField] private Image closedBagImage;
     [SerializeField] private Image zipperHookImage;
     [SerializeField] private Image zipperReReImage;
+    [SerializeField] private Sprite openBagSprite;
+    [SerializeField] private Sprite closedBagSprite;
+    [SerializeField] private Sprite[] bagZipStages;
+    [SerializeField] private Sprite zipperHookSprite;
+    [SerializeField] private Sprite[] zipperReReFrames;
     [SerializeField] private Image[] packedOverlayItemImages;
     [SerializeField] private TMP_Text zipMessageText;
     [SerializeField] private float zipTravelSeconds = 1.8f;
     [SerializeField] private float zipResultHoldSeconds = 0.9f;
+    [SerializeField] private float zipReReFrameRate = 10f;
+    [SerializeField] private Vector2 zipReReSize = new Vector2(210f, 210f);
+    [SerializeField] private float bagStageDisplayWidth = 540f;
+    [SerializeField] private float bagStageBottomY = -312f;
+    [SerializeField] private Vector2 zipperPathCenter = new Vector2(-10f, 24f);
+    [SerializeField] private Vector2 zipperPathHalfSize = new Vector2(232f, 160f);
     [SerializeField] private int maxCarryItems = 4;
     [SerializeField] private ItemDraft[] items;
 
@@ -44,13 +57,20 @@ public class ItemMenuController : MonoBehaviour
     private int selectedIndex;
     private int carryCount;
     private Coroutine zipRoutine;
+    private RectTransform pageRect;
+    private Image dragGhostImage;
+
+    private const float ZipPathEnd = 0.88f;
 
     private void Awake()
     {
         AutoWire();
         EnsureDefaultItems();
         BindButtons();
+        ConfigureDragSources();
+        ConfigureBagDragSources();
         ClearBag();
+        ApplyZipSprites();
         SelectItem(0);
     }
 
@@ -86,6 +106,13 @@ public class ItemMenuController : MonoBehaviour
         if (!detailTitleText) detailTitleText = FindByName<TMP_Text>("DetailTitle");
         if (!detailDescriptionText) detailDescriptionText = FindByName<TMP_Text>("DetailDescription");
         if (!rereCommentText) rereCommentText = FindByName<TMP_Text>("ReReCommentText");
+        if (!bagDropArea)
+        {
+            var dropObject = FindGameObject("CarryBagPanel");
+            if (dropObject)
+                bagDropArea = dropObject.transform as RectTransform;
+        }
+
         if (!addToBagButton) addToBagButton = FindByName<Button>("AddToBagButton");
         if (!confirmBagButton) confirmBagButton = FindByName<Button>("ConfirmBagButton");
         if (!bagStatusText) bagStatusText = FindByName<TMP_Text>("BagStatusText");
@@ -107,6 +134,42 @@ public class ItemMenuController : MonoBehaviour
 
         if (bagZipOverlay)
             bagZipOverlay.SetActive(false);
+
+        pageRect = transform as RectTransform;
+    }
+
+    private void ApplyZipSprites()
+    {
+        if (openBagImage && openBagSprite)
+        {
+            openBagImage.sprite = openBagSprite;
+            openBagImage.color = Color.white;
+            openBagImage.preserveAspect = true;
+            FitBagStageImage(openBagImage, openBagSprite);
+        }
+
+        if (closedBagImage && closedBagSprite)
+        {
+            closedBagImage.sprite = closedBagSprite;
+            closedBagImage.color = Color.white;
+            closedBagImage.preserveAspect = true;
+            FitBagStageImage(closedBagImage, closedBagSprite);
+        }
+
+        if (zipperHookImage && zipperHookSprite)
+        {
+            zipperHookImage.sprite = zipperHookSprite;
+            zipperHookImage.color = Color.white;
+            zipperHookImage.preserveAspect = true;
+        }
+
+        if (zipperReReImage)
+        {
+            zipperReReImage.preserveAspect = true;
+            zipperReReImage.rectTransform.sizeDelta = zipReReSize;
+            if (zipperReReFrames != null && zipperReReFrames.Length > 0)
+                zipperReReImage.sprite = zipperReReFrames[0];
+        }
     }
 
     private void EnsureDefaultItems()
@@ -145,6 +208,9 @@ public class ItemMenuController : MonoBehaviour
 
         if (addToBagButton) addToBagButton.onClick.AddListener(AddSelectedToBag);
         if (confirmBagButton) confirmBagButton.onClick.AddListener(ConfirmBag);
+
+        if (addToBagButton)
+            addToBagButton.gameObject.SetActive(false);
     }
 
     private void UnbindButtons()
@@ -160,6 +226,47 @@ public class ItemMenuController : MonoBehaviour
 
         if (addToBagButton) addToBagButton.onClick.RemoveListener(AddSelectedToBag);
         if (confirmBagButton) confirmBagButton.onClick.RemoveListener(ConfirmBag);
+    }
+
+    private void ConfigureDragSources()
+    {
+        if (itemButtons == null)
+            return;
+
+        for (var i = 0; i < itemButtons.Length; i++)
+        {
+            if (!itemButtons[i])
+                continue;
+
+            var source = itemButtons[i].GetComponent<ItemMenuDragSource>();
+            if (!source)
+                source = itemButtons[i].gameObject.AddComponent<ItemMenuDragSource>();
+
+            source.Initialize(this, i);
+        }
+    }
+
+    private void ConfigureBagDragSources()
+    {
+        if (bagSlotImages == null)
+            return;
+
+        for (var i = 0; i < bagSlotImages.Length; i++)
+        {
+            var slot = bagSlotImages[i] ? bagSlotImages[i].transform.parent : null;
+            if (!slot)
+                continue;
+
+            var slotImage = slot.GetComponent<Image>();
+            if (slotImage)
+                slotImage.raycastTarget = true;
+
+            var source = slot.GetComponent<ItemMenuBagDragSource>();
+            if (!source)
+                source = slot.gameObject.AddComponent<ItemMenuBagDragSource>();
+
+            source.Initialize(this, i);
+        }
     }
 
     private void SelectItem(int index)
@@ -202,10 +309,85 @@ public class ItemMenuController : MonoBehaviour
         if (detailTitleText) detailTitleText.text = item.displayName;
         if (detailDescriptionText) detailDescriptionText.text = item.description;
         if (rereCommentText)
-            rereCommentText.text = "This might help when you need a gentle push. Want to pack it?";
+            rereCommentText.text = "Drag this item into the bag if you want to carry it.";
     }
 
     private void AddSelectedToBag()
+    {
+        AddItemToBag(selectedIndex);
+    }
+
+    public void BeginItemDrag(int index, PointerEventData eventData)
+    {
+        if (items == null || index < 0 || index >= items.Length)
+            return;
+
+        SelectItem(index);
+        EnsureDragGhost();
+
+        if (!dragGhostImage)
+            return;
+
+        dragGhostImage.color = items[index].color;
+        dragGhostImage.gameObject.SetActive(true);
+        MoveDragGhost(eventData);
+    }
+
+    public void MoveItemDrag(PointerEventData eventData)
+    {
+        MoveDragGhost(eventData);
+    }
+
+    public void EndItemDrag(int index, PointerEventData eventData)
+    {
+        if (dragGhostImage)
+            dragGhostImage.gameObject.SetActive(false);
+
+        if (IsPointerOverBag(eventData))
+            AddItemToBag(index);
+        else if (bagStatusText)
+            bagStatusText.text = carryCount + "/" + maxCarryItems + " packed";
+    }
+
+    public void BeginBagDrag(int slotIndex, PointerEventData eventData)
+    {
+        if (slotIndex < 0 || slotIndex >= carryCount || items == null)
+            return;
+
+        var itemIndex = carryIndexes[slotIndex];
+        if (itemIndex < 0 || itemIndex >= items.Length)
+            return;
+
+        SelectItem(itemIndex);
+        EnsureDragGhost();
+        if (!dragGhostImage)
+            return;
+
+        dragGhostImage.color = items[itemIndex].color;
+        dragGhostImage.gameObject.SetActive(true);
+        MoveDragGhost(eventData);
+    }
+
+    public void MoveBagDrag(PointerEventData eventData)
+    {
+        MoveDragGhost(eventData);
+    }
+
+    public void EndBagDrag(int slotIndex, PointerEventData eventData)
+    {
+        if (dragGhostImage)
+            dragGhostImage.gameObject.SetActive(false);
+
+        if (slotIndex < 0 || slotIndex >= carryCount)
+            return;
+
+        if (!IsPointerOverBag(eventData))
+            RemoveItemFromBag(slotIndex);
+        else if (bagStatusText)
+            bagStatusText.text = carryCount + "/" + maxCarryItems + " packed";
+    }
+
+    private void AddItemToBag(int index)
     {
         if (carryCount >= Mathf.Min(maxCarryItems, carryIndexes.Length))
         {
@@ -213,9 +395,71 @@ public class ItemMenuController : MonoBehaviour
             return;
         }
 
-        carryIndexes[carryCount] = selectedIndex;
+        if (items == null || index < 0 || index >= items.Length)
+            return;
+
+        carryIndexes[carryCount] = index;
         carryCount++;
         RefreshBag();
+
+        if (rereCommentText)
+            rereCommentText.text = items[index].displayName + "をバッグに入れたよ。";
+    }
+
+    private void RemoveItemFromBag(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= carryCount)
+            return;
+
+        for (var i = slotIndex; i < carryCount - 1; i++)
+            carryIndexes[i] = carryIndexes[i + 1];
+
+        carryCount--;
+        carryIndexes[carryCount] = -1;
+        RefreshBag();
+
+        if (rereCommentText)
+            rereCommentText.text = "Item returned to the list.";
+    }
+
+    private void EnsureDragGhost()
+    {
+        if (dragGhostImage)
+            return;
+
+        var root = pageRect ? pageRect : transform as RectTransform;
+        var ghostObject = new GameObject("ItemDragGhost", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
+        ghostObject.transform.SetParent(root, false);
+        ghostObject.transform.SetAsLastSibling();
+
+        dragGhostImage = ghostObject.GetComponent<Image>();
+        dragGhostImage.raycastTarget = false;
+        dragGhostImage.color = Color.white;
+        dragGhostImage.rectTransform.sizeDelta = new Vector2(76f, 76f);
+
+        var canvasGroup = ghostObject.GetComponent<CanvasGroup>();
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+
+        ghostObject.SetActive(false);
+    }
+
+    private void MoveDragGhost(PointerEventData eventData)
+    {
+        if (!dragGhostImage || !pageRect || eventData == null)
+            return;
+
+        var camera = eventData.pressEventCamera;
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(pageRect, eventData.position, camera, out var local))
+            dragGhostImage.rectTransform.anchoredPosition = local;
+    }
+
+    private bool IsPointerOverBag(PointerEventData eventData)
+    {
+        if (!bagDropArea || eventData == null)
+            return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(bagDropArea, eventData.position, eventData.pressEventCamera);
     }
 
     private void ConfirmBag()
@@ -238,6 +482,8 @@ public class ItemMenuController : MonoBehaviour
         if (bagZipOverlay)
             bagZipOverlay.SetActive(true);
 
+        ApplyZipSprites();
+
         if (openBagImage)
             openBagImage.gameObject.SetActive(true);
 
@@ -249,17 +495,14 @@ public class ItemMenuController : MonoBehaviour
 
         RefreshPackedOverlayItems(true);
         SetZipperActorsVisible(true);
+        UpdateBagZipStage(0f);
 
-        var center = openBagImage ? openBagImage.rectTransform.anchoredPosition : Vector2.zero;
-        var halfSize = openBagImage ? openBagImage.rectTransform.sizeDelta * 0.5f : new Vector2(250f, 150f);
-        var inset = new Vector2(16f, 18f);
-        var points = new[]
+        var zipPoints = new[]
         {
-            center + new Vector2(-halfSize.x + inset.x, halfSize.y - inset.y),
-            center + new Vector2(halfSize.x - inset.x, halfSize.y - inset.y),
-            center + new Vector2(halfSize.x - inset.x, -halfSize.y + inset.y),
-            center + new Vector2(-halfSize.x + inset.x, -halfSize.y + inset.y),
-            center + new Vector2(-halfSize.x + inset.x, halfSize.y - inset.y)
+            zipperPathCenter + new Vector2(zipperPathHalfSize.x, zipperPathHalfSize.y),
+            zipperPathCenter + new Vector2(zipperPathHalfSize.x, -zipperPathHalfSize.y),
+            zipperPathCenter + new Vector2(-zipperPathHalfSize.x, -zipperPathHalfSize.y),
+            zipperPathCenter + new Vector2(-zipperPathHalfSize.x, zipperPathHalfSize.y)
         };
 
         var elapsed = 0f;
@@ -267,8 +510,8 @@ public class ItemMenuController : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             var t = Mathf.Clamp01(elapsed / Mathf.Max(0.01f, zipTravelSeconds));
-            var pos = PointOnPolyline(points, t);
-            MoveZipperActors(pos, t);
+            MoveZipperActors(zipPoints, t);
+            UpdateBagZipStage(t);
             yield return null;
         }
 
@@ -314,23 +557,105 @@ public class ItemMenuController : MonoBehaviour
     private void SetZipperActorsVisible(bool visible)
     {
         if (zipperHookImage)
-            zipperHookImage.gameObject.SetActive(visible);
+            zipperHookImage.gameObject.SetActive(visible && (zipperReReFrames == null || zipperReReFrames.Length == 0));
 
         if (zipperReReImage)
             zipperReReImage.gameObject.SetActive(visible);
     }
 
-    private void MoveZipperActors(Vector2 hookPosition, float progress)
+    private void MoveZipperActors(Vector2[] zipPoints, float progress)
     {
+        var hasReReFrames = zipperReReFrames != null && zipperReReFrames.Length > 0;
+        var hookStart = zipPoints != null && zipPoints.Length > 0 ? zipPoints[0] : Vector2.zero;
+        const float jumpEnd = 0.26f;
+
+        var hookPosition = hookStart;
+        if (progress > jumpEnd)
+        {
+            var zipT = Mathf.InverseLerp(jumpEnd, ZipPathEnd, Mathf.Min(progress, ZipPathEnd));
+            hookPosition = PointOnPolyline(zipPoints, zipT);
+        }
+
         if (zipperHookImage)
             zipperHookImage.rectTransform.anchoredPosition = hookPosition;
 
         if (zipperReReImage)
         {
-            var swing = Mathf.Sin(progress * Mathf.PI * 8f) * 12f;
-            zipperReReImage.rectTransform.anchoredPosition = hookPosition + new Vector2(0f, -86f + swing);
-            zipperReReImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(progress * Mathf.PI * 6f) * 9f);
+            if (hasReReFrames)
+            {
+                var frame = Mathf.Clamp(Mathf.FloorToInt(progress * zipTravelSeconds * zipReReFrameRate), 0, zipperReReFrames.Length - 1);
+                zipperReReImage.sprite = zipperReReFrames[frame];
+                zipperReReImage.rectTransform.sizeDelta = zipReReSize;
+            }
+
+            var hangOffset = new Vector2(0f, -88f + Mathf.Sin(progress * Mathf.PI * 6f) * 8f);
+            var actorPosition = hookPosition + hangOffset;
+
+            if (hasReReFrames)
+            {
+                if (progress < jumpEnd)
+                {
+                    var start = hookStart + new Vector2(110f, -232f);
+                    var apex = hookStart + new Vector2(46f, -40f);
+                    var land = hookStart + hangOffset;
+                    var jumpT = EaseOut(progress / jumpEnd);
+                    actorPosition = QuadraticBezier(start, apex, land, jumpT);
+                }
+                else if (progress > ZipPathEnd)
+                {
+                    var lastPoint = zipPoints != null && zipPoints.Length > 0 ? zipPoints[zipPoints.Length - 1] : hookStart;
+                    var end = lastPoint + new Vector2(-140f, 178f);
+                    actorPosition = Vector2.Lerp(lastPoint + hangOffset, end, EaseOut((progress - ZipPathEnd) / (1f - ZipPathEnd)));
+                }
+            }
+
+            zipperReReImage.rectTransform.anchoredPosition = actorPosition;
+            zipperReReImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, progress < jumpEnd ? 0f : Mathf.Sin(progress * Mathf.PI * 4f) * 7f);
         }
+    }
+
+    private void UpdateBagZipStage(float progress)
+    {
+        if (!openBagImage || bagZipStages == null || bagZipStages.Length < 2)
+            return;
+
+        var stageCount = Mathf.Min(bagZipStages.Length - 1, 5);
+        var stageProgress = Mathf.Clamp01(progress / ZipPathEnd);
+        var stageIndex = Mathf.Clamp(Mathf.FloorToInt(stageProgress * stageCount), 0, stageCount - 1);
+        var stage = bagZipStages[stageIndex];
+        if (!stage)
+            return;
+
+        openBagImage.sprite = stage;
+        openBagImage.preserveAspect = true;
+        FitBagStageImage(openBagImage, stage);
+    }
+
+    private void FitBagStageImage(Image image, Sprite sprite)
+    {
+        if (!image || !sprite || sprite.rect.width <= 0f)
+            return;
+
+        var width = Mathf.Max(1f, bagStageDisplayWidth);
+        var height = width * sprite.rect.height / sprite.rect.width;
+        image.rectTransform.sizeDelta = new Vector2(width, height);
+        image.rectTransform.anchoredPosition = new Vector2(
+            image.rectTransform.anchoredPosition.x,
+            bagStageBottomY + height * 0.5f);
+    }
+
+    private static float EaseOut(float value)
+    {
+        value = Mathf.Clamp01(value);
+        return 1f - (1f - value) * (1f - value);
+    }
+
+    private static Vector2 QuadraticBezier(Vector2 start, Vector2 control, Vector2 end, float t)
+    {
+        t = Mathf.Clamp01(t);
+        var a = Vector2.Lerp(start, control, t);
+        var b = Vector2.Lerp(control, end, t);
+        return Vector2.Lerp(a, b, t);
     }
 
     private static Vector2 PointOnPolyline(Vector2[] points, float t)
@@ -406,5 +731,59 @@ public class ItemMenuController : MonoBehaviour
         for (var i = 0; i < max; i++)
             result[i] = FindByName<T>(prefix + i);
         return result;
+    }
+}
+
+public class ItemMenuDragSource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+{
+    private ItemMenuController controller;
+    private int itemIndex;
+
+    public void Initialize(ItemMenuController owner, int index)
+    {
+        controller = owner;
+        itemIndex = index;
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        controller?.BeginItemDrag(itemIndex, eventData);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        controller?.MoveItemDrag(eventData);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        controller?.EndItemDrag(itemIndex, eventData);
+    }
+}
+
+public class ItemMenuBagDragSource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+{
+    private ItemMenuController controller;
+    private int slotIndex;
+
+    public void Initialize(ItemMenuController owner, int index)
+    {
+        controller = owner;
+        slotIndex = index;
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        controller?.BeginBagDrag(slotIndex, eventData);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        controller?.MoveBagDrag(eventData);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        controller?.EndBagDrag(slotIndex, eventData);
     }
 }

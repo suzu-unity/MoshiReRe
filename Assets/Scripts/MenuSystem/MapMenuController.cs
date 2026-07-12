@@ -42,11 +42,16 @@ public class MapMenuController : MonoBehaviour
     [SerializeField] private Image safetyFillImage;
     [SerializeField] private TMP_Text dayNightLabelText;
     [SerializeField] private Image dayNightBackgroundImage;
+    [SerializeField] private GameObject dayMapRoot;
+    [SerializeField] private GameObject nightMapRoot;
 
     [Header("Related character buttons")]
     [SerializeField] private Button[] relatedCharacterButtons;
     [SerializeField] private int[] relatedCharacterLocationIndexes;
     [SerializeField] private int[] goButtonLocationIndexes;
+
+    [Header("Page shortcuts")]
+    [SerializeField] private Button[] pageNavigationButtons;
 
     [Header("Time")]
     [SerializeField] private MonoBehaviour timeProvider;
@@ -65,14 +70,31 @@ public class MapMenuController : MonoBehaviour
 
     private UnityAction[] characterActions;
     private UnityAction[] goActions;
+    private UnityAction[] navigationActions;
     private int selectedIndex = -1;
     private bool isDay;
+    private int lastObservedHour = -1;
 
     private void Awake()
     {
         BindButtons();
         RefreshTimeAndColors();
         SelectLocation(0);
+    }
+
+    private void OnEnable()
+    {
+        RefreshTimeAndColors();
+    }
+
+    private void Update()
+    {
+        var hour = GetCurrentHour();
+        if (hour == lastObservedHour)
+            return;
+
+        lastObservedHour = hour;
+        RefreshTimeAndColors();
     }
 
     private void OnDestroy()
@@ -82,7 +104,8 @@ public class MapMenuController : MonoBehaviour
 
     public void RefreshTimeAndColors()
     {
-        isDay = IsDay(GetCurrentHour());
+        lastObservedHour = GetCurrentHour();
+        isDay = IsDay(lastObservedHour);
         ApplyLocationColors();
         ApplyDayNightBackground();
     }
@@ -158,6 +181,18 @@ public class MapMenuController : MonoBehaviour
                     goButtons[i].onClick.AddListener(action);
             }
         }
+
+        if (pageNavigationButtons != null)
+        {
+            navigationActions = new UnityAction[pageNavigationButtons.Length];
+            for (var i = 0; i < pageNavigationButtons.Length; i++)
+            {
+                var pageIndex = i;
+                navigationActions[i] = () => OpenPage(pageIndex);
+                if (pageNavigationButtons[i])
+                    pageNavigationButtons[i].onClick.AddListener(navigationActions[i]);
+            }
+        }
     }
 
     private void UnbindButtons()
@@ -172,8 +207,29 @@ public class MapMenuController : MonoBehaviour
                 if (goButtons[i] && goActions[i] != null)
                     goButtons[i].onClick.RemoveListener(goActions[i]);
 
+        if (pageNavigationButtons != null && navigationActions != null)
+            for (var i = 0; i < pageNavigationButtons.Length && i < navigationActions.Length; i++)
+                if (pageNavigationButtons[i] && navigationActions[i] != null)
+                    pageNavigationButtons[i].onClick.RemoveListener(navigationActions[i]);
+
         characterActions = null;
         goActions = null;
+        navigationActions = null;
+    }
+
+    private void OpenPage(int pageIndex)
+    {
+        var menu = GetComponentInParent<MenuRootV2UI>();
+        if (!menu) return;
+        switch (pageIndex)
+        {
+            case 0: menu.ShowTop(); break;
+            case 1: menu.ShowStatus(); break;
+            case 2: menu.ShowItems(); break;
+            case 3: menu.ShowCharacters(); break;
+            case 4: menu.ShowQuest(); break;
+            default: menu.ShowMap(); break;
+        }
     }
 
     private UnityAction CreateCharacterAction(int locationIndex)
@@ -182,6 +238,7 @@ public class MapMenuController : MonoBehaviour
         {
             SelectLocation(locationIndex);
             OnCharacterSelected.Invoke(locationIndex);
+            OpenPage(3);
         };
     }
 
@@ -217,6 +274,8 @@ public class MapMenuController : MonoBehaviour
             dayNightBackgroundImage.color = isDay ? locations[selectedIndex].dayColor : locations[selectedIndex].nightColor;
 
         SetText(dayNightLabelText, isDay ? "DAY" : "NIGHT");
+        if (dayMapRoot) dayMapRoot.SetActive(isDay);
+        if (nightMapRoot) nightMapRoot.SetActive(!isDay);
     }
 
     private int GetCurrentHour()

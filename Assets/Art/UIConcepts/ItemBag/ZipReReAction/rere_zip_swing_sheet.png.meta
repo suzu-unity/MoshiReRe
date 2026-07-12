@@ -1,0 +1,507 @@
+fileFormatVersion: 2
+guid: 4014eb5aaf0a441429e24b5a5e43f058
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1526537271134306517
+    second: rere_zip_swing_sheet_0
+  - first:
+      213: 7300535436714672607
+    second: rere_zip_swing_sheet_1
+  - first:
+      213: -2044387524571282468
+    second: rere_zip_swing_sheet_2
+  - first:
+      213: -1375937618260756034
+    second: rere_zip_swing_sheet_3
+  - first:
+      213: 2743268031923197808
+    second: rere_zip_swing_sheet_4
+  - first:
+      213: -4428454996634897120
+    second: rere_zip_swing_sheet_5
+  - first:
+      213: 2835887356836107712
+    second: rere_zip_swing_sheet_6
+  - first:
+      213: -5092929602592723631
+    second: rere_zip_swing_sheet_7
+  - first:
+      213: 2943935002034313929
+    second: rere_zip_swing_sheet_8
+  - first:
+      213: 7061456444936690599
+    second: rere_zip_swing_sheet_9
+  - first:
+      213: -531011934283107321
+    second: rere_zip_swing_sheet_10
+  - first:
+      213: 3915757459960226867
+    second: rere_zip_swing_sheet_11
+  - first:
+      213: 1581840852046349693
+    second: rere_zip_swing_sheet_12
+  - first:
+      213: -6476306551116945160
+    second: rere_zip_swing_sheet_13
+  - first:
+      213: -8481207333189577202
+    second: rere_zip_swing_sheet_14
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_0
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 320
+        width: 128
+        height: 187
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2f35a99076a0dae0800000000000000
+      internalID: -1526537271134306517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_1
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 330
+        width: 142
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd1878fbc46b05560800000000000000
+      internalID: 7300535436714672607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_2
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 329
+        width: 117
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd340b6c060e0a3e0800000000000000
+      internalID: -2044387524571282468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_3
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 436
+        width: 34
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb97876b600b7ece0800000000000000
+      internalID: -1375937618260756034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_4
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 316
+        width: 115
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07797769dbb021620800000000000000
+      internalID: 2743268031923197808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_5
+      rect:
+        serializedVersion: 2
+        x: 1099
+        y: 324
+        width: 107
+        height: 183
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 025f5cdb4a7fa82c0800000000000000
+      internalID: -4428454996634897120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_6
+      rect:
+        serializedVersion: 2
+        x: 1353
+        y: 308
+        width: 109
+        height: 199
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c5dc3f96881b5720800000000000000
+      internalID: 2835887356836107712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_7
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 49
+        width: 159
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15da36b82874259b0800000000000000
+      internalID: -5092929602592723631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_8
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 61
+        width: 112
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ca18166945fad820800000000000000
+      internalID: 2943935002034313929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_9
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 71
+        width: 141
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ab185539355ff160800000000000000
+      internalID: 7061456444936690599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_10
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 182
+        width: 41
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 704ff8d857771a8f0800000000000000
+      internalID: -531011934283107321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_11
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 62
+        width: 149
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 334e38bc9a0975630800000000000000
+      internalID: 3915757459960226867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_12
+      rect:
+        serializedVersion: 2
+        x: 1340
+        y: 62
+        width: 135
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d758c6dbfd3d3f510800000000000000
+      internalID: 1581840852046349693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_13
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 57
+        width: 125
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f8a32431898f16a0800000000000000
+      internalID: -6476306551116945160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_sheet_14
+      rect:
+        serializedVersion: 2
+        x: 1213
+        y: 104
+        width: 18
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e061cc6add2bc4a80800000000000000
+      internalID: -8481207333189577202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      rere_zip_swing_sheet_0: -1526537271134306517
+      rere_zip_swing_sheet_1: 7300535436714672607
+      rere_zip_swing_sheet_10: -531011934283107321
+      rere_zip_swing_sheet_11: 3915757459960226867
+      rere_zip_swing_sheet_12: 1581840852046349693
+      rere_zip_swing_sheet_13: -6476306551116945160
+      rere_zip_swing_sheet_14: -8481207333189577202
+      rere_zip_swing_sheet_2: -2044387524571282468
+      rere_zip_swing_sheet_3: -1375937618260756034
+      rere_zip_swing_sheet_4: 2743268031923197808
+      rere_zip_swing_sheet_5: -4428454996634897120
+      rere_zip_swing_sheet_6: 2835887356836107712
+      rere_zip_swing_sheet_7: -5092929602592723631
+      rere_zip_swing_sheet_8: 2943935002034313929
+      rere_zip_swing_sheet_9: 7061456444936690599
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

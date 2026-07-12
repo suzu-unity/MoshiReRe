@@ -1,0 +1,975 @@
+fileFormatVersion: 2
+guid: 177e967cd68730e47a86787c1aceec1e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2909917540357336207
+    second: rere_zip_swing_alpha_raw_0
+  - first:
+      213: -6943009257237199451
+    second: rere_zip_swing_alpha_raw_1
+  - first:
+      213: 4438739123354114705
+    second: rere_zip_swing_alpha_raw_2
+  - first:
+      213: -5401979456006621224
+    second: rere_zip_swing_alpha_raw_3
+  - first:
+      213: -241414104576001096
+    second: rere_zip_swing_alpha_raw_4
+  - first:
+      213: -863409781938416788
+    second: rere_zip_swing_alpha_raw_5
+  - first:
+      213: -3170966286486272655
+    second: rere_zip_swing_alpha_raw_6
+  - first:
+      213: -735326340733880636
+    second: rere_zip_swing_alpha_raw_7
+  - first:
+      213: 4761979248701532753
+    second: rere_zip_swing_alpha_raw_8
+  - first:
+      213: -5096894402122615257
+    second: rere_zip_swing_alpha_raw_9
+  - first:
+      213: 3584230565401567838
+    second: rere_zip_swing_alpha_raw_10
+  - first:
+      213: 790234516897213785
+    second: rere_zip_swing_alpha_raw_11
+  - first:
+      213: -5399996548041182586
+    second: rere_zip_swing_alpha_raw_12
+  - first:
+      213: 7528223388509611109
+    second: rere_zip_swing_alpha_raw_13
+  - first:
+      213: -4209244556569612029
+    second: rere_zip_swing_alpha_raw_14
+  - first:
+      213: 9167804360403752817
+    second: rere_zip_swing_alpha_raw_15
+  - first:
+      213: -7747538160691359270
+    second: rere_zip_swing_alpha_raw_16
+  - first:
+      213: 9007616622593915345
+    second: rere_zip_swing_alpha_raw_17
+  - first:
+      213: 1377928873937485970
+    second: rere_zip_swing_alpha_raw_18
+  - first:
+      213: 8091629410742173876
+    second: rere_zip_swing_alpha_raw_19
+  - first:
+      213: -7254213464027441991
+    second: rere_zip_swing_alpha_raw_20
+  - first:
+      213: 2666773022300997917
+    second: rere_zip_swing_alpha_raw_21
+  - first:
+      213: -3193606588796296370
+    second: rere_zip_swing_alpha_raw_22
+  - first:
+      213: -5437123203991193332
+    second: rere_zip_swing_alpha_raw_23
+  - first:
+      213: -8163267537148618732
+    second: rere_zip_swing_alpha_raw_24
+  - first:
+      213: 2100513929948269093
+    second: rere_zip_swing_alpha_raw_25
+  - first:
+      213: 1623805546404001191
+    second: rere_zip_swing_alpha_raw_26
+  - first:
+      213: -851726001521503903
+    second: rere_zip_swing_alpha_raw_27
+  - first:
+      213: -4904995084124218513
+    second: rere_zip_swing_alpha_raw_28
+  - first:
+      213: 3446100213927366010
+    second: rere_zip_swing_alpha_raw_29
+  - first:
+      213: -153911030730402563
+    second: rere_zip_swing_alpha_raw_30
+  - first:
+      213: 2295766793313018788
+    second: rere_zip_swing_alpha_raw_31
+  - first:
+      213: 2520021597732444617
+    second: rere_zip_swing_alpha_raw_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_0
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 587
+        width: 145
+        height: 210
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17392591a65ed97d0800000000000000
+      internalID: -2909917540357336207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_1
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 606
+        width: 152
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a5c02ebdd975af90800000000000000
+      internalID: -6943009257237199451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_2
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 745
+        width: 44
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19a962a17b1999d30800000000000000
+      internalID: 4438739123354114705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_3
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 589
+        width: 156
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d774c04e405805b0800000000000000
+      internalID: -5401979456006621224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_4
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 603
+        width: 145
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bb7af4a62356acf0800000000000000
+      internalID: -241414104576001096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_5
+      rect:
+        serializedVersion: 2
+        x: 1534
+        y: 581
+        width: 145
+        height: 263
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6396fbb06d8404f0800000000000000
+      internalID: -863409781938416788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_6
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 587
+        width: 142
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1750f3386f67ef3d0800000000000000
+      internalID: -3170966286486272655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_7
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 523
+        width: 22
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c6b19ac6989bc5f0800000000000000
+      internalID: -735326340733880636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_8
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 523
+        width: 32
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15ae2aa85e2f51240800000000000000
+      internalID: 4761979248701532753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_9
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 523
+        width: 32
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 726fdc7bb813449b0800000000000000
+      internalID: -5096894402122615257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_10
+      rect:
+        serializedVersion: 2
+        x: 1011
+        y: 523
+        width: 33
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e52abdb85bebdb130800000000000000
+      internalID: 3584230565401567838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_11
+      rect:
+        serializedVersion: 2
+        x: 1297
+        y: 523
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95d29e43b1a77fa00800000000000000
+      internalID: 790234516897213785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_12
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 523
+        width: 31
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6827badffbb5f05b0800000000000000
+      internalID: -5399996548041182586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_13
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 171
+        width: 192
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56427ed194f997860800000000000000
+      internalID: 7528223388509611109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_14
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 177
+        width: 145
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 301fbe89062c595c0800000000000000
+      internalID: -4209244556569612029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_15
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 173
+        width: 217
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17794202e759a3f70800000000000000
+      internalID: 9167804360403752817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_16
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 335
+        width: 54
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad1553057173b7490800000000000000
+      internalID: -7747538160691359270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_17
+      rect:
+        serializedVersion: 2
+        x: 1236
+        y: 164
+        width: 158
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d93d96089b710d70800000000000000
+      internalID: 9007616622593915345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_18
+      rect:
+        serializedVersion: 2
+        x: 1535
+        y: 164
+        width: 144
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2904cc0a2036f1310800000000000000
+      internalID: 1377928873937485970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_19
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 217
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b00469e31e3b4070800000000000000
+      internalID: 8091629410742173876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_20
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 170
+        width: 165
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b4d9c7f94bd35b90800000000000000
+      internalID: -7254213464027441991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_21
+      rect:
+        serializedVersion: 2
+        x: 1382
+        y: 208
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1988d24fe7420520800000000000000
+      internalID: 2666773022300997917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_22
+      rect:
+        serializedVersion: 2
+        x: 1225
+        y: 190
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e43237a5ab70ea3d0800000000000000
+      internalID: -3193606588796296370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_23
+      rect:
+        serializedVersion: 2
+        x: 1397
+        y: 181
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c09321ac0457b84b0800000000000000
+      internalID: -5437123203991193332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_24
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 109
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41857c10d6f36be80800000000000000
+      internalID: -8163267537148618732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_25
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 109
+        width: 30
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a83505a46862d10800000000000000
+      internalID: 2100513929948269093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_26
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 109
+        width: 31
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a538b98a8ae88610800000000000000
+      internalID: 1623805546404001191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_27
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 109
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 161d859d6bf0e24f0800000000000000
+      internalID: -851726001521503903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_28
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 109
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6b1db175f4fdebb0800000000000000
+      internalID: -4904995084124218513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_29
+      rect:
+        serializedVersion: 2
+        x: 1290
+        y: 109
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7dc987e2e103df20800000000000000
+      internalID: 3446100213927366010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_30
+      rect:
+        serializedVersion: 2
+        x: 1318
+        y: 109
+        width: 22
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df4dc46abb23dddf0800000000000000
+      internalID: -153911030730402563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_31
+      rect:
+        serializedVersion: 2
+        x: 1570
+        y: 109
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a36f8a2cb33cdf10800000000000000
+      internalID: 2295766793313018788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rere_zip_swing_alpha_raw_32
+      rect:
+        serializedVersion: 2
+        x: 1597
+        y: 109
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c9972f9a4ae8f220800000000000000
+      internalID: 2520021597732444617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      rere_zip_swing_alpha_raw_0: -2909917540357336207
+      rere_zip_swing_alpha_raw_1: -6943009257237199451
+      rere_zip_swing_alpha_raw_10: 3584230565401567838
+      rere_zip_swing_alpha_raw_11: 790234516897213785
+      rere_zip_swing_alpha_raw_12: -5399996548041182586
+      rere_zip_swing_alpha_raw_13: 7528223388509611109
+      rere_zip_swing_alpha_raw_14: -4209244556569612029
+      rere_zip_swing_alpha_raw_15: 9167804360403752817
+      rere_zip_swing_alpha_raw_16: -7747538160691359270
+      rere_zip_swing_alpha_raw_17: 9007616622593915345
+      rere_zip_swing_alpha_raw_18: 1377928873937485970
+      rere_zip_swing_alpha_raw_19: 8091629410742173876
+      rere_zip_swing_alpha_raw_2: 4438739123354114705
+      rere_zip_swing_alpha_raw_20: -7254213464027441991
+      rere_zip_swing_alpha_raw_21: 2666773022300997917
+      rere_zip_swing_alpha_raw_22: -3193606588796296370
+      rere_zip_swing_alpha_raw_23: -5437123203991193332
+      rere_zip_swing_alpha_raw_24: -8163267537148618732
+      rere_zip_swing_alpha_raw_25: 2100513929948269093
+      rere_zip_swing_alpha_raw_26: 1623805546404001191
+      rere_zip_swing_alpha_raw_27: -851726001521503903
+      rere_zip_swing_alpha_raw_28: -4904995084124218513
+      rere_zip_swing_alpha_raw_29: 3446100213927366010
+      rere_zip_swing_alpha_raw_3: -5401979456006621224
+      rere_zip_swing_alpha_raw_30: -153911030730402563
+      rere_zip_swing_alpha_raw_31: 2295766793313018788
+      rere_zip_swing_alpha_raw_32: 2520021597732444617
+      rere_zip_swing_alpha_raw_4: -241414104576001096
+      rere_zip_swing_alpha_raw_5: -863409781938416788
+      rere_zip_swing_alpha_raw_6: -3170966286486272655
+      rere_zip_swing_alpha_raw_7: -735326340733880636
+      rere_zip_swing_alpha_raw_8: 4761979248701532753
+      rere_zip_swing_alpha_raw_9: -5096894402122615257
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

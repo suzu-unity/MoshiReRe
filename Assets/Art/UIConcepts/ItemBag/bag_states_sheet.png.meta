@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: 5b9487a472ecdd24a81aff90b5b8109d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6756788380630789522
+    second: bag_states_sheet_0
+  - first:
+      213: 7118105364220977199
+    second: bag_states_sheet_1
+  - first:
+      213: 303911946148788168
+    second: bag_states_sheet_2
+  - first:
+      213: -9100855365493064246
+    second: bag_states_sheet_3
+  - first:
+      213: 6087826345311645584
+    second: bag_states_sheet_4
+  - first:
+      213: 2223049678798139626
+    second: bag_states_sheet_5
+  - first:
+      213: -1068724278832876828
+    second: bag_states_sheet_6
+  - first:
+      213: 7494154717605681704
+    second: bag_states_sheet_7
+  - first:
+      213: 6591332123383040931
+    second: bag_states_sheet_8
+  - first:
+      213: -6565160580805415091
+    second: bag_states_sheet_9
+  - first:
+      213: -4083102520217819566
+    second: bag_states_sheet_10
+  - first:
+      213: -1284529795911387938
+    second: bag_states_sheet_11
+  - first:
+      213: -2637720584710329669
+    second: bag_states_sheet_12
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: bag_states_sheet_0
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 1129
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e62d30e44c01b32a0800000000000000
+      internalID: -6756788380630789522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_1
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 1139
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f20a13c8d1798c260800000000000000
+      internalID: 7118105364220977199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_2
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 1139
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c732390e46b73400800000000000000
+      internalID: 303911946148788168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_3
+      rect:
+        serializedVersion: 2
+        x: 907
+        y: 1141
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acdf393734443b180800000000000000
+      internalID: -9100855365493064246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_4
+      rect:
+        serializedVersion: 2
+        x: 932
+        y: 1139
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09fa09e6ecd4c7450800000000000000
+      internalID: 6087826345311645584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_5
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 1139
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae03fc697ebd9de10800000000000000
+      internalID: 2223049678798139626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_6
+      rect:
+        serializedVersion: 2
+        x: 999
+        y: 1139
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e2b4554ee02b21f0800000000000000
+      internalID: -1068724278832876828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 1131
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82a54ba8206900860800000000000000
+      internalID: 7494154717605681704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_8
+      rect:
+        serializedVersion: 2
+        x: 1061
+        y: 1121
+        width: 23
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ab0ed2d4ad197b50800000000000000
+      internalID: 6591332123383040931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_9
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 684
+        width: 486
+        height: 454
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4f22b74c3dd3e4a0800000000000000
+      internalID: -6565160580805415091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_10
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 684
+        width: 487
+        height: 454
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2562aec14e7e557c0800000000000000
+      internalID: -4083102520217819566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_11
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 177
+        width: 485
+        height: 352
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed4fb43d4fe6c2ee0800000000000000
+      internalID: -1284529795911387938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bag_states_sheet_12
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 175
+        width: 472
+        height: 342
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbaea9b7a1fe46bd0800000000000000
+      internalID: -2637720584710329669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      bag_states_sheet_0: -6756788380630789522
+      bag_states_sheet_1: 7118105364220977199
+      bag_states_sheet_10: -4083102520217819566
+      bag_states_sheet_11: -1284529795911387938
+      bag_states_sheet_12: -2637720584710329669
+      bag_states_sheet_2: 303911946148788168
+      bag_states_sheet_3: -9100855365493064246
+      bag_states_sheet_4: 6087826345311645584
+      bag_states_sheet_5: 2223049678798139626
+      bag_states_sheet_6: -1068724278832876828
+      bag_states_sheet_7: 7494154717605681704
+      bag_states_sheet_8: 6591332123383040931
+      bag_states_sheet_9: -6565160580805415091
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

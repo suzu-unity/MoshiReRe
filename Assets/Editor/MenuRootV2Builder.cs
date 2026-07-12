@@ -37,6 +37,13 @@ public static class MenuRootV2Builder
     private const string DressBodyMotionFolder = "Assets/Art/ReReSprites/DressBodyMotions";
     private const string DressChangeFolder = "Assets/Art/HeroineSprites/DressChange";
     private const string DressCurtainFolder = "Assets/Art/HeroineSprites/DressChangeCurtains";
+    private const string ItemBagOpenSpritePath = "Assets/Art/UIConcepts/ItemBag/moshire_bag_open.png";
+    private const string ItemBagClosedSpritePath = "Assets/Art/UIConcepts/ItemBag/moshire_bag_closed.png";
+    private const string ItemBagStatesSheetPath = "Assets/Art/UIConcepts/ItemBag/moshire_bag_states_sheet.png";
+    private const string ItemBagHookSpritePath = "Assets/Art/UIConcepts/ItemBag/moshire_bag_zipper_hook.png";
+    private const string ItemBagReReZipFolder = "Assets/Art/UIConcepts/ItemBag/ZipReReAction/frames";
+    private const string MapDayConceptPath = "Assets/Art/UIConcepts/MapConcepts/map_concept_02_map_first.png";
+    private const string MapNightConceptPath = "Assets/Art/UIConcepts/MapConcepts/map_concept_04_evening_story.png";
 
     private static readonly Color Cream = new Color(0.98f, 0.94f, 0.84f, 1f);
     private static readonly Color Ink = new Color(0.18f, 0.12f, 0.20f, 1f);
@@ -62,12 +69,23 @@ public static class MenuRootV2Builder
         instance.name = "MenuRootV2";
         var previewCamera = AddPreviewCamera();
         SetPreviewCanvasCamera(instance, previewCamera);
+        ActivatePreviewPage(instance, "PageMap");
         EditorSceneManager.SaveScene(scene, PreviewScenePath);
 
         Object.DestroyImmediate(root);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("[MenuRootV2Builder] Built MenuRootV2 prefab and preview scene.");
+    }
+
+    private static void ActivatePreviewPage(GameObject root, string pageName)
+    {
+        foreach (var child in root.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == "PageTop") child.gameObject.SetActive(false);
+            if (child.name == "SmartphoneLayer") child.gameObject.SetActive(true);
+            if (child.name.StartsWith("Page")) child.gameObject.SetActive(child.name == pageName);
+        }
     }
 
     private static GameObject BuildMenuRoot()
@@ -743,10 +761,11 @@ public static class MenuRootV2Builder
         rereBubble.raycastTarget = false;
         SetRect(rereBubble.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-10f, -120f), new Vector2(-42f, 96f));
         PixelBorder(rereBubble.rectTransform, "BubbleFrame", Ink, 3f);
-        var rereText = Text("This might help when you need a gentle push. Want to pack it?", rereBubble.rectTransform, 18f, FontStyles.Bold,
+        var rereText = Text("Drag an item into the bag to carry it.", rereBubble.rectTransform, 18f, FontStyles.Bold,
             TextAlignmentOptions.TopLeft, Ink, new Vector2(14f, 12f), new Vector2(-14f, -12f));
         rereText.name = "ReReCommentText";
         var addButton = LocalPixelButton(rerePanel.rectTransform, "AddToBagButton", "BAG +", new Vector2(28f, -238f), new Vector2(92f, 42f), Mint);
+        addButton.gameObject.SetActive(false);
         var confirmButton = LocalPixelButton(rerePanel.rectTransform, "ConfirmBagButton", "YES", new Vector2(138f, -238f), new Vector2(92f, 42f), Coral);
 
         var bagPanel = PixelPanelAt(page, "CarryBagPanel", new Rect(128f, 696f, 1402f, 128f), new Color(0.94f, 0.91f, 0.99f, 1f), artworkWidth, artworkHeight);
@@ -763,8 +782,21 @@ public static class MenuRootV2Builder
 
         var controller = page.gameObject.AddComponent<ItemMenuController>();
         var so = new SerializedObject(controller);
+        SetObject(so, "bagDropArea", bagPanel.rectTransform);
         SetObject(so, "addToBagButton", addButton);
         SetObject(so, "confirmBagButton", confirmButton);
+        SetObject(so, "openBagSprite", LoadSprite(ItemBagOpenSpritePath));
+        SetObject(so, "closedBagSprite", LoadSprite(ItemBagClosedSpritePath));
+        SetSpriteArray(so, "bagZipStages", LoadSpritesFromSheet(ItemBagStatesSheetPath));
+        SetObject(so, "zipperHookSprite", LoadSprite(ItemBagHookSpritePath));
+        SetSpriteArray(so, "zipperReReFrames", LoadSpritesFromFolder(ItemBagReReZipFolder));
+        SetFloat(so, "zipTravelSeconds", 2.15f);
+        SetFloat(so, "zipReReFrameRate", 6f);
+        SetVector2(so, "zipReReSize", new Vector2(230f, 230f));
+        SetFloat(so, "bagStageDisplayWidth", 540f);
+        SetFloat(so, "bagStageBottomY", -312f);
+        SetVector2(so, "zipperPathCenter", new Vector2(-10f, 24f));
+        SetVector2(so, "zipperPathHalfSize", new Vector2(232f, 160f));
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
         return page;
@@ -898,35 +930,293 @@ public static class MenuRootV2Builder
     {
         var page = RectRoot("PageQuest", parent);
         Stretch(page, Vector2.zero, Vector2.zero);
-        AddHeader(page, "Quest", "daily missions");
+        var headerStrip = ImageRoot("QuestHeaderStrip", page, new Color(0.98f, 0.94f, 0.84f, 1f));
+        headerStrip.raycastTarget = false;
+        SetRect(headerStrip.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -8f), new Vector2(0f, 70f));
+        PixelBorder(headerStrip.rectTransform, "HeaderFrame", Ink, 3f);
+        AddHeader(page, "QUEST", "ReRe inbox / case board");
 
-        var list = Panel(page, "QuestList", new Vector2(32f, -126f), new Vector2(640f, 480f), new Color(0.96f, 0.94f, 0.82f, 1f));
-        for (int i = 0; i < 5; i++) QuestCard(list.rectTransform, i);
+        var inboxTab = QuestTabButton(page, "QuestInboxTab", "INBOX", new Vector2(32f, -72f), new Vector2(214f, 48f), Cream);
+        var caseBoardTab = QuestTabButton(page, "QuestCaseBoardTab", "CASE BOARD", new Vector2(254f, -72f), new Vector2(244f, 48f), Lavender);
 
-        var detail = Panel(page, "SelectedQuestDetail", new Vector2(704f, -126f), new Vector2(394f, 480f), new Color(0.92f, 0.96f, 1f, 1f));
-        AddDetailBars(detail.rectTransform, 6);
-        SmallCard(detail.rectTransform, "GoToAreaButton", new Vector2(26f, -384f), new Vector2(340f, 62f), Mint);
+        var inboxRoot = RectRoot("QuestInboxRoot", page);
+        Stretch(inboxRoot, Vector2.zero, Vector2.zero);
+        TextMeshProUGUI activeQuestTitleText;
+        TextMeshProUGUI activeQuestObjectiveText;
+        TextMeshProUGUI activeQuestProgressText;
+        TextMeshProUGUI activeQuestHintText;
+        TextMeshProUGUI activeQuestRewardText;
+        Image[] inboxCardImages;
+        var inboxCards = BuildQuestInbox(inboxRoot, out inboxCardImages, out activeQuestTitleText,
+            out activeQuestObjectiveText, out activeQuestProgressText, out activeQuestHintText, out activeQuestRewardText);
+
+        var caseBoardRoot = RectRoot("QuestCaseBoardRoot", page);
+        Stretch(caseBoardRoot, Vector2.zero, Vector2.zero);
+        BuildQuestCaseBoard(caseBoardRoot);
+        caseBoardRoot.gameObject.SetActive(false);
+
+        var controller = page.gameObject.AddComponent<QuestMenuController>();
+        var so = new SerializedObject(controller);
+        SetObject(so, "inboxRoot", inboxRoot.gameObject);
+        SetObject(so, "caseBoardRoot", caseBoardRoot.gameObject);
+        SetObject(so, "inboxTabButton", inboxTab);
+        SetObject(so, "caseBoardTabButton", caseBoardTab);
+        SetQuestObjectArray(so, "inboxQuestButtons", inboxCards);
+        SetQuestObjectArray(so, "inboxCardImages", inboxCardImages);
+        SetObject(so, "activeQuestTitleText", activeQuestTitleText);
+        SetObject(so, "activeQuestObjectiveText", activeQuestObjectiveText);
+        SetObject(so, "activeQuestProgressText", activeQuestProgressText);
+        SetObject(so, "activeQuestHintText", activeQuestHintText);
+        SetObject(so, "activeQuestRewardText", activeQuestRewardText);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(controller);
         return page;
+    }
+
+    private static Button[] BuildQuestInbox(RectTransform parent, out Image[] cardImages,
+        out TextMeshProUGUI titleText, out TextMeshProUGUI objectiveText, out TextMeshProUGUI progressText,
+        out TextMeshProUGUI hintText, out TextMeshProUGUI rewardText)
+    {
+        var cards = new Button[4];
+        cardImages = new Image[cards.Length];
+        var list = PixelPanel(parent, "QuestInboxList", new Vector2(32f, -132f), new Vector2(294f, 554f), Cream);
+        TextBox("ReRe INBOX", list.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -16f), new Vector2(258f, 34f));
+        AddNotificationBadge(list.rectTransform, "!");
+
+        var names = new[] { "Lost Potion", "Library Book", "Stray Kitten", "Island Delivery" };
+        var marks = new[] { "!", "?", "♥", "→" };
+        var colors = new[] { Coral, Yellow, Lavender, Mint };
+        for (var i = 0; i < cards.Length; i++)
+        {
+            cards[i] = QuestInboxCard(list.rectTransform, i, names[i], marks[i], colors[i]);
+            cardImages[i] = cards[i].GetComponent<Image>();
+        }
+
+        var detail = PixelPanel(parent, "QuestActivePanel", new Vector2(344f, -132f), new Vector2(492f, 554f), new Color(1f, 0.95f, 0.85f, 1f));
+        TextBox("ACTIVE", detail.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -16f), new Vector2(456f, 34f));
+        TextBox("★", detail.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Right, Yellow,
+            new Vector2(18f, -16f), new Vector2(456f, 34f));
+
+        var activeCard = Panel(detail.rectTransform, "ActiveQuestSummary", new Vector2(18f, -62f), new Vector2(456f, 148f), new Color(1f, 0.90f, 0.88f, 1f));
+        Circle(activeCard.rectTransform, "QuestIcon", new Vector2(18f, -26f), 74f, Coral);
+        Text("!", activeCard.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white,
+            new Vector2(18f, -26f), new Vector2(92f, 48f));
+        titleText = TextBox("Lost Potion", activeCard.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(112f, -22f), new Vector2(326f, 34f));
+        TextBox("OBJECTIVE", activeCard.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.38f, 0.28f, 0.42f, 1f),
+            new Vector2(112f, -60f), new Vector2(326f, 22f));
+        objectiveText = TextBox("Find the lost potion.", activeCard.rectTransform, 17f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+            new Vector2(112f, -86f), new Vector2(326f, 28f));
+        progressText = TextBox("0 / 1", activeCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Right, Coral,
+            new Vector2(112f, -116f), new Vector2(326f, 24f));
+
+        var hint = PixelPanel(detail.rectTransform, "QuestHintPanel", new Vector2(18f, -224f), new Vector2(456f, 74f), new Color(0.70f, 0.92f, 0.89f, 1f));
+        TextBox("HINT", hint.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(16f, -14f), new Vector2(94f, 26f));
+        hintText = TextBox("ReRe knows a shortcut.", hint.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+            new Vector2(90f, -14f), new Vector2(348f, 26f));
+        TextBox("›", hint.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Right, Ink,
+            new Vector2(16f, -14f), new Vector2(424f, 26f));
+
+        QuestRouteStrip(detail.rectTransform, new Vector2(18f, -314f), new Vector2(456f, 126f));
+
+        var action = PixelPanel(parent, "QuestActionPanel", new Vector2(852f, -132f), new Vector2(246f, 554f), new Color(0.91f, 0.87f, 0.98f, 1f));
+        TextBox("GO?", action.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(16f, -16f), new Vector2(214f, 32f));
+        var go = ButtonRoot("GoToAreaButton", action.rectTransform, Mint);
+        SetRect(go.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(16f, -58f), new Vector2(-32f, 64f));
+        PixelBorder(go.GetComponent<RectTransform>(), "GoFrame", Ink, 3f);
+        Text("YES", go.GetComponent<RectTransform>(), 24f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+
+        TextBox("RELATED", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -148f), new Vector2(210f, 22f));
+        QuestCharacterChip(action.rectTransform, "ReRe", "R", new Vector2(18f, -184f), Coral);
+        QuestCharacterChip(action.rectTransform, "Yui", "Y", new Vector2(88f, -184f), Lavender);
+        QuestCharacterChip(action.rectTransform, "OJI", "O", new Vector2(158f, -184f), Yellow);
+
+        TextBox("REWARD", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -278f), new Vector2(210f, 22f));
+        var reward = PixelPanel(action.rectTransform, "QuestReward", new Vector2(18f, -310f), new Vector2(210f, 78f), new Color(1f, 0.91f, 0.69f, 1f));
+        rewardText = Text("★ 200", reward.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        TextBox("carry bag", action.rectTransform, 13f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+            new Vector2(18f, -416f), new Vector2(210f, 22f));
+
+        return cards;
+    }
+
+    private static void SetQuestObjectArray(SerializedObject so, string name, Object[] values)
+    {
+        var property = so.FindProperty(name);
+        if (property == null) return;
+        property.arraySize = values.Length;
+        for (var i = 0; i < values.Length; i++)
+            property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+    }
+
+    private static void BuildQuestCaseBoard(RectTransform parent)
+    {
+        var list = PixelPanel(parent, "QuestCaseList", new Vector2(32f, -132f), new Vector2(294f, 554f), new Color(0.91f, 0.88f, 0.98f, 1f));
+        TextBox("CASE", list.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(18f, -16f), new Vector2(258f, 34f));
+        var names = new[] { "AI WHISPER", "SMILE CODE", "FAKE FRIEND", "MEMORIES" };
+        var marks = new[] { "▣", "♥", "☺", "▤" };
+        var colors = new[] { Lavender, Mint, Coral, new Color(0.72f, 0.68f, 0.88f, 1f) };
+        for (var i = 0; i < names.Length; i++)
+        {
+            var card = Panel(list.rectTransform, "CaseCard" + i, new Vector2(16f, -58f - i * 112f), new Vector2(262f, 92f), i == 0 ? new Color(1f, 0.91f, 0.69f, 1f) : Cream);
+            PixelBorder(card.rectTransform, "CaseFrame", Ink, 3f);
+            Circle(card.rectTransform, "CaseIcon", new Vector2(16f, -16f), 54f, colors[i]);
+            Text(marks[i], card.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+                new Vector2(16f, -16f), new Vector2(70f, 34f));
+            TextBox(names[i], card.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+                new Vector2(84f, -18f), new Vector2(166f, 24f));
+            AddMiniBars(card.rectTransform, new Vector2(86f, -54f), 3);
+            TextBox((i + 1) + "/6", card.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right, Ink,
+                new Vector2(84f, -54f), new Vector2(166f, 22f));
+        }
+
+        var board = PixelPanel(parent, "QuestCaseBoard", new Vector2(344f, -132f), new Vector2(492f, 554f), new Color(1f, 0.91f, 0.70f, 1f));
+        TextBox("CASE BOARD", board.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -16f), new Vector2(456f, 34f));
+        TextBox("ACTIVE CASE", board.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right, Coral,
+            new Vector2(18f, -18f), new Vector2(456f, 28f));
+
+        RelationLine(board.rectTransform, new Vector2(130f, -182f), new Vector2(246f, -128f), Coral);
+        RelationLine(board.rectTransform, new Vector2(246f, -128f), new Vector2(366f, -188f), Coral);
+        RelationLine(board.rectTransform, new Vector2(246f, -128f), new Vector2(246f, -286f), Lavender);
+        RelationLine(board.rectTransform, new Vector2(246f, -286f), new Vector2(366f, -346f), Mint);
+        QuestCaseNode(board.rectTransform, "Yui", "Y", new Vector2(88f, -146f), Coral);
+        QuestCaseNode(board.rectTransform, "ReRe", "R", new Vector2(204f, -94f), Lavender);
+        QuestCaseNode(board.rectTransform, "OJI", "O", new Vector2(324f, -154f), Coral);
+        QuestCaseNode(board.rectTransform, "MAP", "M", new Vector2(204f, -252f), Mint);
+        QuestCaseNode(board.rectTransform, "?", "?", new Vector2(324f, -312f), new Color(0.60f, 0.58f, 0.72f, 1f));
+        var note = PixelPanel(board.rectTransform, "CaseNote", new Vector2(18f, -432f), new Vector2(456f, 74f), new Color(0.96f, 0.94f, 0.82f, 1f));
+        TextBox("ReRe is connecting the clues...", note.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+            new Vector2(14f, -20f), new Vector2(428f, 34f));
+
+        var action = PixelPanel(parent, "QuestCaseAction", new Vector2(852f, -132f), new Vector2(246f, 554f), new Color(0.98f, 0.86f, 0.90f, 1f));
+        TextBox("HINT", action.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(16f, -16f), new Vector2(214f, 32f));
+        var hint = PixelPanel(action.rectTransform, "CaseHint", new Vector2(16f, -62f), new Vector2(214f, 126f), new Color(0.70f, 0.92f, 0.89f, 1f));
+        TextBox("The clue is near\nthe next route.", hint.rectTransform, 16f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+            new Vector2(12f, -28f), new Vector2(190f, 56f));
+        TextBox("RELATED", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -224f), new Vector2(210f, 22f));
+        QuestCharacterChip(action.rectTransform, "Yui", "Y", new Vector2(18f, -260f), Coral);
+        QuestCharacterChip(action.rectTransform, "OJI", "O", new Vector2(88f, -260f), Yellow);
+        TextBox("REWARD", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -352f), new Vector2(210f, 22f));
+        var go = ButtonRoot("CaseGoToAreaButton", action.rectTransform, Mint);
+        SetRect(go.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(16f, -416f), new Vector2(-32f, 60f));
+        PixelBorder(go.GetComponent<RectTransform>(), "GoFrame", Ink, 3f);
+        Text("GO?", go.GetComponent<RectTransform>(), 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
     }
 
     private static RectTransform BuildMapPage(RectTransform parent)
     {
         var page = RectRoot("PageMap", parent);
         Stretch(page, Vector2.zero, Vector2.zero);
-        AddHeader(page, "Map", "flat area selector");
+        AddHeader(page, "MAP", "day / night city guide");
 
-        var map = Panel(page, "FlatCityMap", new Vector2(32f, -126f), new Vector2(690f, 480f), new Color(0.87f, 0.96f, 0.92f, 1f));
-        Road(map.rectTransform, new Vector2(42f, -210f), new Vector2(600f, 52f));
-        Road(map.rectTransform, new Vector2(284f, -46f), new Vector2(58f, 400f));
-        MapZone(map.rectTransform, "HomeArea", new Vector2(74f, -70f), new Vector2(160f, 110f), Coral, true);
-        MapZone(map.rectTransform, "OfficeArea", new Vector2(382f, -80f), new Vector2(210f, 130f), Cyan, false);
-        MapZone(map.rectTransform, "LibraryArea", new Vector2(72f, -304f), new Vector2(190f, 118f), Lavender, false);
-        MapZone(map.rectTransform, "ShoppingArea", new Vector2(394f, -304f), new Vector2(230f, 118f), Yellow, false);
-        MapZone(map.rectTransform, "LockedArea", new Vector2(520f, -210f), new Vector2(110f, 72f), new Color(0.62f, 0.62f, 0.62f, 1f), false);
+        var shortcuts = new Button[6];
+        var shortcutLabels = new[] { "H", "D", "I", "C", "Q", "M" };
+        var shortcutColors = new[] { Cream, Coral, Mint, Lavender, Yellow, Cyan };
+        for (var i = 0; i < shortcuts.Length; i++)
+        {
+            shortcuts[i] = QuestTabButton(page, "MapShortcut" + i, shortcutLabels[i], new Vector2(30f + i * 48f, -72f), new Vector2(40f, 38f), shortcutColors[i]);
+        }
 
-        var detail = Panel(page, "SelectedAreaDetail", new Vector2(754f, -126f), new Vector2(344f, 480f), new Color(1f, 0.91f, 0.84f, 1f));
-        AddDetailBars(detail.rectTransform, 6);
-        SmallCard(detail.rectTransform, "VisitAreaButton", new Vector2(24f, -384f), new Vector2(296f, 62f), Mint);
+        var mapFrame = PixelPanel(page, "IsometricMapFrame", new Vector2(32f, -120f), new Vector2(756f, 568f), new Color(0.80f, 0.90f, 0.92f, 1f));
+        var dayMap = RawImageRoot("DayMapArtwork", mapFrame.rectTransform, MapDayConceptPath, new Rect(0.122f, 0.174f, 0.59f, 0.65f));
+        Stretch(dayMap.rectTransform, new Vector2(5f, 5f), new Vector2(-5f, -5f));
+        var nightMap = RawImageRoot("NightMapArtwork", mapFrame.rectTransform, MapNightConceptPath, new Rect(0.129f, 0.188f, 0.55f, 0.628f));
+        Stretch(nightMap.rectTransform, new Vector2(5f, 5f), new Vector2(-5f, -5f));
+        nightMap.gameObject.SetActive(false);
+
+        var timeBadge = PixelPanel(mapFrame.rectTransform, "TimeBadge", new Vector2(14f, -14f), new Vector2(116f, 36f), new Color(0.16f, 0.15f, 0.34f, 0.92f));
+        var timeText = Text("DAY", timeBadge.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Center, Cream);
+        timeText.name = "DayNightLabel";
+
+        TextBox("SAFETY", mapFrame.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Right, Cream,
+            new Vector2(484f, -16f), new Vector2(86f, 28f));
+        var safety = SliderRoot("MapSafetySlider", mapFrame.rectTransform, new Vector2(574f, -18f), new Vector2(164f, 24f));
+
+        var zoneNames = new[] { "STATION", "LIBRARY", "OFFICE", "ENTERTAINMENT", "PARK", "HOTEL" };
+        var zonePositions = new[]
+        {
+            new Vector2(42f, -86f), new Vector2(272f, -72f), new Vector2(510f, -86f),
+            new Vector2(56f, -322f), new Vector2(326f, -286f), new Vector2(520f, -360f)
+        };
+        var zoneSizes = new[]
+        {
+            new Vector2(180f, 116f), new Vector2(176f, 108f), new Vector2(190f, 126f),
+            new Vector2(214f, 142f), new Vector2(170f, 116f), new Vector2(204f, 150f)
+        };
+        var locationButtons = new Button[zoneNames.Length];
+        var locationImages = new Image[zoneNames.Length];
+        for (var i = 0; i < zoneNames.Length; i++)
+        {
+            var zone = Panel(mapFrame.rectTransform, "MapLocation" + i, zonePositions[i], zoneSizes[i], new Color(1f, 1f, 1f, i == 0 ? 0.34f : 0.08f));
+            locationButtons[i] = EnsureButton(zone);
+            locationImages[i] = zone;
+            PixelBorder(zone.rectTransform, "LocationFrame", i == 0 ? Coral : new Color(1f, 1f, 1f, 0.28f), i == 0 ? 4f : 2f);
+            var label = PixelPanel(zone.rectTransform, "Label", new Vector2(10f, -zoneSizes[i].y + 38f), new Vector2(zoneSizes[i].x - 20f, 30f), new Color(0.98f, 0.96f, 0.88f, 0.96f));
+            Text(zoneNames[i], label.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        }
+
+        var detail = PixelPanel(page, "MapLocationDetail", new Vector2(808f, -120f), new Vector2(290f, 568f), new Color(0.98f, 0.94f, 0.88f, 1f));
+        var detailTitle = TextBox("STATION", detail.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(16f, -16f), new Vector2(258f, 38f));
+        var rere = PixelPanel(detail.rectTransform, "ReReHint", new Vector2(16f, -72f), new Vector2(258f, 92f), new Color(0.90f, 0.84f, 0.98f, 1f));
+        TextBox("ReRe HINT", rere.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(12f, -10f), new Vector2(234f, 20f));
+        var hintText = TextBox("The trains are calm right now.", rere.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
+            new Vector2(12f, -34f), new Vector2(234f, 48f));
+        var descriptionText = TextBox("A bright gateway to the city.", detail.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
+            new Vector2(18f, -180f), new Vector2(254f, 42f));
+
+        TextBox("RELATED ITEM", detail.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -236f), new Vector2(254f, 20f));
+        var itemCard = PixelPanel(detail.rectTransform, "RelatedItemCard", new Vector2(18f, -264f), new Vector2(254f, 54f), new Color(1f, 0.91f, 0.69f, 1f));
+        var itemText = Text("City Pass", itemCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+
+        TextBox("HERE NOW", detail.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -332f), new Vector2(254f, 20f));
+        var characterButtons = new Button[3];
+        for (var i = 0; i < characterButtons.Length; i++)
+        {
+            characterButtons[i] = LocalPixelButton(detail.rectTransform, "MapCharacter" + i, i == 0 ? "R" : i == 1 ? "Y" : "O",
+                new Vector2(20f + i * 82f, -364f), new Vector2(66f, 58f), i == 0 ? Lavender : i == 1 ? Coral : Yellow);
+        }
+        var characterText = TextBox("ReRe / Yui / OJI", detail.rectTransform, 12f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+            new Vector2(18f, -430f), new Vector2(254f, 20f));
+        var goButton = LocalPixelButton(detail.rectTransform, "MapGoButton", "GO?  YES", new Vector2(18f, -470f), new Vector2(254f, 72f), Mint);
+
+        var controller = page.gameObject.AddComponent<MapMenuController>();
+        var so = new SerializedObject(controller);
+        ConfigureMapLocations(so);
+        SetQuestObjectArray(so, "locationButtons", locationButtons);
+        SetQuestObjectArray(so, "locationImages", locationImages);
+        SetQuestObjectArray(so, "goButtons", new Object[] { goButton });
+        SetObject(so, "detailNameText", detailTitle);
+        SetObject(so, "detailDescriptionText", descriptionText);
+        SetObject(so, "rereHintText", hintText);
+        SetObject(so, "relatedItemText", itemText);
+        SetObject(so, "relatedCharacterText", characterText);
+        SetObject(so, "safetySlider", safety);
+        SetObject(so, "safetyFillImage", safety.fillRect.GetComponent<Image>());
+        SetObject(so, "dayNightLabelText", timeText);
+        SetObject(so, "dayMapRoot", dayMap.gameObject);
+        SetObject(so, "nightMapRoot", nightMap.gameObject);
+        SetQuestObjectArray(so, "relatedCharacterButtons", characterButtons);
+        SetIntArray(so, "relatedCharacterLocationIndexes", new[] { 0, 0, 0 });
+        SetIntArray(so, "goButtonLocationIndexes", new[] { 0 });
+        SetQuestObjectArray(so, "pageNavigationButtons", shortcuts);
+        so.FindProperty("fallbackHour").intValue = 12;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(controller);
         return page;
     }
 
@@ -1323,7 +1613,7 @@ public static class MenuRootV2Builder
         var slot = ImageRoot("BagSlot" + index, parent, new Color(1f, 0.98f, 0.88f, 1f));
         SetRect(slot.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), pos, size);
         PixelBorder(slot.rectTransform, "Frame", Ink, 3f);
-        slot.raycastTarget = false;
+        slot.raycastTarget = true;
 
         var icon = ImageRoot("BagSlotIcon" + index, slot.rectTransform, new Color(1f, 1f, 1f, 0.18f));
         icon.raycastTarget = false;
@@ -1345,31 +1635,27 @@ public static class MenuRootV2Builder
             DressCenter(new Rect(104f, 34f, 1464f, 816f), artworkWidth, artworkHeight), DressSize(new Rect(104f, 34f, 1464f, 816f), artworkWidth, artworkHeight));
         PixelBorder(backdrop.rectTransform, "ZipBackdropFrame", new Color(0.10f, 0.08f, 0.14f, 1f), 5f);
 
-        var openBag = ImageRoot("OpenBagImage", overlay, new Color(0.68f, 0.52f, 0.86f, 1f));
+        var openBag = ImageRoot("OpenBagImage", overlay, Color.white);
+        openBag.sprite = LoadSprite(ItemBagOpenSpritePath);
+        openBag.preserveAspect = true;
         openBag.raycastTarget = false;
         SetRect(openBag.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0f, -12f), new Vector2(640f, 340f));
-        PixelBorder(openBag.rectTransform, "OpenBagFrame", new Color(0.96f, 0.84f, 0.36f, 1f), 8f);
-        var bagPocket = ImageRoot("OpenBagPocket", openBag.rectTransform, new Color(0.38f, 0.30f, 0.55f, 1f));
-        bagPocket.raycastTarget = false;
-        SetRect(bagPocket.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -18f), new Vector2(520f, 216f));
-        PixelBorder(bagPocket.rectTransform, "PocketFrame", Ink, 4f);
-        Text("OPEN BAG", openBag.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Top, Cream, new Vector2(0f, 18f), new Vector2(0f, -282f));
+            new Vector2(-10f, -12f), new Vector2(680f, 560f));
 
-        var closedBag = ImageRoot("ClosedBagImage", overlay, new Color(0.56f, 0.42f, 0.76f, 1f));
+        var closedBag = ImageRoot("ClosedBagImage", overlay, Color.white);
+        closedBag.sprite = LoadSprite(ItemBagClosedSpritePath);
+        closedBag.preserveAspect = true;
         closedBag.raycastTarget = false;
         SetRect(closedBag.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0f, -12f), new Vector2(560f, 270f));
-        PixelBorder(closedBag.rectTransform, "ClosedBagFrame", new Color(0.96f, 0.84f, 0.36f, 1f), 8f);
-        Text("CLOSED BAG", closedBag.rectTransform, 30f, FontStyles.Bold, TextAlignmentOptions.Center, Cream);
+            new Vector2(-10f, -12f), new Vector2(680f, 560f));
         closedBag.gameObject.SetActive(false);
 
         var itemPositions = new[]
         {
-            new Vector2(-190f, 36f),
-            new Vector2(-64f, 42f),
-            new Vector2(66f, 40f),
-            new Vector2(190f, 34f)
+            new Vector2(-188f, 24f),
+            new Vector2(-62f, 30f),
+            new Vector2(64f, 28f),
+            new Vector2(188f, 22f)
         };
         for (var i = 0; i < itemPositions.Length; i++)
         {
@@ -1381,20 +1667,22 @@ public static class MenuRootV2Builder
             item.gameObject.SetActive(false);
         }
 
-        var hook = ImageRoot("ZipperHookImage", overlay, Yellow);
+        var hook = ImageRoot("ZipperHookImage", overlay, Color.white);
+        hook.sprite = LoadSprite(ItemBagHookSpritePath);
+        hook.preserveAspect = true;
         hook.raycastTarget = false;
         SetRect(hook.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(-304f, 140f), new Vector2(42f, 58f));
-        PixelBorder(hook.rectTransform, "HookFrame", Ink, 3f);
+            new Vector2(294f, 218f), new Vector2(76f, 96f));
 
         var rere = ImageRoot("ZipperReReImage", overlay, Color.white);
-        rere.sprite = LoadSprite(TopReReSpritePath);
+        var rereFrames = LoadSpritesFromFolder(ItemBagReReZipFolder);
+        rere.sprite = rereFrames.Length > 0 ? rereFrames[0] : LoadSprite(TopReReSpritePath);
         rere.preserveAspect = true;
         rere.raycastTarget = false;
         SetRect(rere.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(-304f, 54f), new Vector2(128f, 128f));
+            new Vector2(294f, 132f), new Vector2(230f, 230f));
 
-        var message = Text("Packing...", overlay, 30f, FontStyles.Bold, TextAlignmentOptions.Center, Cream, new Vector2(0f, 130f), new Vector2(0f, -820f));
+        var message = Text("Packing...", overlay, 30f, FontStyles.Bold, TextAlignmentOptions.Center, Cream, new Vector2(0f, 270f), new Vector2(0f, -680f));
         message.name = "ZipMessageText";
 
         overlay.gameObject.SetActive(false);
@@ -1520,6 +1808,61 @@ public static class MenuRootV2Builder
         SetRect(progress.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(84f, 12f), new Vector2(320f - index * 30f, 10f));
     }
 
+    private static Button QuestTabButton(RectTransform parent, string name, string label, Vector2 pos, Vector2 size, Color color)
+    {
+        var tab = ButtonRoot(name, parent, color);
+        SetRect(tab.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), pos, size);
+        PixelBorder(tab.GetComponent<RectTransform>(), "TabFrame", Ink, 3f);
+        Text(label, tab.GetComponent<RectTransform>(), 17f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        return tab;
+    }
+
+    private static Button QuestInboxCard(RectTransform parent, int index, string title, string mark, Color color)
+    {
+        var card = Panel(parent, "QuestCardInbox" + index, new Vector2(12f, -56f - index * 112f), new Vector2(270f, 94f), index == 0 ? new Color(1f, 0.88f, 0.88f, 1f) : Cream);
+        var button = EnsureButton(card);
+        PixelBorder(card.rectTransform, "CardFrame", index == 0 ? Coral : Ink, 3f);
+        var icon = Circle(card.rectTransform, "QuestIcon", new Vector2(14f, -18f), 54f, color);
+        Text(mark, icon.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        TextBox(title, card.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(82f, -18f), new Vector2(166f, 24f));
+        AddMiniBars(card.rectTransform, new Vector2(84f, -54f), 2);
+        TextBox(index == 0 ? "NEW" : (index + 1) + "/6", card.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right,
+            index == 0 ? Coral : Ink, new Vector2(82f, -54f), new Vector2(166f, 22f));
+        return button;
+    }
+
+    private static void QuestRouteStrip(RectTransform parent, Vector2 pos, Vector2 size)
+    {
+        var route = PixelPanel(parent, "QuestRoutePanel", pos, size, new Color(0.86f, 0.93f, 0.99f, 1f));
+        TextBox("ROUTE", route.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(16f, -12f), new Vector2(258f, 22f));
+        RelationLine(route.rectTransform, new Vector2(92f, -76f), new Vector2(194f, -76f), Lavender);
+        RelationLine(route.rectTransform, new Vector2(194f, -76f), new Vector2(296f, -76f), Lavender);
+        RelationLine(route.rectTransform, new Vector2(296f, -76f), new Vector2(398f, -76f), Lavender);
+        QuestCaseNode(route.rectTransform, "Start", "★", new Vector2(50f, -50f), Coral);
+        QuestCaseNode(route.rectTransform, "Yui", "Y", new Vector2(152f, -50f), Lavender);
+        QuestCaseNode(route.rectTransform, "Map", "M", new Vector2(254f, -50f), Mint);
+        QuestCaseNode(route.rectTransform, "Goal", "!", new Vector2(356f, -50f), Yellow);
+    }
+
+    private static void QuestCharacterChip(RectTransform parent, string name, string mark, Vector2 pos, Color color)
+    {
+        var chip = Panel(parent, "Related" + name, pos, new Vector2(56f, 58f), new Color(1f, 1f, 1f, 0.42f));
+        var icon = Circle(chip.rectTransform, "Icon", new Vector2(8f, -6f), 38f, color);
+        Text(mark, icon.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        TextBox(name, chip.rectTransform, 10f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(4f, -44f), new Vector2(48f, 16f));
+    }
+
+    private static void QuestCaseNode(RectTransform parent, string name, string mark, Vector2 pos, Color color)
+    {
+        var node = Panel(parent, "QuestNode" + name, pos, new Vector2(68f, 68f), new Color(1f, 1f, 1f, 0.74f));
+        PixelBorder(node.rectTransform, "NodeFrame", Ink, 3f);
+        var icon = Circle(node.rectTransform, "NodeIcon", new Vector2(8f, -8f), 50f, color);
+        Text(mark, icon.rectTransform, 18f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+    }
+
     private static void MapZone(RectTransform parent, string name, Vector2 pos, Vector2 size, Color color, bool selected)
     {
         var zone = Panel(parent, name, pos, size, selected ? color : new Color(color.r, color.g, color.b, 0.55f));
@@ -1527,6 +1870,89 @@ public static class MenuRootV2Builder
         var pin = Circle(zone.rectTransform, "Pin", new Vector2(size.x * 0.5f - 18f, -size.y * 0.5f + 18f), 36f, selected ? Coral : Cream);
         pin.raycastTarget = false;
         Text(selected ? "!" : "?", pin.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+    }
+
+    private static RawImage RawImageRoot(string name, RectTransform parent, string texturePath, Rect uvRect)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
+        go.transform.SetParent(parent, false);
+        var image = go.GetComponent<RawImage>();
+        image.texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+        image.uvRect = uvRect;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static Slider SliderRoot(string name, RectTransform parent, Vector2 pos, Vector2 size)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(Slider));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        SetRect(rect, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), pos, size);
+        var background = ImageRoot("Background", rect, new Color(0.14f, 0.13f, 0.28f, 0.84f));
+        Stretch(background.rectTransform, Vector2.zero, Vector2.zero);
+        PixelBorder(background.rectTransform, "Frame", Cream, 2f);
+        var fillArea = RectRoot("Fill Area", rect);
+        Stretch(fillArea, new Vector2(4f, 4f), new Vector2(-4f, -4f));
+        var fill = ImageRoot("Fill", fillArea, Mint);
+        Stretch(fill.rectTransform, Vector2.zero, Vector2.zero);
+        fill.type = Image.Type.Filled;
+        fill.fillMethod = Image.FillMethod.Horizontal;
+        var slider = go.GetComponent<Slider>();
+        slider.fillRect = fill.rectTransform;
+        slider.targetGraphic = fill;
+        slider.interactable = false;
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = 0.82f;
+        return slider;
+    }
+
+    private static void ConfigureMapLocations(SerializedObject so)
+    {
+        var names = new[] { "STATION", "LIBRARY", "OFFICE", "ENTERTAINMENT", "PARK", "HOTEL" };
+        var descriptions = new[]
+        {
+            "A bright gateway to the city.", "A quiet place full of useful clues.", "Busy towers where OJI gather.",
+            "Neon fun and unexpected meetings.", "A calm green break in the route.", "A polished district that wakes at night."
+        };
+        var hints = new[]
+        {
+            "The trains are calm right now.", "Check the return desk for a new note.", "Lunch time is the safest window.",
+            "Bring something small for the arcade.", "Someone is waiting near the fountain.", "The lobby changes after sunset."
+        };
+        var safety = new[] { 0.86f, 0.94f, 0.68f, 0.56f, 0.91f, 0.74f };
+        var items = new[] { "City Pass", "Library Card", "Office Key", "Arcade Coin", "Picnic Set", "Room Key" };
+        var characters = new[] { "ReRe / Yui / OJI", "Yui / Librarian", "OJI / ReRe", "Mina / ReRe", "Yui / Cat", "ReRe / Concierge" };
+        var dayColors = new[] { Cyan, Lavender, new Color(0.62f, 0.82f, 0.94f, 1f), Coral, Mint, Yellow };
+        var nightColors = new[]
+        {
+            new Color(0.38f, 0.48f, 0.86f, 1f), new Color(0.52f, 0.43f, 0.78f, 1f), new Color(0.34f, 0.48f, 0.74f, 1f),
+            new Color(0.88f, 0.34f, 0.76f, 1f), new Color(0.30f, 0.66f, 0.58f, 1f), new Color(0.92f, 0.48f, 0.68f, 1f)
+        };
+        var property = so.FindProperty("locations");
+        property.arraySize = names.Length;
+        for (var i = 0; i < names.Length; i++)
+        {
+            var item = property.GetArrayElementAtIndex(i);
+            item.FindPropertyRelative("baseName").stringValue = names[i];
+            item.FindPropertyRelative("description").stringValue = descriptions[i];
+            item.FindPropertyRelative("rereHint").stringValue = hints[i];
+            item.FindPropertyRelative("safety").floatValue = safety[i];
+            item.FindPropertyRelative("relatedItemName").stringValue = items[i];
+            item.FindPropertyRelative("relatedCharacterName").stringValue = characters[i];
+            item.FindPropertyRelative("dayColor").colorValue = dayColors[i];
+            item.FindPropertyRelative("nightColor").colorValue = nightColors[i];
+        }
+    }
+
+    private static void SetIntArray(SerializedObject so, string name, int[] values)
+    {
+        var property = so.FindProperty(name);
+        if (property == null) return;
+        property.arraySize = values.Length;
+        for (var i = 0; i < values.Length; i++)
+            property.GetArrayElementAtIndex(i).intValue = values[i];
     }
 
     private static void Road(RectTransform parent, Vector2 pos, Vector2 size)
@@ -1992,6 +2418,19 @@ public static class MenuRootV2Builder
                 sprites.Add(sprite);
         }
 
+        return sprites.ToArray();
+    }
+
+    private static Sprite[] LoadSpritesFromSheet(string path)
+    {
+        var sprites = new System.Collections.Generic.List<Sprite>();
+        foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+        {
+            if (asset is Sprite sprite)
+                sprites.Add(sprite);
+        }
+
+        sprites.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
         return sprites.ToArray();
     }
 

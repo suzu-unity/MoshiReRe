@@ -1,0 +1,611 @@
+fileFormatVersion: 2
+guid: 2fd8efd408ca0d2499b1fde44ec7a921
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3428501354450905111
+    second: moshire_bag_zipper_parts_sheet_0
+  - first:
+      213: -7128436581234300653
+    second: moshire_bag_zipper_parts_sheet_1
+  - first:
+      213: 4536388022847054937
+    second: moshire_bag_zipper_parts_sheet_2
+  - first:
+      213: 8420638152663362568
+    second: moshire_bag_zipper_parts_sheet_3
+  - first:
+      213: -1626645825997224586
+    second: moshire_bag_zipper_parts_sheet_4
+  - first:
+      213: 5247402839174133054
+    second: moshire_bag_zipper_parts_sheet_5
+  - first:
+      213: 1677176390442679948
+    second: moshire_bag_zipper_parts_sheet_6
+  - first:
+      213: 610451396363243970
+    second: moshire_bag_zipper_parts_sheet_7
+  - first:
+      213: -7318160189380567504
+    second: moshire_bag_zipper_parts_sheet_8
+  - first:
+      213: 8241352159108955605
+    second: moshire_bag_zipper_parts_sheet_9
+  - first:
+      213: 5070062034996251691
+    second: moshire_bag_zipper_parts_sheet_10
+  - first:
+      213: 4736671479544944800
+    second: moshire_bag_zipper_parts_sheet_11
+  - first:
+      213: -2134563378943315489
+    second: moshire_bag_zipper_parts_sheet_12
+  - first:
+      213: 2008267779029128149
+    second: moshire_bag_zipper_parts_sheet_13
+  - first:
+      213: -1472466106581944126
+    second: moshire_bag_zipper_parts_sheet_14
+  - first:
+      213: -6011340223392055074
+    second: moshire_bag_zipper_parts_sheet_15
+  - first:
+      213: -6743495152020862850
+    second: moshire_bag_zipper_parts_sheet_16
+  - first:
+      213: -4044797221086207241
+    second: moshire_bag_zipper_parts_sheet_17
+  - first:
+      213: -6513569167065927903
+    second: moshire_bag_zipper_parts_sheet_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_0
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 555
+        width: 168
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e71200ee248b60d0800000000000000
+      internalID: -3428501354450905111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_1
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 556
+        width: 99
+        height: 229
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31921ab82b4b21d90800000000000000
+      internalID: -7128436581234300653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_2
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 626
+        width: 384
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 954a2293fdc74fe30800000000000000
+      internalID: 4536388022847054937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_3
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 585
+        width: 372
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80ce99f09cd1cd470800000000000000
+      internalID: 8420638152663362568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_4
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 170
+        width: 330
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67540165d3efc69e0800000000000000
+      internalID: -1626645825997224586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_5
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 167
+        width: 318
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e35b95e841582d840800000000000000
+      internalID: 5247402839174133054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_6
+      rect:
+        serializedVersion: 2
+        x: 1005
+        y: 299
+        width: 39
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8ef1028a07864710800000000000000
+      internalID: 1677176390442679948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1127
+        y: 299
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c15fd88f42c87800800000000000000
+      internalID: 610451396363243970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_8
+      rect:
+        serializedVersion: 2
+        x: 1458
+        y: 321
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03ed09eb41ca07a90800000000000000
+      internalID: -7318160189380567504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_9
+      rect:
+        serializedVersion: 2
+        x: 1359
+        y: 289
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dd7698cf1a2f5270800000000000000
+      internalID: 8241352159108955605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_10
+      rect:
+        serializedVersion: 2
+        x: 1375
+        y: 219
+        width: 87
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2c4529fe8a7c5640800000000000000
+      internalID: 5070062034996251691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_11
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 306
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a8100c5d990cb140800000000000000
+      internalID: 4736671479544944800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_12
+      rect:
+        serializedVersion: 2
+        x: 1472
+        y: 306
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd1b68f8ae18062e0800000000000000
+      internalID: -2134563378943315489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_13
+      rect:
+        serializedVersion: 2
+        x: 1046
+        y: 231
+        width: 79
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d3d4ee97eccedb10800000000000000
+      internalID: 2008267779029128149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_14
+      rect:
+        serializedVersion: 2
+        x: 1458
+        y: 289
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c87165a0efb09be0800000000000000
+      internalID: -1472466106581944126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_15
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 220
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed003b09aed639ca0800000000000000
+      internalID: -6011340223392055074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_16
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 198
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e784a3743ea4a62a0800000000000000
+      internalID: -6743495152020862850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_17
+      rect:
+        serializedVersion: 2
+        x: 1346
+        y: 195
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f26ba09b5efdd7c0800000000000000
+      internalID: -4044797221086207241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moshire_bag_zipper_parts_sheet_18
+      rect:
+        serializedVersion: 2
+        x: 1470
+        y: 211
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12f29195a572b95a0800000000000000
+      internalID: -6513569167065927903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      moshire_bag_zipper_parts_sheet_0: -3428501354450905111
+      moshire_bag_zipper_parts_sheet_1: -7128436581234300653
+      moshire_bag_zipper_parts_sheet_10: 5070062034996251691
+      moshire_bag_zipper_parts_sheet_11: 4736671479544944800
+      moshire_bag_zipper_parts_sheet_12: -2134563378943315489
+      moshire_bag_zipper_parts_sheet_13: 2008267779029128149
+      moshire_bag_zipper_parts_sheet_14: -1472466106581944126
+      moshire_bag_zipper_parts_sheet_15: -6011340223392055074
+      moshire_bag_zipper_parts_sheet_16: -6743495152020862850
+      moshire_bag_zipper_parts_sheet_17: -4044797221086207241
+      moshire_bag_zipper_parts_sheet_18: -6513569167065927903
+      moshire_bag_zipper_parts_sheet_2: 4536388022847054937
+      moshire_bag_zipper_parts_sheet_3: 8420638152663362568
+      moshire_bag_zipper_parts_sheet_4: -1626645825997224586
+      moshire_bag_zipper_parts_sheet_5: 5247402839174133054
+      moshire_bag_zipper_parts_sheet_6: 1677176390442679948
+      moshire_bag_zipper_parts_sheet_7: 610451396363243970
+      moshire_bag_zipper_parts_sheet_8: -7318160189380567504
+      moshire_bag_zipper_parts_sheet_9: 8241352159108955605
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
