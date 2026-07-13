@@ -1,0 +1,11 @@
+; Explicit character motion examples. The actor must already exist in Naninovel.
+@charMotion id:Wanabi type:shock
+Wanabi: びっくりした。
+@charMotion id:Wanabi type:nervous
+Wanabi: えっと、その……。
+@charMotion id:Wanabi type:pressure
+Wanabi: ここは譲れない。
+@charMotion id:Wanabi type:withdraw
+Wanabi: ごめん、少し離れるね。
+@charMotion id:Wanabi type:awkwardGap
+Wanabi: ……。
