@@ -1,0 +1,12 @@
+; BeatController must be present and assigned a BeatLibrary.
+@beat type:awkward
+ReRe: This line gets a small pause before the next command.
+
+@beat type:shock
+ReRe: The shock preset can hide the text printer and shake the camera.
+
+@beat type:realize
+ReRe: A warm flash can underline a realization.
+
+@beat type:punchline
+ReRe: The punchline preset waits for Continue when configured to do so.
