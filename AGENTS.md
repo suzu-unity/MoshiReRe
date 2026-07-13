@@ -308,6 +308,37 @@ git diff --stat:
 - For larger work, split by independent system boundaries and perform a final
   integration review in Sol before reporting completion.
 
+## Token-Efficient Workflow
+
+The following rules are mandatory for reducing parent-agent and sub-agent token
+usage while preserving implementation quality.
+
+1. Split broad requests into explicit units such as shared infrastructure, one
+   page or gameplay system, asset generation, and Unity verification. Do not
+   combine unrelated implementation units in one sub-agent assignment.
+2. Do not fork full conversation history into a sub-agent by default. Provide
+   only the objective, acceptance criteria, owned files, required references,
+   and verification commands needed for that assignment.
+3. Restrict inspection to the assigned methods, files, and directly related
+   dependencies. Do not read an entire builder, prefab, or subsystem when a
+   targeted search and a narrow line range are sufficient.
+4. Batch compatible code changes and perform Unity refresh, compilation,
+   prefab rebuilding, and scene regeneration once per coherent change set
+   instead of after every small edit.
+5. Visually verify the shared component once and then capture only pages whose
+   unique layout or behavior changed. Do not screenshot every page when the
+   tested shared component is identical.
+6. Sub-agents must return only the compressed completion report defined above.
+   Do not return internal reasoning, copied source files, routine progress, or
+   long explanations unless escalation is required.
+7. Do not inspect full generated prefab or scene diffs. Verify generated output
+   with targeted object names, serialized field names, `rg`, Unity hierarchy
+   queries, and console results.
+8. Separate asset generation, code implementation, and Unity integration into
+   independent assignments when practical. The generating agent should save
+   the artifact and return a path; the integrating agent should not regenerate
+   the same asset.
+
 ---
 
 End of document.
