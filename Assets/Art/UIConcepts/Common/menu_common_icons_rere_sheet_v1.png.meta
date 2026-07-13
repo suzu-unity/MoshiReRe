@@ -1,0 +1,429 @@
+fileFormatVersion: 2
+guid: 8bbe2bd89e2f1ab4b81a6e741f6805d7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6983679289985403411
+    second: menu_common_icons_rere_sheet_v1_0
+  - first:
+      213: -308571661623571696
+    second: menu_common_icons_rere_sheet_v1_1
+  - first:
+      213: -4793125201626035604
+    second: menu_common_icons_rere_sheet_v1_2
+  - first:
+      213: 5715859458226929651
+    second: menu_common_icons_rere_sheet_v1_3
+  - first:
+      213: -1422626378477073934
+    second: menu_common_icons_rere_sheet_v1_4
+  - first:
+      213: -2767600060600292435
+    second: menu_common_icons_rere_sheet_v1_5
+  - first:
+      213: 6557044951429023445
+    second: menu_common_icons_rere_sheet_v1_6
+  - first:
+      213: -9209459324318669602
+    second: menu_common_icons_rere_sheet_v1_7
+  - first:
+      213: -8726791243340872042
+    second: menu_common_icons_rere_sheet_v1_8
+  - first:
+      213: -5626287652638367061
+    second: menu_common_icons_rere_sheet_v1_9
+  - first:
+      213: -5113164914631342447
+    second: menu_common_icons_rere_sheet_v1_10
+  - first:
+      213: 659109696704427993
+    second: menu_common_icons_rere_sheet_v1_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_0
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 763
+        width: 224
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de5fa27dfacf41f90800000000000000
+      internalID: -6983679289985403411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_1
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 759
+        width: 213
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01bcc2965bbb7bbf0800000000000000
+      internalID: -308571661623571696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_2
+      rect:
+        serializedVersion: 2
+        x: 794
+        y: 754
+        width: 211
+        height: 249
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6a8b1136066b7db0800000000000000
+      internalID: -4793125201626035604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_3
+      rect:
+        serializedVersion: 2
+        x: 1118
+        y: 767
+        width: 251
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ff3ca1b4efc25f40800000000000000
+      internalID: 5715859458226929651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_4
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 437
+        width: 182
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f906ce98d0d14ce0800000000000000
+      internalID: -1422626378477073934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_5
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 442
+        width: 221
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dabe19388628799d0800000000000000
+      internalID: -2767600060600292435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_6
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 446
+        width: 205
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d6023284ad4ffa50800000000000000
+      internalID: 6557044951429023445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_7
+      rect:
+        serializedVersion: 2
+        x: 1134
+        y: 442
+        width: 214
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed4a390d98d613080800000000000000
+      internalID: -9209459324318669602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_8
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 104
+        width: 252
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6968da7c99534e680800000000000000
+      internalID: -8726791243340872042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_9
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 103
+        width: 251
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba2e25470396be1b0800000000000000
+      internalID: -5626287652638367061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_10
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 102
+        width: 253
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1968861d9936a09b0800000000000000
+      internalID: -5113164914631342447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: menu_common_icons_rere_sheet_v1_11
+      rect:
+        serializedVersion: 2
+        x: 1118
+        y: 103
+        width: 270
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d7351ce6c0a52900800000000000000
+      internalID: 659109696704427993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      menu_common_icons_rere_sheet_v1_0: -6983679289985403411
+      menu_common_icons_rere_sheet_v1_1: -308571661623571696
+      menu_common_icons_rere_sheet_v1_10: -5113164914631342447
+      menu_common_icons_rere_sheet_v1_11: 659109696704427993
+      menu_common_icons_rere_sheet_v1_2: -4793125201626035604
+      menu_common_icons_rere_sheet_v1_3: 5715859458226929651
+      menu_common_icons_rere_sheet_v1_4: -1422626378477073934
+      menu_common_icons_rere_sheet_v1_5: -2767600060600292435
+      menu_common_icons_rere_sheet_v1_6: 6557044951429023445
+      menu_common_icons_rere_sheet_v1_7: -9209459324318669602
+      menu_common_icons_rere_sheet_v1_8: -8726791243340872042
+      menu_common_icons_rere_sheet_v1_9: -5626287652638367061
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

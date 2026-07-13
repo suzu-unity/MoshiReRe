@@ -11,7 +11,8 @@ public static class MenuRootV2Builder
 {
     private const string PrefabPath = "Assets/NaninovelData/Resources/UI/MenuRootV2.prefab";
     private const string PreviewScenePath = "Assets/Scenes/MenuRootV2Preview.unity";
-    private const string TopArtworkPath = "Assets/Art/UIConcepts/menu_top_phone_alpha.png";
+    private const string TopArtworkPath = "Assets/Art/UIConcepts/menu_top_phone_unified_v2.png";
+    private const string CommonUiCropFolder = "Assets/Art/UIConcepts/Common/Cropped";
     private const string DressArtworkPath = "Assets/Art/UIConcepts/dress_room_phone_concept.png";
     private const string NeutralDressArtworkPath = "Assets/Art/UIConcepts/dress_room_phone_concept_neutral.png";
     private const string PixelFillSpritePath = "Assets/Art/UIConcepts/pixel_ui_fill.png";
@@ -175,11 +176,6 @@ public static class MenuRootV2Builder
         mapTileButton = TopHitbox(page, "MapTileHitbox", new Rect(904f, 438f, 540f, 322f));
         var saveButton = TopHitbox(page, "SaveTileHitbox", new Rect(250f, 610f, 348f, 150f));
         var settingsButton = TopHitbox(page, "SettingsTileHitbox", new Rect(614f, 610f, 276f, 150f));
-        var statusCover = PixelPanelAt(page, "ReReAiStatusTile", new Rect(665f, 205f, 388f, 216f), new Color(0.57f, 0.88f, 0.84f, 1f), 1675f, 943f);
-        Text("ReRe AI\nONLINE", statusCover.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
-            new Vector2(0f, 24f), new Vector2(0f, -24f));
-        TopColorPatch(page, "ItemBakedBadgeCover", new Rect(1392f, 201f, 50f, 46f), new Color(1f, 0.73f, 0.24f, 1f));
-        TopColorPatch(page, "QuestBakedBadgeCover", new Rect(836f, 431f, 48f, 46f), new Color(0.96f, 0.37f, 0.29f, 1f));
         AddDynamicNotificationBadge(itemsTileButton, "TopItemNotificationBadge");
         AddDynamicNotificationBadge(questTileButton, "TopQuestNotificationBadge");
         ConfigurePageNavigation(page.gameObject, null, null, null, null, null, null, saveButton, settingsButton);
@@ -235,15 +231,6 @@ public static class MenuRootV2Builder
         var centerY = artworkHeight * 0.5f - sourceRect.y - sourceRect.height * 0.5f;
         SetRect(rect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(centerX, centerY), sourceRect.size);
         return button;
-    }
-
-    private static Image TopColorPatch(RectTransform parent, string name, Rect sourceRect, Color color)
-    {
-        var image = ImageRoot(name, parent, color);
-        image.raycastTarget = false;
-        SetRect(image.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            DressCenter(sourceRect, 1675f, 943f), DressSize(sourceRect, 1675f, 943f));
-        return image;
     }
 
     private static RectTransform BuildDressArtworkPage(RectTransform parent, out Button homeButton, out Button dressButton,
@@ -782,7 +769,7 @@ public static class MenuRootV2Builder
         var rerePanel = PixelPanelAt(page, "ReReItemCommentPanel", new Rect(1270f, 220f, 260f, 300f), new Color(1f, 0.90f, 0.91f, 1f), artworkWidth, artworkHeight);
         TextBox("ReRe NOTE", rerePanel.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink, new Vector2(18f, -16f), new Vector2(224f, 32f));
         var rereFace = ImageRoot("ReReFacePreview", rerePanel.rectTransform, Color.white);
-        rereFace.sprite = LoadSprite(TopReReSpritePath);
+        rereFace.sprite = LoadSprite(CommonUiCropFolder + "/rere_guide.png");
         rereFace.preserveAspect = true;
         rereFace.raycastTarget = false;
         SetRect(rereFace.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-88f, -54f), new Vector2(70f, 70f));
@@ -908,7 +895,9 @@ public static class MenuRootV2Builder
         LocalPixelButton(detail.rectTransform, "GoAreaButton", "GO >", new Vector2(620f, -292f), new Vector2(120f, 48f), Lavender);
 
         var memo = PixelPanelAt(contactsPage, "ReReMemo", new Rect(760f, 660f, 700f, 112f), new Color(1f, 0.98f, 0.90f, 1f), artworkWidth, artworkHeight);
-        CircleAt(memo.rectTransform, "ReReFace", new Rect(20f, 18f, 76f, 76f), Lavender);
+        var memoFace = CircleAt(memo.rectTransform, "ReReFace", new Rect(20f, 18f, 76f, 76f), Color.white);
+        memoFace.sprite = LoadSprite(CommonUiCropFolder + "/rere_happy.png");
+        memoFace.preserveAspect = true;
         TextBox("ReRe COMMENT\nこの人はクエストに関係してそう。話しかけに行く？", memo.rectTransform, 20f, FontStyles.Bold,
             TextAlignmentOptions.TopLeft, new Color(0.32f, 0.25f, 0.45f, 1f), new Vector2(116f, -18f), new Vector2(548f, 74f));
 
@@ -1048,6 +1037,11 @@ public static class MenuRootV2Builder
             new Vector2(16f, -14f), new Vector2(94f, 26f));
         hintText = TextBox("ReRe knows a shortcut.", hint.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
             new Vector2(90f, -14f), new Vector2(348f, 26f));
+        var questReRe = ImageRoot("QuestReReIdea", hint.rectTransform, Color.white);
+        questReRe.sprite = LoadSprite(CommonUiCropFolder + "/rere_idea.png");
+        questReRe.preserveAspect = true;
+        questReRe.raycastTarget = false;
+        SetRect(questReRe.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-12f, 0f), new Vector2(54f, 54f));
         TextBox("›", hint.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Right, Ink,
             new Vector2(16f, -14f), new Vector2(424f, 26f));
 
@@ -1205,6 +1199,11 @@ public static class MenuRootV2Builder
             new Vector2(12f, -10f), new Vector2(234f, 20f));
         var hintText = TextBox("The trains are calm right now.", rere.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
             new Vector2(12f, -34f), new Vector2(234f, 48f));
+        var mapReRe = ImageRoot("MapReReGuide", rere.rectTransform, Color.white);
+        mapReRe.sprite = LoadSprite(CommonUiCropFolder + "/rere_worried.png");
+        mapReRe.preserveAspect = true;
+        mapReRe.raycastTarget = false;
+        SetRect(mapReRe.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-8f, 2f), new Vector2(62f, 62f));
         var descriptionText = TextBox("A bright gateway to the city.", detail.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
             new Vector2(18f, -180f), new Vector2(254f, 42f));
 
@@ -1277,7 +1276,8 @@ public static class MenuRootV2Builder
         var button = ButtonRoot(name, parent, color);
         SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(x, -8f), new Vector2(166f, 56f));
         PixelBorder(button.GetComponent<RectTransform>(), "Frame", Ink, 2f);
-        Text(label, button.GetComponent<RectTransform>(), 15f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        Text(label, button.GetComponent<RectTransform>(), 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink, new Vector2(44f, 0f), new Vector2(-4f, 0f));
+        AddNavigationIcon(button, name.Replace("Button", string.Empty));
         return button;
     }
 
@@ -1617,10 +1617,28 @@ public static class MenuRootV2Builder
         {
             buttons[i] = CharacterNavButton(page, "Unified" + names[i] + "Button", labels[i],
                 new Rect(120f + i * 178f, 84f, 166f, 56f), colors[i], artworkWidth, artworkHeight);
+            AddNavigationIcon(buttons[i], names[i]);
         }
         AddDynamicNotificationBadge(buttons[2], "ItemNotificationBadge");
         AddDynamicNotificationBadge(buttons[4], "QuestNotificationBadge");
         ConfigurePageNavigation(strip.gameObject, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], buttons[5], buttons[6], buttons[7]);
+    }
+
+    private static void AddNavigationIcon(Button button, string id)
+    {
+        var key = id.ToLowerInvariant();
+        if (key == "top") key = "home";
+        if (key == "items") key = "item";
+        if (key == "characters") key = "char";
+        if (key == "settings") key = "settings";
+        var sprite = LoadSprite(CommonUiCropFolder + "/nav_" + key + ".png");
+        if (!sprite) return;
+        var icon = ImageRoot("NavIcon", button.GetComponent<RectTransform>(), Color.white);
+        icon.sprite = sprite;
+        icon.preserveAspect = true;
+        icon.raycastTarget = false;
+        SetRect(icon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(6f, 0f), new Vector2(46f, 46f));
+        icon.transform.SetAsFirstSibling();
     }
 
     private static void ConfigurePageNavigation(GameObject target, Button home, Button dress, Button item, Button characters,
