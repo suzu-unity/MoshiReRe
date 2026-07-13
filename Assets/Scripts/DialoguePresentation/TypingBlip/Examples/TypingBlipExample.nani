@@ -1,0 +1,4 @@
+; TypingBlipController is configured in Unity; dialogue remains ordinary Naninovel text.
+; Replace actor IDs with the IDs used by the project.
+ReRe: <b>こんにちは。</b> これは表示連動ピコピコ音の確認用です。
+Male: 句読点、空白、<i>リッチテキストタグ</i>は音を鳴らす文字数に含まれません。
