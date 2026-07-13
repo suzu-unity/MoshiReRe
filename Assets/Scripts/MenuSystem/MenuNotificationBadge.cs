@@ -32,6 +32,8 @@ public class MenuNotificationBadge : MonoBehaviour
     {
         Count = Mathf.Max(0, count);
 
+        SetVisible(Count > 0);
+
         if (countText == null) return;
 
         countText.text = Count.ToString();

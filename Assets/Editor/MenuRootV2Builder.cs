@@ -114,14 +114,18 @@ public static class MenuRootV2Builder
             out var charactersTileButton, out var questTileButton, out var mapTileButton);
 
         var phone = ImageRoot("SmartphoneLayer", rect, new Color(0.13f, 0.08f, 0.17f, 0.96f));
-        SetRect(phone.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1320f, 820f));
+        SetRect(phone.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1672f, 941f));
         PixelBorder(phone.rectTransform, "PhonePixelFrame", new Color(0.05f, 0.03f, 0.07f, 1f), 8f);
+        var phoneBody = ImageRoot("SharedPhoneBody", phone.rectTransform, new Color(1f, 0.97f, 0.91f, 1f));
+        phoneBody.raycastTarget = false;
+        Stretch(phoneBody.rectTransform, new Vector2(48f, 48f), new Vector2(-48f, -48f));
+        PixelBorder(phoneBody.rectTransform, "BodyPixelFrame", new Color(0.46f, 0.42f, 0.58f, 1f), 4f);
 
         var nav = BuildNavigation(phone.rectTransform, out var topButton, out var statusButton, out var itemsButton,
             out var charactersButton, out var questButton, out var mapButton, out var saveButton, out var settingsButton);
 
         var content = RectRoot("Content", phone.rectTransform);
-        Stretch(content, new Vector2(160f, 34f), new Vector2(-34f, -34f));
+        Stretch(content, new Vector2(273f, 54f), new Vector2(-273f, -135f));
 
         var pageStatus = BuildDressArtworkPage(rect, out var dressHomeButton, out var dressDressButton,
             out var dressStatusButton, out var dressItemsButton, out var dressMapButton);
@@ -164,13 +168,21 @@ public static class MenuRootV2Builder
         SetRect(artwork.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1675f, 943f));
 
         dressTileButton = TopHitbox(page, "DressTileHitbox", new Rect(250f, 205f, 400f, 216f));
-        statusTileButton = TopHitbox(page, "StatusTileHitbox", new Rect(665f, 205f, 388f, 216f));
+        statusTileButton = null;
         itemsTileButton = TopHitbox(page, "ItemsTileHitbox", new Rect(1083f, 205f, 362f, 216f));
         charactersTileButton = TopHitbox(page, "CharactersTileHitbox", new Rect(250f, 438f, 348f, 160f));
         questTileButton = TopHitbox(page, "QuestTileHitbox", new Rect(614f, 438f, 276f, 160f));
         mapTileButton = TopHitbox(page, "MapTileHitbox", new Rect(904f, 438f, 540f, 322f));
-        TopHitbox(page, "SaveTileHitbox", new Rect(250f, 610f, 348f, 150f));
-        TopHitbox(page, "SettingsTileHitbox", new Rect(614f, 610f, 276f, 150f));
+        var saveButton = TopHitbox(page, "SaveTileHitbox", new Rect(250f, 610f, 348f, 150f));
+        var settingsButton = TopHitbox(page, "SettingsTileHitbox", new Rect(614f, 610f, 276f, 150f));
+        var statusCover = PixelPanelAt(page, "ReReAiStatusTile", new Rect(665f, 205f, 388f, 216f), new Color(0.57f, 0.88f, 0.84f, 1f), 1675f, 943f);
+        Text("ReRe AI\nONLINE", statusCover.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(0f, 24f), new Vector2(0f, -24f));
+        TopColorPatch(page, "ItemBakedBadgeCover", new Rect(1392f, 201f, 50f, 46f), new Color(1f, 0.73f, 0.24f, 1f));
+        TopColorPatch(page, "QuestBakedBadgeCover", new Rect(836f, 431f, 48f, 46f), new Color(0.96f, 0.37f, 0.29f, 1f));
+        AddDynamicNotificationBadge(itemsTileButton, "TopItemNotificationBadge");
+        AddDynamicNotificationBadge(questTileButton, "TopQuestNotificationBadge");
+        ConfigurePageNavigation(page.gameObject, null, null, null, null, null, null, saveButton, settingsButton);
         topMascot = BuildTopReReMascot(page);
 
         return page;
@@ -223,6 +235,15 @@ public static class MenuRootV2Builder
         var centerY = artworkHeight * 0.5f - sourceRect.y - sourceRect.height * 0.5f;
         SetRect(rect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(centerX, centerY), sourceRect.size);
         return button;
+    }
+
+    private static Image TopColorPatch(RectTransform parent, string name, Rect sourceRect, Color color)
+    {
+        var image = ImageRoot(name, parent, color);
+        image.raycastTarget = false;
+        SetRect(image.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            DressCenter(sourceRect, 1675f, 943f), DressSize(sourceRect, 1675f, 943f));
+        return image;
     }
 
     private static RectTransform BuildDressArtworkPage(RectTransform parent, out Button homeButton, out Button dressButton,
@@ -378,6 +399,7 @@ public static class MenuRootV2Builder
         SetDressTalkSets(dressControllerSo);
         SetOutfitChangeSets(dressControllerSo);
         dressControllerSo.ApplyModifiedPropertiesWithoutUndo();
+        BuildUnifiedPageNavigation(page, artworkWidth, artworkHeight);
         return page;
     }
 
@@ -731,9 +753,16 @@ public static class MenuRootV2Builder
 
         var grid = PixelPanelAt(page, "ItemInventoryGrid", new Rect(282f, 220f, 556f, 446f), new Color(0.94f, 0.98f, 0.96f, 1f), artworkWidth, artworkHeight);
         TextBox("ITEM LIST", grid.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(24f, -18f), new Vector2(260f, 34f));
+        var openBagPreview = ImageRoot("OpenBagInventoryArtwork", grid.rectTransform, Color.white);
+        openBagPreview.sprite = LoadSprite(ItemBagOpenSpritePath);
+        openBagPreview.preserveAspect = true;
+        openBagPreview.raycastTarget = false;
+        SetRect(openBagPreview.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(0f, -24f), new Vector2(520f, 392f));
         for (var y = 0; y < 2; y++)
         for (var x = 0; x < 4; x++)
-            ItemDraftCard(grid.rectTransform, y * 4 + x, new Vector2(24f + x * 128f, -72f - y * 160f), new Vector2(112f, 138f), (x + y) % 2 == 0 ? Cream : new Color(0.96f, 0.94f, 0.99f, 1f));
+            ItemDraftCard(grid.rectTransform, y * 4 + x, new Vector2(72f + x * 106f, -116f - y * 112f), new Vector2(92f, 96f),
+                new Color(0.96f, 0.94f, 0.99f, 0.90f));
 
         var detail = PixelPanelAt(page, "SelectedItemDetail", new Rect(878f, 220f, 372f, 300f), new Color(1f, 0.94f, 0.84f, 1f), artworkWidth, artworkHeight);
         TextBox("SELECTED ITEM", detail.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Center, Ink, new Vector2(20f, -16f), new Vector2(332f, 34f));
@@ -799,6 +828,7 @@ public static class MenuRootV2Builder
         SetVector2(so, "zipperPathHalfSize", new Vector2(232f, 160f));
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
+        BuildUnifiedPageNavigation(page, artworkWidth, artworkHeight);
         return page;
     }
 
@@ -923,6 +953,7 @@ public static class MenuRootV2Builder
         SetObject(so, "relationHintText", hintText);
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
+        BuildUnifiedPageNavigation(page, artworkWidth, artworkHeight);
         return page;
     }
 
@@ -1223,17 +1254,31 @@ public static class MenuRootV2Builder
     private static RectTransform BuildNavigation(RectTransform parent, out Button top, out Button status, out Button items,
         out Button characters, out Button quest, out Button map, out Button save, out Button settings)
     {
-        var nav = ImageRoot("PersistentNav", parent, new Color(0.25f, 0.18f, 0.30f, 1f));
-        Stretch(nav.rectTransform, new Vector2(0f, 0f), new Vector2(-1184f, 0f));
-        top = NavButton(nav.rectTransform, "TopButton", "HOME", 26f, -28f, Cream);
-        status = NavButton(nav.rectTransform, "StatusButton", "DRESS", 26f, -118f, Coral);
-        items = NavButton(nav.rectTransform, "ItemsButton", "ITEM", 26f, -208f, Mint);
-        characters = NavButton(nav.rectTransform, "CharactersButton", "CHAR", 26f, -298f, Lavender);
-        quest = NavButton(nav.rectTransform, "QuestButton", "QUEST", 26f, -388f, Yellow);
-        map = NavButton(nav.rectTransform, "MapButton", "MAP", 26f, -478f, Cyan);
-        save = NavButton(nav.rectTransform, "SaveButton", "SAVE", 26f, -650f, Peach);
-        settings = NavButton(nav.rectTransform, "SettingsButton", "SET", 26f, -730f, new Color(0.75f, 0.72f, 0.80f, 1f));
+        var nav = ImageRoot("PersistentNav", parent, new Color(0.98f, 0.96f, 0.91f, 1f));
+        SetRect(nav.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -78f), new Vector2(-196f, 72f));
+        PixelBorder(nav.rectTransform, "NavFrame", new Color(0.46f, 0.42f, 0.58f, 1f), 3f);
+        var x = 12f;
+        top = WideNavButton(nav.rectTransform, "TopButton", "HOME", x, Cream); x += 178f;
+        status = WideNavButton(nav.rectTransform, "StatusButton", "DRESS", x, Lavender); x += 178f;
+        items = WideNavButton(nav.rectTransform, "ItemsButton", "ITEM", x, Yellow); x += 178f;
+        characters = WideNavButton(nav.rectTransform, "CharactersButton", "CHAR", x, Coral); x += 178f;
+        quest = WideNavButton(nav.rectTransform, "QuestButton", "QUEST", x, Peach); x += 178f;
+        map = WideNavButton(nav.rectTransform, "MapButton", "MAP", x, Cyan); x += 178f;
+        save = WideNavButton(nav.rectTransform, "SaveButton", "SAVE", x, new Color(0.66f, 0.72f, 0.94f, 1f)); x += 178f;
+        settings = WideNavButton(nav.rectTransform, "SettingsButton", "SET", x, new Color(0.78f, 0.78f, 0.82f, 1f));
+        AddDynamicNotificationBadge(items, "ItemNotificationBadge");
+        AddDynamicNotificationBadge(quest, "QuestNotificationBadge");
+        ConfigurePageNavigation(nav.gameObject, top, status, items, characters, quest, map, save, settings);
         return nav.rectTransform;
+    }
+
+    private static Button WideNavButton(RectTransform parent, string name, string label, float x, Color color)
+    {
+        var button = ButtonRoot(name, parent, color);
+        SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(x, -8f), new Vector2(166f, 56f));
+        PixelBorder(button.GetComponent<RectTransform>(), "Frame", Ink, 2f);
+        Text(label, button.GetComponent<RectTransform>(), 15f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        return button;
     }
 
     private static void BuildReRe(RectTransform root, RectTransform phone)
@@ -1558,6 +1603,63 @@ public static class MenuRootV2Builder
         var button = CharacterTabButton(parent, name, label, sourceRect, color, artworkWidth, artworkHeight);
         PixelBorder(button.GetComponent<RectTransform>(), "NavFrame", Ink, 3f);
         return button;
+    }
+
+    private static void BuildUnifiedPageNavigation(RectTransform page, float artworkWidth, float artworkHeight)
+    {
+        var strip = PixelPanelAt(page, "UnifiedPageNavigation", new Rect(112f, 76f, 1448f, 72f),
+            new Color(0.98f, 0.96f, 0.91f, 1f), artworkWidth, artworkHeight);
+        var labels = new[] { "HOME", "DRESS", "ITEM", "CHAR", "QUEST", "MAP", "SAVE", "SET" };
+        var names = new[] { "Home", "Dress", "Item", "Characters", "Quest", "Map", "Save", "Settings" };
+        var colors = new[] { Cream, Lavender, Yellow, Coral, Peach, Cyan, new Color(0.66f, 0.72f, 0.94f, 1f), new Color(0.78f, 0.78f, 0.82f, 1f) };
+        var buttons = new Button[labels.Length];
+        for (var i = 0; i < buttons.Length; i++)
+        {
+            buttons[i] = CharacterNavButton(page, "Unified" + names[i] + "Button", labels[i],
+                new Rect(120f + i * 178f, 84f, 166f, 56f), colors[i], artworkWidth, artworkHeight);
+        }
+        AddDynamicNotificationBadge(buttons[2], "ItemNotificationBadge");
+        AddDynamicNotificationBadge(buttons[4], "QuestNotificationBadge");
+        ConfigurePageNavigation(strip.gameObject, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], buttons[5], buttons[6], buttons[7]);
+    }
+
+    private static void ConfigurePageNavigation(GameObject target, Button home, Button dress, Button item, Button characters,
+        Button quest, Button map, Button save, Button settings)
+    {
+        var navigation = target.GetComponent<MenuPageNavigation>() ?? target.AddComponent<MenuPageNavigation>();
+        var so = new SerializedObject(navigation);
+        SetObject(so, "home", home);
+        SetObject(so, "dress", dress);
+        SetObject(so, "item", item);
+        SetObject(so, "characters", characters);
+        SetObject(so, "quest", quest);
+        SetObject(so, "map", map);
+        SetObject(so, "save", save);
+        SetObject(so, "settings", settings);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(navigation);
+    }
+
+    private static MenuNotificationBadge AddDynamicNotificationBadge(Button button, string name)
+    {
+        button.transform.SetAsLastSibling();
+        var badge = ImageRoot(name, button.GetComponent<RectTransform>(), Coral);
+        SetRect(badge.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-8f, -8f), new Vector2(34f, 34f));
+        PixelBorder(badge.rectTransform, "BadgeFrame", Ink, 2f);
+        var count = Text("!", badge.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        count.name = "Count";
+        var controller = button.gameObject.AddComponent<MenuNotificationBadge>();
+        var so = new SerializedObject(controller);
+        SetObject(so, "badgeTarget", badge.gameObject);
+        SetObject(so, "countText", count);
+        var visible = so.FindProperty("initialVisible");
+        if (visible != null) visible.boolValue = false;
+        var initialCount = so.FindProperty("initialCount");
+        if (initialCount != null) initialCount.intValue = 0;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        badge.gameObject.SetActive(false);
+        EditorUtility.SetDirty(controller);
+        return controller;
     }
 
     private static Button CharacterTabButton(RectTransform parent, string name, string label, Rect sourceRect, Color color, float artworkWidth, float artworkHeight)
