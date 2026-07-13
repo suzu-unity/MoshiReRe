@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [ExecuteAlways]
 [RequireComponent(typeof(RectTransform), typeof(Canvas))]
@@ -19,6 +22,9 @@ public sealed class ComicPanelController : MonoBehaviour
     private bool isVisible;
     private int focusIndex = -1;
     private ComicPanelFocusMode focusMode = ComicPanelFocusMode.All;
+#if UNITY_EDITOR
+    private bool editorRebuildScheduled;
+#endif
 
     public ComicPanelLayout Layout => layout;
     public int SelectedPanel { get => selectedPanel; set => selectedPanel = Mathf.Max(0, value); }
@@ -55,6 +61,10 @@ public sealed class ComicPanelController : MonoBehaviour
 
     private void OnDisable()
     {
+#if UNITY_EDITOR
+        EditorApplication.delayCall -= RebuildVisualsDelayed;
+        editorRebuildScheduled = false;
+#endif
         if (Application.isPlaying && Instance == this)
             Instance = null;
     }
@@ -62,8 +72,19 @@ public sealed class ComicPanelController : MonoBehaviour
     private void OnValidate()
     {
         selectedPanel = Mathf.Max(0, selectedPanel);
-        RebuildVisuals();
-        if (!Application.isPlaying && buildInEditMode)
+        if (Application.isPlaying)
+            return;
+
+        // Unity 6 rejects hierarchy changes from OnValidate. Update only the
+        // already-created graphics here and defer structural work to an idle
+        // editor callback.
+        SyncExistingGraphicCache();
+        var structureIsCurrent = UpdateExistingVisualsOnly();
+#if UNITY_EDITOR
+        if (!structureIsCurrent)
+            ScheduleEditorRebuild();
+#endif
+        if (buildInEditMode)
             ApplyEditorPreview();
     }
 
@@ -166,6 +187,7 @@ public sealed class ComicPanelController : MonoBehaviour
 
     private void RebuildVisuals()
     {
+        SyncExistingGraphicCache();
         EnsureVisuals();
         for (var i = 0; i < graphics.Count; i++)
         {
@@ -175,6 +197,59 @@ public sealed class ComicPanelController : MonoBehaviour
             graphics[i].gameObject.name = $"ComicPanel_{i + 1}_{panel.Id}";
         }
     }
+
+    private bool UpdateExistingVisualsOnly()
+    {
+        var count = layout != null && layout.Panels != null ? layout.Panels.Count : 0;
+        if (graphics.Count != count)
+            return false;
+
+        for (var i = 0; i < graphics.Count; i++)
+        {
+            var panel = layout.Panels[i];
+            graphics[i].Configure(panel.image, panel.SafeVertices);
+            graphics[i].raycastTarget = false;
+            graphics[i].gameObject.name = $"ComicPanel_{i + 1}_{panel.Id}";
+        }
+
+        return true;
+    }
+
+    private void SyncExistingGraphicCache()
+    {
+        if (graphics.Count > 0)
+            return;
+
+        for (var i = 0; i < transform.childCount; i++)
+        {
+            var graphic = transform.GetChild(i).GetComponent<ComicPanelGraphic>();
+            if (graphic != null)
+                graphics.Add(graphic);
+        }
+    }
+
+#if UNITY_EDITOR
+    private void ScheduleEditorRebuild()
+    {
+        if (editorRebuildScheduled)
+            return;
+
+        editorRebuildScheduled = true;
+        EditorApplication.delayCall += RebuildVisualsDelayed;
+    }
+
+    private void RebuildVisualsDelayed()
+    {
+        EditorApplication.delayCall -= RebuildVisualsDelayed;
+        editorRebuildScheduled = false;
+        if (this == null || gameObject == null)
+            return;
+
+        RebuildVisuals();
+        if (buildInEditMode)
+            ApplyEditorPreview();
+    }
+#endif
 
     private void EnsureVisuals()
     {
