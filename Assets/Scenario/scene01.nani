@@ -1,6 +1,6 @@
-@showLocation "府内某所━自宅" hold:1.5
+@showLocation "都内某所━自宅" hold:1.5
 @showUI LocationHUD
-@setLocation "府内某所━自宅"
+@setLocation "都内某所━自宅"
 @set money=0
 @syncMoney
 @back title&eyecatch/kuro
