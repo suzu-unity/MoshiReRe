@@ -1,0 +1,4 @@
+# Naninovel background appearance IDs used by @eyecatch.
+# Add one registered background per line. Blank lines and lines beginning with # or ; are ignored.
+title&eyecatch/Load01
+title&eyecatch/Load02
