@@ -89,3 +89,7 @@ Assets/**/*.csproj
 Assets/**/*.sln
 
 .aider*
+
+# Local xAI credentials (the example file is intentionally tracked)
+tools/grok/.env
+tools/grok/.env.local
