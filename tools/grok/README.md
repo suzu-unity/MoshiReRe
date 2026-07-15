@@ -1,61 +1,61 @@
 # Grok 4.5 tools for MoshiReRe
 
-このフォルダには、xAI APIを使う2つのローカルツールがあります。
+xAI APIを使うローカルツールです。
 
-1. `grok_agent.py`: Codexが作業を委譲するためのCLI。対象ファイルを明示してGrokに渡し、回答やunified diffを標準出力へ返します。Grokがワークスペースへ直接書き込まないため、Codexが内容を確認してから適用できます。
-2. `web_server.py`: ブラウザから会話するローカルWebUI。サーバーは既定で `127.0.0.1` にのみbindし、APIキーをブラウザへ送信しません。
+- `grok_agent.py`: Codexから委譲するCLI。明示したファイルを読み、分析・レビュー・unified diffを返します。
+- `web_server.py`: 会話履歴をローカル保存するWebUI。APIキーはサーバーだけが読み込みます。
 
-## APIキーの設定
+## APIキー
 
-PowerShellで、現在のターミナルにだけ設定します。
+PowerShellで設定します。実キーをチャット、ソース、`.env.example`へ貼り付けないでください。
 
 ```powershell
 $env:XAI_API_KEY = "xai-..."
+$env:XAI_MODEL = "grok-4.5"
 ```
-
-永続化する場合はPowerShellのユーザー環境変数、CIのsecret store、またはOSの資格情報管理を使ってください。実キーを `.env.example` やソースへ書かないでください。
 
 ## WebUI
 
 ```powershell
-.	ools\grok\run-web.ps1
+cd D:\Unity\MoshiReRe
+.\tools\grok\run-web.ps1
 ```
 
-ブラウザで <http://127.0.0.1:8787> を開きます。ポートを変える場合:
+ブラウザで <http://127.0.0.1:8787> を開きます。`index.html`を直接開くのではなく、必ずサーバー経由で開いてください。
+
+WebUIの機能:
+
+- 会話一覧、新規作成、名前変更、削除
+- 会話履歴のローカル保存（`tools/grok/data/conversations`）
+- 相談、レビュー、編集案モード
+- `.cs`, `.nani`, `.md`, `.json`などのテキストファイル添付
+- 添付ファイル名を会話履歴に表示
+- Grokの回答をコピー
+- 編集案をdiffとして確認し、Codexへ渡す
+
+会話と添付ファイルの内容はローカルJSONへ保存されます。APIキーは保存されません。添付したファイル内容はxAI APIへ送信されるため、秘密情報を含むファイルは添付しないでください。
+
+## Codexから委譲するCLI
 
 ```powershell
-.	ools\grok\run-web.ps1 -Port 8788
-```
-
-## Codexからサブエージェントとして使う
-
-まず対象ファイルだけを渡して分析させます。
-
-```powershell
-.	ools\grok\run-agent.ps1 `
+.\tools\grok\run-agent.ps1 `
   --mode analyze `
   --prompt "この変更の影響範囲と潜在バグを調べて" `
   --file AGENTS.md `
   --file Assets/Scripts/MenuSystem/MenuRootUI.cs
 ```
 
-実装案をunified diffで返させる場合:
+編集案をunified diffで返させる場合:
 
 ```powershell
-.	ools\grok\run-agent.ps1 `
+.\tools\grok\run-agent.ps1 `
   --mode implement `
-  --prompt "ESCキーでメニューを閉じる処理の不具合を修正して" `
+  --prompt "ESCキーでメニューを閉じる処理を修正して" `
   --file AGENTS.md `
   --file Assets/Scripts/MenuSystem/MenuEsc.cs
 ```
 
-プロンプトをパイプから渡すこともできます。
-
-```powershell
-"このスクリプトをレビューして" | .\tools\grok\run-agent.ps1 --mode review --file Assets/Scripts/MoneySystem/MoneyManager.cs
-```
-
-`Library`, `Temp`, `Logs`, `Build`, `obj`, `.git` と秘密ファイルはコンテキストとして渡せません。ファイルへの直接変更、コミット、Unity操作は行わない設計です。
+`--mode` は `analyze`、`review`、`implement` のいずれかです。Grokはファイルを直接変更しません。Codexが結果を確認してから適用します。
 
 ## 設定
 
@@ -69,10 +69,8 @@ $env:XAI_API_KEY = "xai-..."
 
 ## ローカル検証
 
-ネットワークやAPIキーを使わないテスト:
-
 ```powershell
 python -m unittest discover -s tools/grok -p "test_*.py"
 ```
 
-Grok 4.5はxAIのChat Completions APIで `grok-4.5` として利用します。料金・提供地域・レート制限はxAI側で変更されるため、実運用前に公式ドキュメントとコンソールを確認してください。
+このテストはネットワークやAPIキーを使用しません。

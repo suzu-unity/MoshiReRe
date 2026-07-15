@@ -5,65 +5,185 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoshiReRe Grok 4.5</title>
   <style>
-    :root { color-scheme: dark; --bg:#10131a; --panel:#191e29; --line:#303848; --text:#edf2f7; --muted:#9da8b8; --accent:#8bd5ca; }
+    :root { color-scheme: dark; --bg:#10131a; --panel:#191e29; --panel2:#202736; --line:#303848; --text:#edf2f7; --muted:#9da8b8; --accent:#8bd5ca; --danger:#f09b9b; }
     * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; background:radial-gradient(circle at top right,#27384a 0,#10131a 42%); color:var(--text); font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
-    main { width:min(980px,100%); min-height:100vh; margin:auto; display:flex; flex-direction:column; padding:22px; gap:14px; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    h1 { font-size:20px; margin:0; letter-spacing:.02em; }
-    .status { color:var(--muted); font-size:12px; }
-    .toolbar { display:flex; gap:8px; align-items:center; }
-    select,button,textarea { font:inherit; color:inherit; }
-    select,button { border:1px solid var(--line); border-radius:9px; background:var(--panel); padding:8px 11px; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top right,#27384a 0,#10131a 42%); color:var(--text); font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    button,select,textarea { color:inherit; font:inherit; }
+    button,select { border:1px solid var(--line); border-radius:8px; background:var(--panel); padding:7px 10px; }
     button { cursor:pointer; } button:hover { border-color:var(--accent); } button:disabled { opacity:.5; cursor:wait; }
-    #messages { flex:1; min-height:55vh; display:flex; flex-direction:column; gap:12px; padding:4px 0; overflow:auto; }
-    .bubble { max-width:86%; padding:12px 15px; border:1px solid var(--line); border-radius:14px; white-space:pre-wrap; overflow-wrap:anywhere; }
-    .user { align-self:flex-end; background:#214047; border-color:#35666a; } .assistant { align-self:flex-start; background:var(--panel); }
-    .empty { margin:auto; color:var(--muted); text-align:center; }
-    form { display:flex; gap:10px; align-items:flex-end; } textarea { flex:1; resize:vertical; min-height:72px; max-height:260px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; outline:none; } textarea:focus { border-color:var(--accent); }
-    #send { min-width:74px; min-height:48px; background:var(--accent); color:#102321; border-color:transparent; font-weight:700; }
-    .note { color:var(--muted); font-size:12px; margin:0; }
-    @media (max-width:600px) { main { padding:14px; } .bubble { max-width:94%; } header { align-items:flex-start; flex-direction:column; } }
+    .app { min-height:100vh; display:grid; grid-template-columns:270px minmax(0,1fr); }
+    aside { border-right:1px solid var(--line); background:rgba(16,19,26,.86); padding:14px; display:flex; flex-direction:column; gap:12px; }
+    .brand { font-weight:700; font-size:17px; padding:4px 4px 2px; }
+    #new-chat { width:100%; background:var(--accent); color:#102321; border-color:transparent; font-weight:700; }
+    #conversation-list { flex:1; overflow:auto; display:flex; flex-direction:column; gap:5px; }
+    .conversation { display:flex; gap:3px; align-items:center; border:1px solid transparent; border-radius:9px; padding:4px; }
+    .conversation.active { background:var(--panel2); border-color:var(--line); }
+    .conversation-title { flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; text-align:left; background:transparent; border:0; padding:7px 5px; }
+    .conversation-action { padding:5px 7px; color:var(--muted); background:transparent; border:0; }
+    .sidebar-note { color:var(--muted); font-size:11px; border-top:1px solid var(--line); padding-top:10px; }
+    main { min-width:0; min-height:100vh; display:flex; flex-direction:column; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:17px 22px 13px; border-bottom:1px solid rgba(48,56,72,.7); }
+    h1 { font-size:19px; margin:0; } .status { color:var(--muted); font-size:12px; margin-top:2px; }
+    .header-actions { display:flex; gap:8px; align-items:center; } .header-actions label { color:var(--muted); font-size:12px; }
+    #messages { flex:1; width:min(980px,100%); margin:0 auto; padding:24px 22px; display:flex; flex-direction:column; gap:14px; overflow:auto; }
+    .empty { margin:auto; color:var(--muted); text-align:center; max-width:540px; }
+    .message { max-width:88%; padding:12px 15px; border:1px solid var(--line); border-radius:14px; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .message.user { align-self:flex-end; background:#214047; border-color:#35666a; } .message.assistant { align-self:flex-start; background:var(--panel); }
+    .message-meta { color:var(--muted); font-size:11px; margin-bottom:5px; display:flex; gap:8px; align-items:center; }
+    .copy { margin-left:auto; padding:2px 6px; font-size:11px; }
+    .file-chip { display:inline-block; margin:7px 5px 0 0; padding:3px 7px; color:var(--accent); border:1px solid rgba(139,213,202,.35); border-radius:99px; font-size:11px; }
+    #composer { width:min(980px,100%); margin:0 auto; padding:0 22px 17px; }
+    .attachments { display:flex; gap:6px; flex-wrap:wrap; min-height:0; margin-bottom:7px; }
+    .pending-file { border:1px solid var(--line); border-radius:99px; padding:3px 7px 3px 10px; color:var(--muted); font-size:12px; }
+    .pending-file button { border:0; background:transparent; padding:0 0 0 6px; color:var(--danger); }
+    form { display:flex; gap:9px; align-items:flex-end; } textarea { flex:1; resize:vertical; min-height:70px; max-height:260px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 12px; outline:none; } textarea:focus { border-color:var(--accent); }
+    #send { min-width:76px; min-height:48px; background:var(--accent); color:#102321; border-color:transparent; font-weight:700; }
+    .composer-tools { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:7px; color:var(--muted); font-size:11px; }
+    #attach { padding:5px 8px; } .warning { color:#d7bd85; }
+    @media (max-width:720px) { .app { grid-template-columns:1fr; } aside { max-height:230px; border-right:0; border-bottom:1px solid var(--line); } #conversation-list { max-height:100px; } header { align-items:flex-start; flex-direction:column; } .header-actions { width:100%; flex-wrap:wrap; } .message { max-width:95%; } }
   </style>
 </head>
 <body>
-  <main>
-    <header>
-      <div><h1>MoshiReRe / Grok 4.5</h1><div class="status" id="status">ローカルサーバー経由で接続</div></div>
-      <div class="toolbar"><label for="effort">推論</label><select id="effort"><option value="">環境設定</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option></select><button id="clear" type="button">クリア</button></div>
-    </header>
-    <section id="messages" aria-live="polite"><div class="empty">メッセージを入力してください。APIキーはこの画面には渡りません。</div></section>
-    <form id="chat-form"><textarea id="input" placeholder="Grokに相談する… (Ctrl+Enterで送信)" required></textarea><button id="send" type="submit">送信</button></form>
-    <p class="note">APIキーはPythonサーバーの <code>XAI_API_KEY</code> だけで読み込みます。ブラウザの開発者ツールやURLには表示しません。</p>
-  </main>
+  <div class="app">
+    <aside>
+      <div class="brand">MoshiReRe / Grok 4.5</div>
+      <button id="new-chat" type="button">＋ 新しい会話</button>
+      <div id="conversation-list" aria-label="会話一覧"></div>
+      <div class="sidebar-note">会話と添付ファイルの内容は、このPCの <code>tools/grok/data</code> に保存されます。APIキーは保存されません。</div>
+    </aside>
+    <main>
+      <header>
+        <div><h1 id="conversation-title">読み込み中…</h1><div id="status" class="status">ローカルサーバー経由で接続</div></div>
+        <div class="header-actions">
+          <button id="rename" type="button">名前変更</button>
+          <button id="delete" type="button">削除</button>
+          <label for="mode">モード</label>
+          <select id="mode"><option value="consult">相談</option><option value="review">レビュー</option><option value="implement">編集案</option></select>
+          <label for="effort">推論</label>
+          <select id="effort"><option value="">環境設定</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option></select>
+        </div>
+      </header>
+      <section id="messages" aria-live="polite"></section>
+      <section id="composer">
+        <div id="attachments" class="attachments"></div>
+        <form id="chat-form">
+          <textarea id="input" placeholder="相談内容を入力… (Ctrl+Enterで送信)" required></textarea>
+          <button id="send" type="submit">送信</button>
+        </form>
+        <div class="composer-tools"><span id="file-summary">ファイル未選択</span><span class="warning">選択したファイル内容はxAI APIへ送信されます。秘密情報は添付しないでください。</span><button id="attach" type="button">📎 ファイル</button><input id="file-input" type="file" multiple hidden accept=".txt,.md,.cs,.nani,.json,.yaml,.yml,.xml,.js,.ts,.py,.ps1,.shader,.uxml,.uss,.meta,.prefab,.asset,.asmdef,.html,.css,.csproj,.sln"></div>
+      </section>
+    </main>
+  </div>
   <script>
-    const messagesEl = document.querySelector('#messages');
-    const input = document.querySelector('#input');
-    const form = document.querySelector('#chat-form');
-    const send = document.querySelector('#send');
-    const statusEl = document.querySelector('#status');
-    const effort = document.querySelector('#effort');
-    const conversationId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
-    const messages = [];
+    const state = { conversations: [], current: null, pendingFiles: [] };
+    const $ = (selector) => document.querySelector(selector);
+    const messagesEl = $('#messages');
+    const statusEl = $('#status');
+    const input = $('#input');
+    const send = $('#send');
 
-    function render() {
+    async function api(path, options = {}) {
+      const response = await fetch(path, options);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) throw new Error(data.error || `HTTP ${response.status}`);
+      return data;
+    }
+
+    function jsonOptions(method, body) { return { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }; }
+
+    async function boot() {
+      try {
+        const data = await api('/api/conversations');
+        state.conversations = data.conversations || [];
+        if (!state.conversations.length) {
+          const created = await api('/api/conversations', jsonOptions('POST', {title:'新しい会話'}));
+          state.conversations = [{id:created.id,title:created.title,updated_at:created.updated_at,message_count:0}];
+        }
+        renderConversationList();
+        await openConversation(state.conversations[0].id);
+      } catch (error) { statusEl.textContent = `接続エラー: ${error.message}`; }
+    }
+
+    async function openConversation(id) {
+      const conversation = await api(`/api/conversations/${encodeURIComponent(id)}`);
+      state.current = conversation;
+      state.pendingFiles = [];
+      $('#conversation-title').textContent = conversation.title;
+      renderConversationList(); renderMessages(); renderAttachments();
+      statusEl.textContent = 'ローカル保存済みの会話';
+    }
+
+    function renderConversationList() {
+      const list = $('#conversation-list'); list.replaceChildren();
+      for (const item of state.conversations) {
+        const row = document.createElement('div'); row.className = `conversation ${state.current && state.current.id === item.id ? 'active' : ''}`;
+        const title = document.createElement('button'); title.className='conversation-title'; title.textContent=item.title; title.title=item.title; title.onclick=()=>openConversation(item.id);
+        const rename = document.createElement('button'); rename.className='conversation-action'; rename.textContent='✎'; rename.title='名前変更'; rename.onclick=(event)=>{event.stopPropagation(); renameConversation(item.id);};
+        row.append(title, rename); list.append(row);
+      }
+    }
+
+    function renderMessages() {
       messagesEl.replaceChildren();
-      if (!messages.length) { const empty = document.createElement('div'); empty.className='empty'; empty.textContent='メッセージを入力してください。APIキーはこの画面には渡りません。'; messagesEl.append(empty); return; }
-      for (const message of messages) { const bubble=document.createElement('div'); bubble.className=`bubble ${message.role}`; bubble.textContent=message.content; messagesEl.append(bubble); }
+      const messages = state.current?.messages || [];
+      if (!messages.length) { const empty=document.createElement('div'); empty.className='empty'; empty.innerHTML='<h2>新しい会話</h2><p>ファイルを添付してコードの相談、レビュー、編集案の作成ができます。</p>'; messagesEl.append(empty); return; }
+      for (const message of messages) {
+        const bubble=document.createElement('div'); bubble.className=`message ${message.role}`;
+        const meta=document.createElement('div'); meta.className='message-meta'; meta.textContent=message.role==='user' ? `あなた${message.mode ? ` / ${modeLabel(message.mode)}` : ''}` : 'Grok 4.5';
+        if (message.role==='assistant') { const copy=document.createElement('button'); copy.className='copy'; copy.textContent='コピー'; copy.onclick=()=>copyText(message.content, copy); meta.append(copy); }
+        bubble.append(meta); const content=document.createElement('div'); content.textContent=message.content; bubble.append(content);
+        for (const name of (message.files || [])) { const chip=document.createElement('span'); chip.className='file-chip'; chip.textContent=`📄 ${name}`; bubble.append(chip); }
+        messagesEl.append(bubble);
+      }
       messagesEl.scrollTop=messagesEl.scrollHeight;
     }
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault(); const content=input.value.trim(); if (!content || send.disabled) return;
-      messages.push({role:'user',content}); input.value=''; render(); send.disabled=true; statusEl.textContent='Grok 4.5に問い合わせ中…';
-      try {
-        const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages,conversation_id:conversationId,reasoning_effort:effort.value||undefined})});
-        const data=await response.json(); if (!response.ok || !data.ok) throw new Error(data.error||`HTTP ${response.status}`);
-        messages.push({role:'assistant',content:data.text}); render(); statusEl.textContent=`接続中 / ${data.model||'grok-4.5'}`;
-      } catch (error) { messages.pop(); render(); statusEl.textContent=`エラー: ${error.message}`; }
+
+    function modeLabel(mode) { return ({consult:'相談',review:'レビュー',implement:'編集案'})[mode] || mode; }
+    async function copyText(text, button) { try { await navigator.clipboard.writeText(text); const old=button.textContent; button.textContent='コピー済み'; setTimeout(()=>button.textContent=old,1200); } catch (_) { statusEl.textContent='コピーに失敗しました'; } }
+
+    function renderAttachments() {
+      const container=$('#attachments'); container.replaceChildren();
+      for (const [index, file] of state.pendingFiles.entries()) { const chip=document.createElement('span'); chip.className='pending-file'; chip.textContent=file.name; const remove=document.createElement('button'); remove.textContent='×'; remove.title='添付を外す'; remove.onclick=()=>{state.pendingFiles.splice(index,1); renderAttachments();}; chip.append(remove); container.append(chip); }
+      $('#file-summary').textContent = state.pendingFiles.length ? `${state.pendingFiles.length}ファイルを送信予定` : 'ファイル未選択';
+    }
+
+    async function createConversation() {
+      const created=await api('/api/conversations', jsonOptions('POST',{title:'新しい会話'}));
+      state.conversations.unshift({id:created.id,title:created.title,updated_at:created.updated_at,message_count:0});
+      renderConversationList(); await openConversation(created.id); input.focus();
+    }
+
+    async function renameConversation(id) {
+      const current=state.conversations.find(item=>item.id===id); const title=window.prompt('会話名',current?.title||''); if (!title?.trim()) return;
+      const updated=await api(`/api/conversations/${encodeURIComponent(id)}`,jsonOptions('PATCH',{title}));
+      const item=state.conversations.find(entry=>entry.id===id); if(item) item.title=updated.title;
+      if(state.current?.id===id) $('#conversation-title').textContent=updated.title; renderConversationList();
+    }
+
+    async function deleteConversation() {
+      if (!state.current || !window.confirm(`「${state.current.title}」を削除しますか？`)) return;
+      const id=state.current.id; await api(`/api/conversations/${encodeURIComponent(id)}`,{method:'DELETE'}); state.conversations=state.conversations.filter(item=>item.id!==id);
+      if(!state.conversations.length) { await createConversation(); } else { renderConversationList(); await openConversation(state.conversations[0].id); }
+    }
+
+    $('#new-chat').onclick=()=>createConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`);
+    $('#rename').onclick=()=>state.current && renameConversation(state.current.id).catch(error=>statusEl.textContent=`エラー: ${error.message}`);
+    $('#delete').onclick=()=>deleteConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`);
+    $('#attach').onclick=()=>$('#file-input').click();
+    $('#file-input').onchange=async (event)=>{
+      try { for (const file of event.target.files) { if(file.size>200000) throw new Error(`${file.name} は200KBを超えています`); if(state.pendingFiles.some(item=>item.name===file.name)) continue; state.pendingFiles.push({name:file.name,content:await file.text()}); } renderAttachments(); }
+      catch(error) { statusEl.textContent=`添付エラー: ${error.message}`; } finally { event.target.value=''; }
+    };
+    $('#chat-form').onsubmit=async (event)=>{
+      event.preventDefault(); const content=input.value.trim(); if(!content || !state.current || send.disabled) return;
+      send.disabled=true; statusEl.textContent='Grok 4.5に問い合わせ中…';
+      try { const data=await api('/api/chat',jsonOptions('POST',{conversation_id:state.current.id,content,mode:$('#mode').value,reasoning_effort:$('#effort').value||null,files:state.pendingFiles})); input.value=''; state.pendingFiles=[]; await refreshConversationList(data.conversation); await openConversation(state.current.id); statusEl.textContent=`接続中 / ${data.model||'grok-4.5'}`; }
+      catch(error) { statusEl.textContent=`エラー: ${error.message}`; }
       finally { send.disabled=false; input.focus(); }
-    });
-    input.addEventListener('keydown',(event)=>{ if(event.ctrlKey && event.key==='Enter') form.requestSubmit(); });
-    document.querySelector('#clear').addEventListener('click',()=>{ messages.length=0; render(); statusEl.textContent='ローカルサーバー経由で接続'; input.focus(); });
+    };
+    async function refreshConversationList(updated) { const data=await api('/api/conversations'); state.conversations=data.conversations||[]; if(updated && !state.conversations.some(item=>item.id===updated.id)) state.conversations.unshift(updated); renderConversationList(); }
+    input.onkeydown=(event)=>{ if(event.ctrlKey && event.key==='Enter') $('#chat-form').requestSubmit(); };
+    boot();
   </script>
 </body>
 </html>

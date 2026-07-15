@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -9,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from grok_client import GrokApiError, GrokConfig, message_text
 from grok_agent import build_context, is_safe_context_path
-from web_server import validate_messages
+from web_server import ConversationStore, content_with_files, public_conversation, validate_attachments
 
 
 class GrokToolsTests(unittest.TestCase):
@@ -36,11 +37,26 @@ class GrokToolsTests(unittest.TestCase):
         finally:
             test_file.unlink(missing_ok=True)
 
-    def test_web_messages_are_normalized(self):
-        result = validate_messages([{"role": "user", "content": " hello "}])
-        self.assertEqual(result, [{"role": "user", "content": " hello "}])
+    def test_attachment_validation_and_context_format(self):
+        files = validate_attachments([{"name": "Example.cs", "content": "class Example {}"}])
+        self.assertIn("class Example", content_with_files("Review this", files))
         with self.assertRaises(GrokApiError):
-            validate_messages([{"role": "tool", "content": "not allowed"}])
+            validate_attachments([{"name": ".env", "content": "XAI_API_KEY=secret"}])
+
+    def test_conversation_store_persists_and_hides_attachment_contents(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = ConversationStore(Path(directory))
+            conversation = store.create()
+            conversation["messages"].append({
+                "role": "user",
+                "content": "Review this",
+                "files": [{"name": "Example.cs", "content": "secret source"}],
+            })
+            store.save(conversation)
+            loaded = store.get(conversation["id"])
+            public = public_conversation(loaded)
+            self.assertEqual(public["messages"][0]["files"], ["Example.cs"])
+            self.assertNotIn("secret source", json.dumps(public, ensure_ascii=False))
 
 
 if __name__ == "__main__":
