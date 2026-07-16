@@ -94,3 +94,6 @@ Assets/**/*.sln
 tools/grok/.env
 tools/grok/.env.local
 tools/grok/data/
+
+# Coplay checkpoints
+Packages/Coplay/Editor/Checkpoints/
