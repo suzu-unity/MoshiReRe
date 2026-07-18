@@ -12,6 +12,16 @@ public class TitleSceneController : MonoBehaviour
     private IScriptManager scriptManager;
     private string titleScriptPath = string.Empty;
     private bool routing;
+    private TitleScreenPresentation presentation;
+
+    private void Awake()
+    {
+        // Keep the existing scene playable even before TitleSceneBuilder has
+        // written its hierarchy. The presentation creates its own overlay UI.
+        presentation = GetComponent<TitleScreenPresentation>();
+        if (presentation == null)
+            presentation = gameObject.AddComponent<TitleScreenPresentation>();
+    }
 
     private void Update()
     {
@@ -19,7 +29,8 @@ public class TitleSceneController : MonoBehaviour
         if (SceneManager.GetActiveScene().name != titleSceneName) return;
 
         // Fallback for manual testing.
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if ((presentation == null || !presentation.HandlesInput) &&
+            (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
         {
             StartGame();
             return;

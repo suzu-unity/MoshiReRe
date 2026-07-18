@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 8b750b96d6824e74db2b82d8ade3e73d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2855816857968044473
+    second: Title_Logo_EN_1920x1080_0
+  - first:
+      213: -2252520089339893836
+    second: Title_Logo_EN_1920x1080_1
+  - first:
+      213: -8388058071182978681
+    second: Title_Logo_EN_1920x1080_2
+  - first:
+      213: 2178139640260701772
+    second: Title_Logo_EN_1920x1080_3
+  - first:
+      213: -1374039066379000104
+    second: Title_Logo_EN_1920x1080_4
+  - first:
+      213: -7448308308609241152
+    second: Title_Logo_EN_1920x1080_5
+  - first:
+      213: 217644577088526745
+    second: Title_Logo_EN_1920x1080_6
+  - first:
+      213: 4006462046374391202
+    second: Title_Logo_EN_1920x1080_7
+  - first:
+      213: -1659356649195893855
+    second: Title_Logo_EN_1920x1080_8
+  - first:
+      213: -2385083144888795733
+    second: Title_Logo_EN_1920x1080_9
+  - first:
+      213: 400112911707545148
+    second: Title_Logo_EN_1920x1080_10
+  - first:
+      213: 2531630866799914280
+    second: Title_Logo_EN_1920x1080_11
+  - first:
+      213: -6937117787700704770
+    second: Title_Logo_EN_1920x1080_12
+  - first:
+      213: 9024901112406539367
+    second: Title_Logo_EN_1920x1080_13
+  - first:
+      213: 6646304888472048985
+    second: Title_Logo_EN_1920x1080_14
+  - first:
+      213: 2503901308551932486
+    second: Title_Logo_EN_1920x1080_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_0
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 357
+        width: 1592
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b9e1c23d46e1a720800000000000000
+      internalID: 2855816857968044473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_1
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 397
+        width: 91
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b7e671c9e07db0e0800000000000000
+      internalID: -2252520089339893836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_2
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 398
+        width: 85
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7815ac740a1a79b80800000000000000
+      internalID: -8388058071182978681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_3
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 398
+        width: 81
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4eafe8667e4a3e10800000000000000
+      internalID: 2178139640260701772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_4
+      rect:
+        serializedVersion: 2
+        x: 508
+        y: 397
+        width: 81
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d668f4cfbe6eece0800000000000000
+      internalID: -1374039066379000104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_5
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 397
+        width: 85
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cf61cf5e0b42a890800000000000000
+      internalID: -7448308308609241152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_6
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 398
+        width: 70
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 999d6a8f69a350300800000000000000
+      internalID: 217644577088526745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_7
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 396
+        width: 65
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2adea380100d99730800000000000000
+      internalID: 4006462046374391202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_8
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 397
+        width: 72
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ab0ff05be7c8f8e0800000000000000
+      internalID: -1659356649195893855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_9
+      rect:
+        serializedVersion: 2
+        x: 1099
+        y: 400
+        width: 51
+        height: 312
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: badb125348b76eed0800000000000000
+      internalID: -2385083144888795733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_10
+      rect:
+        serializedVersion: 2
+        x: 1174
+        y: 397
+        width: 72
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3e1064c29c7d8500800000000000000
+      internalID: 400112911707545148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_11
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 397
+        width: 85
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82de5063cd8222320800000000000000
+      internalID: 2531630866799914280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_12
+      rect:
+        serializedVersion: 2
+        x: 1365
+        y: 398
+        width: 72
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef94e0360286abf90800000000000000
+      internalID: -6937117787700704770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_13
+      rect:
+        serializedVersion: 2
+        x: 1444
+        y: 398
+        width: 87
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76cf40aeeb3ee3d70800000000000000
+      internalID: 9024901112406539367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_14
+      rect:
+        serializedVersion: 2
+        x: 1538
+        y: 397
+        width: 87
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 955915a151b6c3c50800000000000000
+      internalID: 6646304888472048985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title_Logo_EN_1920x1080_15
+      rect:
+        serializedVersion: 2
+        x: 1630
+        y: 397
+        width: 51
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64aafd059f4afb220800000000000000
+      internalID: 2503901308551932486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Title_Logo_EN_1920x1080_0: 2855816857968044473
+      Title_Logo_EN_1920x1080_1: -2252520089339893836
+      Title_Logo_EN_1920x1080_10: 400112911707545148
+      Title_Logo_EN_1920x1080_11: 2531630866799914280
+      Title_Logo_EN_1920x1080_12: -6937117787700704770
+      Title_Logo_EN_1920x1080_13: 9024901112406539367
+      Title_Logo_EN_1920x1080_14: 6646304888472048985
+      Title_Logo_EN_1920x1080_15: 2503901308551932486
+      Title_Logo_EN_1920x1080_2: -8388058071182978681
+      Title_Logo_EN_1920x1080_3: 2178139640260701772
+      Title_Logo_EN_1920x1080_4: -1374039066379000104
+      Title_Logo_EN_1920x1080_5: -7448308308609241152
+      Title_Logo_EN_1920x1080_6: 217644577088526745
+      Title_Logo_EN_1920x1080_7: 4006462046374391202
+      Title_Logo_EN_1920x1080_8: -1659356649195893855
+      Title_Logo_EN_1920x1080_9: -2385083144888795733
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
