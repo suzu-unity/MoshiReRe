@@ -2,6 +2,8 @@
 
 対象シナリオ：`出勤_会社案_修正稿.nani`
 
+> 更新注記：旧「千津鰯夫」は大宅優良（ギャル後輩）へ変更された。旧千津の人物設定と生成Promptは廃止扱いとし、`大宅優良_キャラ設定と生成Prompt.md`および`出勤_会社案_ギャル後輩改稿.nani`を優先する。
+
 ## 制作方針
 
 - イベントCGは原則16:9、1920×1080基準で作る。
@@ -19,14 +21,14 @@
 3. 通勤する足元
 4. 朝日を背負った会社ビルと罠美の後ろ姿
 5. 朝日を眩しがる罠美の顔アップ
-6. 千津がPCを確認する一枚絵（PC画面は見せない）
+6. 優良がPCを確認する一枚絵（PC画面は見せない）
 7. 正常なPC画面をこちらへ見せる一枚絵
 8. USBを抜いたスマートフォンとハート通知のアップ
 9. 広告画面、偽購入画面、独自エラー画面
 
 ### 次点
 
-1. 景気のよい罠美が千津へ大盤振る舞いを約束する回想
+1. 景気のよい罠美が優良へ大盤振る舞いを約束する回想
 2. PCへ向かって仕事をする罠美
 3. 終業後、USB接続したスマートフォンを横に置いてネットを見る罠美
 4. 時計、修正済み付箋、減っていく未処理件数のモンタージュ素材
@@ -41,7 +43,9 @@
 
 ## キャラクターデザイン
 
-### 千津鰯夫
+### 千津鰯夫（旧案・廃止）
+
+> 現行案では大宅優良へ変更済み。この節は過去案の参照用としてのみ残す。
 
 二十二歳から二十四歳程度。入社半年の青年男性。ギーク気質で、人との距離感は少し雑だが、頼られると結局手を貸す。
 
@@ -99,7 +103,7 @@ Danbooruタグ：
 - 背筋が伸びた長方形のシルエット。中肉で肩幅はやや広い。
 - 黒に近い髪を七三に整え、右のこめかみに明確な銀色の毛束を入れる。
 - 太く角度のついた眉、四角い顎、目尻と眉間に薄い皺。
-- 眼鏡は使わない。千津との顔の区別を明確にする。
+- 眼鏡は使わない。罠美との顔の区別を明確にする。
 - チャコールグレーの三つ揃い、白いシャツ、深い臙脂色のネクタイ。
 - 銀色の山形ネクタイピン。左手に結婚指輪。
 - 厳格には見えるが、口元や目元に疲れと穏やかさを残す。悪役顔にはしない。
@@ -149,7 +153,7 @@ Danbooruタグ：
 - `suspicious`：ポップアップを訝しむ
 - `shocked`：偽購入画面
 - `panic`：青いエラー画面
-- `embarrassed_sweat`：千津へ助けを求める
+- `embarrassed_sweat`：優良へ助けを求める
 - `puzzled`：消えたハート通知を見る
 
 ## イベントCG用プロンプト
@@ -229,13 +233,13 @@ Danbooruタグ：
 自然言語：
 
 ```text
-A monochrome office flashback showing Wanabi acting overconfident while cryptocurrency prices are rising. Wanabi, a long-haired Japanese office woman with black rectangular glasses, proudly leans toward her junior coworker and gestures as if promising to buy him anything he wants. Iwao Chizu, a slightly chubby young Japanese male office worker with messy black hair, large rounded-square black glasses with a cyan left temple, a wrinkled white shirt, loose cyan tie, cyan lanyard, and one untucked shirt tail, reacts with surprised greedy interest. Comedic contrast, workplace desks and monitors, horizontal 16:9 framing, no speech bubbles, no readable text.
+A monochrome office flashback showing Wanabi acting overconfident while cryptocurrency prices are rising. Wanabi, a long-haired Japanese office woman with black rectangular glasses, proudly leans toward her junior coworker and gestures as if promising to buy her anything she wants. Yura Ooya, a fashionable young Japanese gyaru office worker with a high side ponytail, crossed hairpins, long nails, a loosened necktie, and a partly untucked shirt, reacts with surprised greedy interest while pointing toward a high-end graphics card displayed on her smartphone. Comedic contrast, workplace desks and monitors, horizontal 16:9 framing, no speech bubbles, no readable text.
 ```
 
 Danbooruタグ：
 
 ```text
-1girl, 1boy, office, flashback, monochrome, grayscale, adult woman, long black hair, blunt bangs, black-framed eyewear, smug, confident, gesturing, office lady, young adult male, slightly chubby, messy black hair, rounded-square eyewear, wrinkled shirt, loose cyan necktie, untucked shirt, cyan lanyard, surprised, greedy smile, desk, computer, horizontal composition, 16:9, no speech bubble, no text
+2girls, office, flashback, monochrome, grayscale, adult woman, very long black hair, blunt bangs, black-framed eyewear, smug, confident, gesturing, office lady, gyaru, high side ponytail, crossed hairpins, long fingernails, loose necktie, partially untucked shirt, surprised, greedy smile, smartphone, graphics card image, desk, computer, horizontal composition, 16:9, no speech bubble, no text
 ```
 
 ### 7. PC作業中の罠美
@@ -266,18 +270,18 @@ Danbooruタグ：
 1girl, adult woman, office lady, long black hair, blunt bangs, black-framed eyewear, tired, sitting, computer, browsing, office, empty office, evening, monitor glow, smartphone, phone on desk, usb cable, connected device, keyboard, suspicious, side view, horizontal composition, 16:9, no readable text
 ```
 
-### 9. 千津がPCを確認する絵（画面は見せない）
+### 9. 優良がPCを確認する絵（画面は見せない）
 
 自然言語：
 
 ```text
-A horizontal 16:9 event illustration of Iwao Chizu examining Wanabi's office computer after a suspicious crash. Chizu is a slightly chubby 23-year-old Japanese male office worker with messy black hair, large rounded-square black glasses with a cyan left temple, a wrinkled white shirt, loose cyan tie, cyan ID lanyard with a tiny blue fish charm, dark slacks, and the right shirt tail untucked. He sits close to the desk with a serious focused expression, one hand on the mouse and the other near the keyboard. Wanabi stands anxiously behind him. The monitor faces away from the viewer, so the screen content is completely hidden. Visible USB cable and phone on desk, quiet tense office, no text.
+A horizontal 16:9 event illustration of Yura Ooya examining Wanabi's office computer after a suspicious crash. Yura is a cheerful 22-year-old Japanese gyaru office worker with lightly tanned skin, teal upturned eyes, honey-blonde hair with dark roots tied in a high right-side ponytail, two crossed teal hairpins above her left temple, coral long nails, a loosened coral necktie, a slightly untucked white office shirt, charcoal pencil skirt, black tights, and a mint employee lanyard with a tiny Enter-key charm. Her usual playful expression has changed into a serious focused look. She sits close to the desk, one hand on the mouse and the other moving confidently over the keyboard. Wanabi stands anxiously behind her. The monitor faces away from the viewer, so the screen content is completely hidden. Visible USB cable and phone on desk, quiet tense office, no text.
 ```
 
 Danbooruタグ：
 
 ```text
-1boy, 1girl, office, computer, monitor from behind, screen not visible, young adult male, slightly chubby, messy black hair, rounded-square eyewear, cyan eyewear temple, wrinkled white shirt, loose cyan necktie, cyan lanyard, fish charm, untucked shirt, serious, focused, sitting, hand on mouse, hand on keyboard, adult woman, long black hair, anxious, standing behind, smartphone, usb cable, evening, horizontal composition, 16:9, no text
+2girls, office, computer, monitor from behind, screen not visible, gyaru, light tan, honey blonde hair, dark roots, high side ponytail, crossed hairpins, teal hairpin, teal eyes, tsurime, coral nails, long fingernails, white collared shirt, rolled sleeves, loose coral necktie, partially untucked shirt, charcoal pencil skirt, black pantyhose, mint lanyard, keyboard key charm, serious, focused, sitting, hand on mouse, hand on keyboard, adult woman, very long black hair, black-framed eyewear, anxious, standing behind, smartphone, usb cable, evening, horizontal composition, 16:9, no text
 ```
 
 ### 10. 正常なPC画面を見せる絵
@@ -285,7 +289,7 @@ Danbooruタグ：
 自然言語：
 
 ```text
-A front-facing close event shot of an office computer monitor being turned toward the viewer by a young male coworker's hand. The display shows an entirely ordinary clean desktop with a neutral wallpaper, a taskbar, and a few generic unlabeled icons, with no error message and no readable text. Part of Iwao Chizu's wrinkled white sleeve and cyan lanyard is visible at one edge, while Wanabi's anxious silhouette is visible at the other. The image must clearly communicate that the computer has already returned to normal. Horizontal 16:9 composition, no brand logos, no readable text.
+A front-facing close event shot of an office computer monitor being turned toward the viewer by a young female coworker's hand with distinctive long coral nails. The display shows an entirely ordinary clean desktop with a neutral wallpaper, a taskbar, and a few generic unlabeled icons, with no error message and no readable text. Part of Yura Ooya's rolled white sleeve, coral necktie, and mint lanyard is visible at one edge, while Wanabi's anxious silhouette is visible at the other. The image must clearly communicate that the computer has already returned to normal. Horizontal 16:9 composition, no brand logos, no readable text.
 ```
 
 Danbooruタグ：
