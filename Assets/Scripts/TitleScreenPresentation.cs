@@ -50,6 +50,11 @@ public sealed class TitleScreenPresentation : MonoBehaviour
     [SerializeField] private AudioClip selectSfx;
     [SerializeField] private AudioClip confirmSfx;
     [SerializeField] private AudioClip titleBgm;
+    [SerializeField, Range(0f, 1f)] private float bgmBaseVolume = 0.26f;
+    [SerializeField, Min(0.01f)] private float bgmFadeInDuration = 0.65f;
+    [SerializeField, Range(0f, 1f)] private float bgmDuckVolume = 0.11f;
+    [SerializeField, Min(0.01f)] private float bgmDuckInDuration = 0.08f;
+    [SerializeField, Min(0.01f)] private float bgmDuckRecoveryDuration = 0.24f;
 
     [Header("Timing")]
     [SerializeField, Min(0.01f)] private float backgroundFadeDuration = 0.65f;
@@ -64,6 +69,7 @@ public sealed class TitleScreenPresentation : MonoBehaviour
     private State state;
     private Coroutine presentationRoutine;
     private Coroutine glintRoutine;
+    private Coroutine bgmVolumeRoutine;
     private Vector2 titleStartPosition;
     private Vector2 subtitleStartPosition;
     private int lastSelectedButtonId;
@@ -239,7 +245,9 @@ public sealed class TitleScreenPresentation : MonoBehaviour
         if (titleBgm != null && !bgmSource.isPlaying)
         {
             bgmSource.clip = titleBgm;
+            bgmSource.volume = 0f;
             bgmSource.Play();
+            bgmVolumeRoutine = StartCoroutine(FadeBgmVolume(0f, bgmBaseVolume, bgmFadeInDuration));
         }
     }
 
@@ -437,10 +445,45 @@ public sealed class TitleScreenPresentation : MonoBehaviour
 
         actionPending = true;
         PlayConfirmSfx();
+        DuckBgmForConfirmation();
         var delay = confirmSfx != null ? Mathf.Clamp(confirmSfx.length, 0.08f, 0.4f) : 0.08f;
         yield return new WaitForSecondsRealtime(delay);
         action?.Invoke();
         actionPending = false;
+    }
+
+    private void DuckBgmForConfirmation()
+    {
+        if (bgmSource == null || !bgmSource.isPlaying)
+            return;
+
+        if (bgmVolumeRoutine != null)
+            StopCoroutine(bgmVolumeRoutine);
+        bgmVolumeRoutine = StartCoroutine(DuckAndRestoreBgm());
+    }
+
+    private IEnumerator DuckAndRestoreBgm()
+    {
+        var currentVolume = bgmSource.volume;
+        yield return FadeBgmVolume(currentVolume, bgmDuckVolume, bgmDuckInDuration);
+        yield return new WaitForSecondsRealtime(0.08f);
+        yield return FadeBgmVolume(bgmDuckVolume, bgmBaseVolume, bgmDuckRecoveryDuration);
+    }
+
+    private IEnumerator FadeBgmVolume(float from, float to, float duration)
+    {
+        if (bgmSource == null)
+            yield break;
+
+        var elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            bgmSource.volume = Mathf.Lerp(from, to, Mathf.Clamp01(elapsed / duration));
+            yield return null;
+        }
+        bgmSource.volume = to;
+        bgmVolumeRoutine = null;
     }
 
     private void StartGlintLoop()
