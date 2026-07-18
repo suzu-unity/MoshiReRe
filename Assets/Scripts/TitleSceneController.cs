@@ -2,9 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Naninovel;
+using Naninovel.UI;
 
 public class TitleSceneController : MonoBehaviour
 {
+    private const string StartGameScriptPath = "Scenario/scene01";
+
     [SerializeField] private string gameplaySceneName = "CommonUIHub";
     [SerializeField] private string titleSceneName = "TitleScene";
 
@@ -12,6 +15,7 @@ public class TitleSceneController : MonoBehaviour
     private IScriptManager scriptManager;
     private string titleScriptPath = string.Empty;
     private bool routing;
+    private bool startingGame;
     private TitleScreenPresentation presentation;
 
     private void Awake()
@@ -59,9 +63,40 @@ public class TitleSceneController : MonoBehaviour
         RouteToGameplay();
     }
 
-    public void StartGame()
+    public async void StartGame()
     {
-        RouteToGameplay();
+        if (routing || startingGame)
+            return;
+
+        startingGame = true;
+        try
+        {
+            while (!Engine.Initialized)
+                await AsyncUtils.WaitEndOfFrame();
+
+            player ??= Engine.GetService<IScriptPlayer>();
+            scriptManager ??= Engine.GetService<IScriptManager>();
+            if (player == null)
+                throw new InvalidOperationException("Naninovel script player is unavailable.");
+
+            var configuredPath = scriptManager?.Configuration?.StartGameScript;
+            var scriptPath = string.IsNullOrWhiteSpace(configuredPath)
+                ? StartGameScriptPath
+                : configuredPath;
+
+            Engine.GetService<IUIManager>()?.GetUI<ITitleUI>()?.Hide();
+            await player.LoadAndPlay(scriptPath);
+            RouteToGameplay();
+        }
+        catch (Exception exception)
+        {
+            routing = false;
+            Debug.LogException(exception);
+        }
+        finally
+        {
+            startingGame = false;
+        }
     }
 
     public void QuitGame()

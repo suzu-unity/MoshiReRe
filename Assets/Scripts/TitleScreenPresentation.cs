@@ -46,15 +46,14 @@ public sealed class TitleScreenPresentation : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource confirmSfxSource;
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioClip selectSfx;
     [SerializeField] private AudioClip confirmSfx;
     [SerializeField] private AudioClip titleBgm;
     [SerializeField, Range(0f, 1f)] private float bgmBaseVolume = 0.26f;
     [SerializeField, Min(0.01f)] private float bgmFadeInDuration = 0.65f;
-    [SerializeField, Range(0f, 1f)] private float bgmDuckVolume = 0.11f;
-    [SerializeField, Min(0.01f)] private float bgmDuckInDuration = 0.08f;
-    [SerializeField, Min(0.01f)] private float bgmDuckRecoveryDuration = 0.24f;
+    [SerializeField, Min(0.01f)] private float bgmFadeOutDuration = 0.55f;
 
     [Header("Timing")]
     [SerializeField, Min(0.01f)] private float backgroundFadeDuration = 0.65f;
@@ -231,6 +230,23 @@ public sealed class TitleScreenPresentation : MonoBehaviour
             sfxSource = gameObject.AddComponent<AudioSource>();
         sfxSource.playOnAwake = false;
         sfxSource.spatialBlend = 0f;
+
+        if (confirmSfxSource == null)
+        {
+            var confirmObject = new GameObject("TitleConfirmSFX", typeof(AudioSource));
+            confirmObject.transform.SetParent(transform, false);
+            confirmSfxSource = confirmObject.GetComponent<AudioSource>();
+        }
+        confirmSfxSource.playOnAwake = false;
+        confirmSfxSource.spatialBlend = 0f;
+
+        var confirmEcho = confirmSfxSource.GetComponent<AudioEchoFilter>();
+        if (confirmEcho == null)
+            confirmEcho = confirmSfxSource.gameObject.AddComponent<AudioEchoFilter>();
+        confirmEcho.delay = 72f;
+        confirmEcho.decayRatio = 0.16f;
+        confirmEcho.dryMix = 0.96f;
+        confirmEcho.wetMix = 0.10f;
 
         if (bgmSource == null)
         {
@@ -434,8 +450,8 @@ public sealed class TitleScreenPresentation : MonoBehaviour
 
     private void PlayConfirmSfx()
     {
-        if (confirmSfx != null && sfxSource != null)
-            sfxSource.PlayOneShot(confirmSfx);
+        if (confirmSfx != null && confirmSfxSource != null)
+            confirmSfxSource.PlayOneShot(confirmSfx);
     }
 
     private IEnumerator ConfirmAndInvoke(Action action)
@@ -445,29 +461,20 @@ public sealed class TitleScreenPresentation : MonoBehaviour
 
         actionPending = true;
         PlayConfirmSfx();
-        DuckBgmForConfirmation();
-        var delay = confirmSfx != null ? Mathf.Clamp(confirmSfx.length, 0.08f, 0.4f) : 0.08f;
-        yield return new WaitForSecondsRealtime(delay);
+        yield return FadeOutBgmForConfirmation();
         action?.Invoke();
         actionPending = false;
     }
 
-    private void DuckBgmForConfirmation()
+    private IEnumerator FadeOutBgmForConfirmation()
     {
         if (bgmSource == null || !bgmSource.isPlaying)
-            return;
+            yield break;
 
         if (bgmVolumeRoutine != null)
             StopCoroutine(bgmVolumeRoutine);
-        bgmVolumeRoutine = StartCoroutine(DuckAndRestoreBgm());
-    }
-
-    private IEnumerator DuckAndRestoreBgm()
-    {
-        var currentVolume = bgmSource.volume;
-        yield return FadeBgmVolume(currentVolume, bgmDuckVolume, bgmDuckInDuration);
-        yield return new WaitForSecondsRealtime(0.08f);
-        yield return FadeBgmVolume(bgmDuckVolume, bgmBaseVolume, bgmDuckRecoveryDuration);
+        yield return FadeBgmVolume(bgmSource.volume, 0f, bgmFadeOutDuration);
+        bgmSource.Stop();
     }
 
     private IEnumerator FadeBgmVolume(float from, float to, float duration)
