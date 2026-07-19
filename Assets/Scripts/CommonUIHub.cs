@@ -5,13 +5,15 @@ public class CommonUIHub : MonoBehaviour
 {
     public GameObject moneyUIPrefab;
     public GameObject reReButtonPrefab;
+    [SerializeField] private bool showReReButton;
 
     private void Start()
     {
         if (SceneManager.GetActiveScene().name != "CommonUIHub") return;
 
         SpawnPrefab(moneyUIPrefab, "moneyUIPrefab");
-        SpawnPrefab(reReButtonPrefab, "reReButtonPrefab");
+        if (showReReButton)
+            SpawnPrefab(reReButtonPrefab, "reReButtonPrefab");
         EnsureComicDemoOverlay();
     }
 

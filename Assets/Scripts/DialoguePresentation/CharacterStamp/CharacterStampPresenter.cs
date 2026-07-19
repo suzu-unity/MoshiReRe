@@ -13,12 +13,24 @@ namespace MoshiReRe.DialoguePresentation.CharacterStamp
         [SerializeField] private CharacterDatabase characterDatabase;
         [SerializeField] private Image iconImage;
         [SerializeField] private TextMeshProUGUI numberLabel;
+        [SerializeField] private GameObject authorNamePanel;
+        [SerializeField] private NarrationFlipbook narrationFlipbook;
         [SerializeField] private string unknownNumber = "--";
 
         public void SetAuthor (string authorId, string authorName)
         {
             var hasAuthor = !string.IsNullOrWhiteSpace(authorId) || !string.IsNullOrWhiteSpace(authorName);
-            gameObject.SetActive(hasAuthor);
+            gameObject.SetActive(true);
+
+            if (narrationFlipbook)
+            {
+                if (hasAuthor) narrationFlipbook.Hide();
+                else narrationFlipbook.Show();
+            }
+
+            if (iconImage) iconImage.gameObject.SetActive(hasAuthor);
+            if (numberLabel) numberLabel.gameObject.SetActive(hasAuthor);
+            if (authorNamePanel) authorNamePanel.SetActive(hasAuthor);
             if (!hasAuthor) return;
 
             var character = FindCharacter(authorId, authorName, out var index);

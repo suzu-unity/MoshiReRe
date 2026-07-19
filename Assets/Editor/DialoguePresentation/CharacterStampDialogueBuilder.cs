@@ -21,6 +21,7 @@ namespace MoshiReRe.Editor.DialoguePresentation
         private const string DestinationPath = DestinationFolder + "/Dialogue.prefab";
         private const string FontPath = "Assets/Font/PixelMplus12-Regular SDF.asset";
         private const string CharacterDatabasePath = "Assets/Database/Characters/CharacterDatabase.asset";
+        private const string NarrationFrameFolder = "Assets/Art/UI/Dialogue/NarrationBookFrames";
 
         private static readonly Color PanelColor = new(0.024f, 0.067f, 0.145f, 0.91f);
         private static readonly Color BorderColor = new(0.25f, 0.69f, 0.92f, 0.9f);
@@ -74,14 +75,23 @@ namespace MoshiReRe.Editor.DialoguePresentation
             if (!textPanel || !dialogueText || !authorPanel || !authorText)
                 throw new InvalidOperationException("The source Dialogue prefab hierarchy does not match Naninovel's expected layout.");
 
-            StylePanel(textPanel, dialogueText, font);
+            StylePanel(root.transform, textPanel, dialogueText, font);
             var stamp = CreateStamp(textPanel, authorPanel, authorText, font, database);
             CreateInputDiamond(root, textPanel, font, panel);
             AssignPanelStamp(panel, stamp);
         }
 
-        private static void StylePanel (Transform textPanel, TextMeshProUGUI dialogueText, TMP_FontAsset font)
+        private static void StylePanel (Transform root, Transform textPanel, TextMeshProUGUI dialogueText, TMP_FontAsset font)
         {
+            var printerPanel = Find(root, "PrinterPanel");
+            if (!printerPanel) throw new InvalidOperationException("The source Dialogue prefab has no PrinterPanel.");
+            var printerWidth = printerPanel.GetComponent<LayoutElement>();
+            printerWidth.minWidth = 0f;
+            printerWidth.preferredWidth = 1680f;
+            printerWidth.flexibleWidth = -1f;
+            var printer = Find(root, "Printer");
+            if (printer) (printer as RectTransform).anchoredPosition = new Vector2(0f, 26f);
+
             var background = textPanel.GetComponent<Image>();
             background.sprite = null;
             background.type = Image.Type.Simple;
@@ -91,22 +101,23 @@ namespace MoshiReRe.Editor.DialoguePresentation
             border.effectDistance = new Vector2(1f, -1f);
 
             var layout = textPanel.GetComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(176, 74, 32, 34);
+            layout.padding = new RectOffset(224, 74, 30, 36);
             layout.childAlignment = TextAnchor.UpperLeft;
 
             var element = textPanel.GetComponent<LayoutElement>();
-            element.minHeight = 196f;
+            element.minHeight = 224f;
 
             dialogueText.font = font;
             dialogueText.fontSize = 30f;
             dialogueText.color = TextColor;
             dialogueText.margin = Vector4.zero;
+            dialogueText.enableWordWrapping = true;
         }
 
         private static CharacterStampPresenter CreateStamp (Transform textPanel, Transform authorPanel, TextMeshProUGUI authorText, TMP_FontAsset font, CharacterDatabase database)
         {
             var stampRoot = CreateUIObject("CharacterStamp", textPanel);
-            SetRect(stampRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(18f, -18f), new Vector2(148f, 58f), new Vector2(0f, 1f));
+            SetRect(stampRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(18f, -18f), new Vector2(190f, 68f), new Vector2(0f, 1f));
             stampRoot.GetComponent<LayoutElement>().ignoreLayout = true;
             var stampImage = stampRoot.AddComponent<Image>();
             stampImage.color = new Color(0.035f, 0.11f, 0.22f, 0.98f);
@@ -115,7 +126,7 @@ namespace MoshiReRe.Editor.DialoguePresentation
             stampOutline.effectDistance = new Vector2(1f, -1f);
 
             var iconFrame = CreateUIObject("IconFrame", stampRoot.transform);
-            SetRect(iconFrame, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(7f, 0f), new Vector2(46f, 46f), new Vector2(0f, 0.5f));
+            SetRect(iconFrame, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(8f, 0f), new Vector2(52f, 52f), new Vector2(0f, 0.5f));
             var frameImage = iconFrame.AddComponent<Image>();
             frameImage.color = new Color(0.12f, 0.31f, 0.47f, 1f);
 
@@ -125,16 +136,27 @@ namespace MoshiReRe.Editor.DialoguePresentation
             iconImage.preserveAspect = true;
             iconImage.enabled = false;
 
-            var tag = CreateLabel("StampNumber", stampRoot.transform, font, "01", 16f, TextAnchor.MiddleRight);
-            SetRect(tag.gameObject, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-8f, -8f), new Vector2(34f, 20f), new Vector2(1f, 1f));
+            var narrationBook = CreateUIObject("NarrationBook", iconFrame.transform);
+            SetRect(narrationBook, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-4f, -4f), new Vector2(0.5f, 0.5f));
+            var narrationImage = narrationBook.AddComponent<Image>();
+            narrationImage.preserveAspect = true;
+            narrationImage.enabled = false;
+            var narrationFlipbook = narrationBook.AddComponent<NarrationFlipbook>();
+            ConfigureNarrationFrames(narrationFlipbook, narrationImage);
+            narrationBook.SetActive(false);
+
+            var tag = CreateLabel("StampNumber", stampRoot.transform, font, "01", 15f, TextAnchor.MiddleLeft);
+            SetRect(tag.gameObject, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(70f, -10f), new Vector2(44f, 18f), new Vector2(0f, 1f));
             tag.color = BorderColor;
 
             authorPanel.SetParent(stampRoot.transform, false);
-            SetRect(authorPanel.gameObject, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(59f, 4f), new Vector2(-8f, 26f), new Vector2(0f, 0.5f));
+            SetRect(authorPanel.gameObject, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(70f, -31f), new Vector2(112f, 26f), new Vector2(0f, 1f));
             var authorLayout = authorPanel.GetComponent<LayoutElement>() ?? authorPanel.gameObject.AddComponent<LayoutElement>();
             authorLayout.ignoreLayout = true;
+            var authorBackground = authorPanel.GetComponent<Image>();
+            if (authorBackground) UnityEngine.Object.DestroyImmediate(authorBackground);
             authorText.font = font;
-            authorText.fontSize = 23f;
+            authorText.fontSize = 20f;
             authorText.alignment = TextAlignmentOptions.MidlineLeft;
             authorText.color = TextColor;
             ReplaceScript<StampAuthorNamePanel>(authorPanel.GetComponent<AuthorNameTMProPanel>());
@@ -148,8 +170,38 @@ namespace MoshiReRe.Editor.DialoguePresentation
             presenterSerialized.FindProperty("characterDatabase").objectReferenceValue = database;
             presenterSerialized.FindProperty("iconImage").objectReferenceValue = iconImage;
             presenterSerialized.FindProperty("numberLabel").objectReferenceValue = tag;
+            presenterSerialized.FindProperty("authorNamePanel").objectReferenceValue = authorPanel.gameObject;
+            presenterSerialized.FindProperty("narrationFlipbook").objectReferenceValue = narrationFlipbook;
             presenterSerialized.ApplyModifiedPropertiesWithoutUndo();
             return presenter;
+        }
+
+        private static void ConfigureNarrationFrames (NarrationFlipbook flipbook, Image image)
+        {
+            var frames = new Sprite[4];
+            for (var index = 0; index < frames.Length; index++)
+            {
+                var path = $"{NarrationFrameFolder}/NarrationBook_{index + 1:00}.png";
+                var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (!importer) throw new InvalidOperationException($"Narration book frame was not found at '{path}'.");
+
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.alphaIsTransparency = true;
+                importer.filterMode = FilterMode.Point;
+                importer.mipmapEnabled = false;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+                frames[index] = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            }
+
+            var serialized = new SerializedObject(flipbook);
+            serialized.FindProperty("image").objectReferenceValue = image;
+            var frameProperty = serialized.FindProperty("frames");
+            frameProperty.arraySize = frames.Length;
+            for (var index = 0; index < frames.Length; index++)
+                frameProperty.GetArrayElementAtIndex(index).objectReferenceValue = frames[index];
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CreateInputDiamond (GameObject root, Transform textPanel, TMP_FontAsset font, CharacterStampDialoguePanel panel)
