@@ -233,13 +233,13 @@ Danbooruタグ：
 自然言語：
 
 ```text
-A monochrome office flashback showing Wanabi acting overconfident while cryptocurrency prices are rising. Wanabi, a long-haired Japanese office woman with black rectangular glasses, proudly leans toward her junior coworker and gestures as if promising to buy her anything she wants. Yura Ooya, a fashionable young Japanese gyaru office worker with a high side ponytail, crossed hairpins, long nails, a loosened necktie, and a partly untucked shirt, reacts with surprised greedy interest while pointing toward a high-end graphics card displayed on her smartphone. Comedic contrast, workplace desks and monitors, horizontal 16:9 framing, no speech bubbles, no readable text.
+A monochrome office flashback showing Wanabi acting overconfident while cryptocurrency prices are rising. Wanabi, a long-haired Japanese office woman with black rectangular glasses, proudly leans toward her junior coworker and gestures as if promising to buy her anything she wants. Yura Ooya is a languid young Japanese gyaru office worker with visible dark roots, milk-tea beige shoulder-length layered bob hair, pale mint inner hair, strong high-prescription metal-frame glasses, one dusty-pink X hairpin arrangement, and muted pink nails. She reacts with surprised greedy interest while pointing toward a high-end graphics card displayed on her smartphone. Comedic contrast, workplace desks and monitors, horizontal 16:9 framing, no speech bubbles, no readable text.
 ```
 
 Danbooruタグ：
 
 ```text
-2girls, office, flashback, monochrome, grayscale, adult woman, very long black hair, blunt bangs, black-framed eyewear, smug, confident, gesturing, office lady, gyaru, high side ponytail, crossed hairpins, long fingernails, loose necktie, partially untucked shirt, surprised, greedy smile, smartphone, graphics card image, desk, computer, horizontal composition, 16:9, no speech bubble, no text
+2girls, office, flashback, monochrome, grayscale, adult woman, very long black hair, blunt bangs, black-framed eyewear, smug, confident, gesturing, office lady, gyaru, milk tea beige hair, dark roots, mint inner hair, layered bob, crossed hairpins, high prescription glasses, thick lenses, muted pink fingernails, loose necktie, partially untucked shirt, surprised, greedy smile, smartphone, graphics card image, desk, computer, horizontal composition, 16:9, no speech bubble, no text
 ```
 
 ### 7. PC作業中の罠美
@@ -275,13 +275,13 @@ Danbooruタグ：
 自然言語：
 
 ```text
-A horizontal 16:9 event illustration of Yura Ooya examining Wanabi's office computer after a suspicious crash. Yura is a cheerful 22-year-old Japanese gyaru office worker with lightly tanned skin, teal upturned eyes, honey-blonde hair with dark roots tied in a high right-side ponytail, two crossed teal hairpins above her left temple, coral long nails, a loosened coral necktie, a slightly untucked white office shirt, charcoal pencil skirt, black tights, and a mint employee lanyard with a tiny Enter-key charm. Her usual playful expression has changed into a serious focused look. She sits close to the desk, one hand on the mouse and the other moving confidently over the keyboard. Wanabi stands anxiously behind her. The monitor faces away from the viewer, so the screen content is completely hidden. Visible USB cable and phone on desk, quiet tense office, no text.
+A horizontal 16:9 event illustration of Yura Ooya examining Wanabi's office computer after a suspicious crash. Yura is a 22-year-old Japanese gyaru office worker with freckles, olive-brown sleepy eyes, milk-tea beige shoulder-length layered bob hair, clearly visible two-to-three-centimeter dark brown roots, pale mint inner hair, exactly two dusty-pink enamel hairpins crossed into one X above her left temple, and a single matching ear cuff on her right ear. She wears thin metal-frame glasses with extremely thick high-prescription myopia lenses that visibly reduce her eyes, a modest white office shirt, muted-coral necktie, charcoal pencil skirt, black tights, and mint employee lanyard. Her usual languid expression has changed into a serious focused look. She sits close to the desk, one hand on the mouse and the other moving confidently over the keyboard. Wanabi stands anxiously behind her. The monitor faces away from the viewer, so the screen content is completely hidden. Visible USB cable and phone on desk, quiet tense office, no text.
 ```
 
 Danbooruタグ：
 
 ```text
-2girls, office, computer, monitor from behind, screen not visible, gyaru, light tan, honey blonde hair, dark roots, high side ponytail, crossed hairpins, teal hairpin, teal eyes, tsurime, coral nails, long fingernails, white collared shirt, rolled sleeves, loose coral necktie, partially untucked shirt, charcoal pencil skirt, black pantyhose, mint lanyard, keyboard key charm, serious, focused, sitting, hand on mouse, hand on keyboard, adult woman, very long black hair, black-framed eyewear, anxious, standing behind, smartphone, usb cable, evening, horizontal composition, 16:9, no text
+2girls, office, computer, monitor from behind, screen not visible, gyaru, freckles, milk tea beige hair, clearly visible dark roots, pale mint inner hair, layered bob, exactly two hairpins, crossed dusty pink hairpins, single dusty pink ear cuff, olive brown eyes, sleepy eyes, high prescription glasses, bottle-bottom glasses, thick lenses, eyes smaller behind glasses, muted pink fingernails, white collared shirt, rolled sleeves, loose coral necktie, partially untucked shirt, charcoal pencil skirt, black pantyhose, mint lanyard, serious, focused, sitting, hand on mouse, hand on keyboard, adult woman, very long black hair, black-framed eyewear, anxious, standing behind, smartphone, usb cable, evening, horizontal composition, 16:9, no text
 ```
 
 ### 10. 正常なPC画面を見せる絵
@@ -289,7 +289,7 @@ Danbooruタグ：
 自然言語：
 
 ```text
-A front-facing close event shot of an office computer monitor being turned toward the viewer by a young female coworker's hand with distinctive long coral nails. The display shows an entirely ordinary clean desktop with a neutral wallpaper, a taskbar, and a few generic unlabeled icons, with no error message and no readable text. Part of Yura Ooya's rolled white sleeve, coral necktie, and mint lanyard is visible at one edge, while Wanabi's anxious silhouette is visible at the other. The image must clearly communicate that the computer has already returned to normal. Horizontal 16:9 composition, no brand logos, no readable text.
+A front-facing close event shot of an office computer monitor being turned toward the viewer by a young female coworker's hand with distinctive muted-pink nails. The display shows an entirely ordinary clean desktop with a neutral wallpaper, a taskbar, and a few generic unlabeled icons, with no error message and no readable text. Part of Yura Ooya's unevenly rolled white sleeve, muted-coral necktie, mint lanyard, and thick metal-frame glasses is visible at one edge, while Wanabi's anxious silhouette is visible at the other. The image must clearly communicate that the computer has already returned to normal. Horizontal 16:9 composition, no brand logos, no readable text.
 ```
 
 Danbooruタグ：
