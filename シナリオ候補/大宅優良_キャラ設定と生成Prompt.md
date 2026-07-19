@@ -39,7 +39,7 @@ Naninovel上の内部キャラクターIDは、既存実装との互換性を優
 2. 肩に触れる薄めのレイヤーボブ、弱い外ハネ、淡いミント色のインナーカラー
 3. 左こめかみで一つのXを作る、くすみピンクのエナメルヘアピン二本
 4. 右耳だけに付ける、ヘアピンと同色の小さなくすみピンクのイヤーカフ
-5. 薄い金属フレームと、目が小さく見えるほど分厚い強度近視レンズ
+5. 薄い金属フレームと、白い反射で両目を完全に隠す分厚い強度近視レンズ
 6. ミント色の社員証ストラップと、ストラップ下部の小さなミント色基板ピン
 7. くすみピンクの中程度のネイル
 
@@ -48,7 +48,7 @@ Naninovel上の内部キャラクターIDは、既存実装との互換性を優
 ## 服装
 
 - 少し大きめの白い襟付きシャツ。袖を左右で違う高さまでまくる。
-- 第一ボタンだけを開け、黒いレースキャミソールの縁を襟元へごく細くのぞかせる。
+- 第一ボタンだけを外して襟元を少し緩める。シャツは完全に不透明で、下着やインナーは見せない。
 - 珊瑚色の細いネクタイを緩く結ぶ。
 - シャツは前だけ軽く入れ、片側の裾だけを少し出す。
 - チャコールグレーの膝丈ペンシルスカート、薄い黒タイツ、黒いローファー。
@@ -57,21 +57,21 @@ Naninovel上の内部キャラクターIDは、既存実装との互換性を優
 ## 立ち絵用・自然言語Prompt
 
 ```text
-A full-body character illustration of Yura Ooya, a 22-year-old Japanese junior office worker with a subtle gyaru style, a languid posture, and a friendly teasing expression. Her natural dark brown hair has grown out visibly: show a clearly defined two-to-three-centimeter band of dark brown roots along the center part, crown, hairline, and both temples. The dyed lengths are milk-tea beige with a pale mint inner layer. Her hair is a thin shoulder-length layered bob with weakly flipped ends and slightly messy side-swept bangs. Exactly two dusty-pink enamel hairpins cross each other to form one clear X above her left temple; there are no other hairpins. A single small dusty-pink enamel ear cuff is attached to her right ear, matching the X hairpins; she wears no earrings. She has freckles, olive-brown half-lidded drooping eyes, natural makeup, and muted pink medium-length nails. She wears thin silver metal-frame glasses with extremely thick high-prescription myopia lenses, clearly visible thick lens edges, strong refraction distortion, and eyes that appear noticeably smaller through the lenses, like realistic bottle-bottom glasses. Her white collared shirt is modestly buttoned except for the first button, its sleeves are rolled to uneven heights, and a very narrow edge of a black lace camisole is visible at the collar. She wears a loosened muted-coral necktie, a charcoal knee-length pencil skirt, sheer black pantyhose, and black loafers. One shirt hem is slightly untucked. A mint employee lanyard holds her employee badge, with one small mint circuit-board enamel pin fixed directly above the badge. Realistic Japanese office wear, relaxed standing pose, plain neutral background.
+A full-body character illustration of Yura Ooya, a 22-year-old Japanese junior office worker with a subtle gyaru style, a languid posture, and a friendly teasing expression. Her natural dark brown hair has grown out visibly: show a clearly defined two-to-three-centimeter band of dark brown roots along the center part, crown, hairline, and both temples. The dyed lengths are milk-tea beige with a pale mint inner layer. Her hair is a thin shoulder-length layered bob with weakly flipped ends and slightly messy side-swept bangs. Exactly two dusty-pink enamel hairpins cross each other to form one clear X above her left temple; there are no other hairpins. A single small dusty-pink enamel ear cuff is attached to her right ear, matching the X hairpins; she wears no earrings. She has freckles, natural makeup, and muted pink medium-length nails. She wears thin silver metal-frame bottle-bottom glasses with extremely thick high-prescription myopia lenses and clearly visible thick lens edges. Strong flat white glare completely covers both lenses from edge to edge, fully obscuring both eyes; no pupils, irises, eyelashes, or eye shapes are visible through or above the glasses. Her white collared office shirt is made from fully opaque fabric. Exactly one top button is undone so the collar sits slightly loose, but no bra, camisole, lingerie, skin, or undergarment is visible through the shirt or inside the opening. The remaining buttons are closed. Its sleeves are rolled to uneven heights. She wears a loosened muted-coral necktie, a charcoal knee-length pencil skirt, sheer black pantyhose, and black loafers. One shirt hem is slightly untucked. A mint employee lanyard holds her employee badge, with one small mint circuit-board enamel pin fixed directly above the badge. Realistic Japanese office wear, relaxed standing pose, plain neutral background.
 ```
 
 ## 立ち絵用・DanbooruタグPrompt
 
 ```text
-1girl, solo, adult woman, 22yo, japanese office lady, junior employee, subtle gyaru, approachable, languid, slouching, friendly teasing smile, freckles, milk tea beige hair, dark brown roots, clearly visible dark roots, grown-out roots, two-tone hair, pale mint inner hair, shoulder-length hair, thin hair, layered bob, weakly flipped hair, slightly messy side-swept bangs, exactly two hairpins, crossed hairpins, single x-shaped hairpin arrangement, dusty pink hairpins, hairpin above left temple, no extra hairpins, olive brown eyes, tareme, sleepy eyes, half-closed eyes, long eyelashes, natural makeup, thin silver metal-frame glasses, high prescription glasses, strong myopia glasses, bottle-bottom glasses, extremely thick lenses, thick lens edges, refraction distortion, eyes smaller behind glasses, muted pink fingernails, medium fingernails, white collared shirt, first button undone, black lace camisole edge, sleeves rolled up unevenly, loosened muted coral necktie, slightly untucked shirt, charcoal knee-length pencil skirt, sheer black pantyhose, black loafers, mint lanyard, employee badge, single mint circuit-board enamel pin above badge, single dusty pink enamel ear cuff on right ear, no earrings, realistic office wear, standing, relaxed posture, plain background
+1girl, solo, adult woman, 22yo, japanese office lady, junior employee, subtle gyaru, approachable, languid, slouching, friendly teasing smile, freckles, milk tea beige hair, dark brown roots, clearly visible dark roots, grown-out roots, two-tone hair, pale mint inner hair, shoulder-length hair, thin hair, layered bob, weakly flipped hair, slightly messy side-swept bangs, exactly two hairpins, crossed hairpins, single x-shaped hairpin arrangement, dusty pink hairpins, hairpin above left temple, no extra hairpins, natural makeup, thin silver metal-frame glasses, high prescription glasses, strong myopia glasses, bottle-bottom glasses, extremely thick lenses, thick lens edges, opaque glasses, glasses glare, solid white lens glare, both lenses completely white, eyes fully obscured by glasses, no visible eyes, no pupils, no irises, muted pink fingernails, medium fingernails, fully opaque white collared shirt, exactly one top button undone, modest loose collar, all lower buttons closed, no visible underwear, sleeves rolled up unevenly, loosened muted coral necktie, slightly untucked shirt, charcoal knee-length pencil skirt, sheer black pantyhose, black loafers, mint lanyard, employee badge, single mint circuit-board enamel pin above badge, single dusty pink enamel ear cuff on right ear, no earrings, realistic office wear, standing, relaxed posture, plain background
 ```
 
-### 眼鏡越しに見る表情用の追記
+### 表情差分の方針
 
-基本立ち絵では眼鏡を正しく掛け、厚いレンズを識別記号として見せる。からかう表情だけ、次を末尾へ追加する。
+眼鏡は常に正しく掛け、両目を白い反射で隠す。表情差分では目を描かせず、口、眉、首の傾き、手振り、姿勢で感情を表現する。
 
 ```text
-glasses lowered slightly on nose, looking over glasses, half-lidded teasing gaze, eyes visible above the upper rim while thick lens edges remain visible
+glasses worn correctly, solid white glare across both lenses, eyes completely hidden, expression conveyed only by mouth, eyebrows, head angle, hands, and body language
 ```
 
 ## Character sheet用追記
@@ -97,5 +97,5 @@ character sheet, multiple views, front view, side view, back view, three-quarter
 ## Negative Prompt候補
 
 ```text
-fully beige roots, pale roots, uniform hair color, hidden hair roots, black hair lengths, very long hair, ponytail, twin tails, extra hairpins, parallel hairpins, three hairpins, multiple earrings, hoop earrings, opaque glasses, sunglasses, thin lenses, normal lenses, oversized eyes behind glasses, visible bra, exposed underwear, cleavage, open shirt, miniskirt, school uniform, schoolgirl, child, underage, extreme tan, nightclub outfit, maid outfit, multiple people, text, watermark
+fully beige roots, pale roots, uniform hair color, hidden hair roots, black hair lengths, very long hair, ponytail, twin tails, extra hairpins, parallel hairpins, three hairpins, multiple earrings, hoop earrings, transparent glasses, clear lenses, sunglasses, thin lenses, normal lenses, visible eyes, pupils, irises, eyelashes visible through glasses, glasses lowered, looking over glasses, transparent shirt, translucent shirt, see-through clothes, wet shirt, black fabric visible through shirt, black chest panel, camisole, visible bra, exposed underwear, lingerie, cleavage, open shirt, two buttons undone, multiple buttons undone, miniskirt, school uniform, schoolgirl, child, underage, extreme tan, nightclub outfit, maid outfit, multiple people, text, watermark
 ```
