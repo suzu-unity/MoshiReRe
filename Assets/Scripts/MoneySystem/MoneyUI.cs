@@ -1,8 +1,9 @@
-using UnityEngine;
-using TMPro;
-using Naninovel;
 using System.Collections;
+using System.Text;
 using Febucci.UI;
+using Naninovel;
+using TMPro;
+using UnityEngine;
 
 public class MoneyUI : MonoBehaviour
 {
@@ -11,17 +12,23 @@ public class MoneyUI : MonoBehaviour
     [SerializeField] private TextAnimator_TMP floatingText;
     [SerializeField] private CanvasGroup floatingGroup;
 
-    private bool initialized = false;
-    private bool subscribed = false;
-    private int lastAmount = 0;
+    private bool initialized;
+    private bool subscribed;
+    private int lastAmount;
+    private Coroutine bindingRoutine;
+    private Coroutine floatingRoutine;
+    private RectTransform floatingRect;
+    private Vector2 floatingRestPosition;
 
     private void Start()
     {
-        if (moneyText) moneyText.text = "";
-        if (floatingText) floatingText.SetText("");
+        if (moneyText) moneyText.text = "¥ 000,000";
+        if (floatingText) floatingText.SetText(string.Empty);
         if (floatingGroup) floatingGroup.alpha = 0f;
 
-        StartCoroutine(BindToMoneyManagerWhenReady());
+        if (floatingText) floatingRect = floatingText.GetComponent<RectTransform>();
+        if (floatingRect) floatingRestPosition = floatingRect.anchoredPosition;
+        bindingRoutine = StartCoroutine(BindToMoneyManagerWhenReady());
     }
 
     private IEnumerator BindToMoneyManagerWhenReady()
@@ -33,33 +40,33 @@ public class MoneyUI : MonoBehaviour
         subscribed = true;
 
         lastAmount = MoneyManager.Instance.CurrentMoney;
-        UpdateMoneyText(lastAmount, playSound: false);
+        UpdateMoneyText(lastAmount, false);
         initialized = true;
+        bindingRoutine = null;
     }
 
     public void UpdateMoneyText(int newAmount)
     {
-        UpdateMoneyText(newAmount, playSound: true);
+        UpdateMoneyText(newAmount, true);
     }
 
     private void UpdateMoneyText(int newAmount, bool playSound)
     {
         if (moneyText != null)
-            moneyText.text = $"所持金: <mspace=0.6em></mspace>¥{newAmount:N0}";
+            moneyText.text = $"<mspace=0.62em>¥ {FormatMoney(newAmount)}</mspace>";
 
         int diff = newAmount - lastAmount;
-
         if (diff != 0 && floatingText != null && floatingGroup != null)
         {
             string sign = diff > 0 ? "+" : "-";
-            string color = diff > 0 ? "red" : "blue";
-            string animTag = diff > 0 ? "<bounce>" : "<slide y=-20>";
-            string popup = $"{animTag}<color={color}>{sign}¥{Mathf.Abs(diff):N0}</color>";
+            string color = diff > 0 ? "#42E8FF" : "#FF8A5B";
+            string popup = $"<mspace=0.62em><color={color}>{sign}¥{FormatMoney(Mathf.Abs(diff))}</color></mspace>";
 
             floatingGroup.alpha = 1f;
             floatingText.SetText(popup);
-            StopAllCoroutines();
-            StartCoroutine(FadeOutFloatingText());
+            if (floatingRoutine != null)
+                StopCoroutine(floatingRoutine);
+            floatingRoutine = StartCoroutine(FadeOutFloatingText());
         }
 
         if (diff != 0 && playSound && moneySE != null && initialized)
@@ -70,25 +77,54 @@ public class MoneyUI : MonoBehaviour
 
     private IEnumerator FadeOutFloatingText()
     {
-        yield return new WaitForSeconds(1.0f);
+        if (floatingRect)
+            floatingRect.anchoredPosition = floatingRestPosition + new Vector2(0f, -10f);
 
-        float duration = 0.5f;
+        const float settleDuration = 0.18f;
         float t = 0f;
-        while (t < duration)
+        while (t < settleDuration)
         {
-            t += Time.deltaTime;
-            floatingGroup.alpha = Mathf.Lerp(1f, 0f, t / duration);
+            t += Time.unscaledDeltaTime;
+            if (floatingRect)
+                floatingRect.anchoredPosition = Vector2.Lerp(floatingRestPosition + new Vector2(0f, -10f), floatingRestPosition, t / settleDuration);
+            yield return null;
+        }
+
+        yield return new WaitForSecondsRealtime(0.55f);
+
+        const float fadeDuration = 0.32f;
+        t = 0f;
+        while (t < fadeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            floatingGroup.alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
             yield return null;
         }
 
         floatingGroup.alpha = 0f;
-
         if (floatingText != null)
-            floatingText.SetText("");
+            floatingText.SetText(string.Empty);
+        floatingRoutine = null;
+    }
+
+    private static string FormatMoney(int amount)
+    {
+        string digits = Mathf.Max(0, amount).ToString().PadLeft(6, '0');
+        var formatted = new StringBuilder(digits.Length + digits.Length / 3);
+        for (int i = 0; i < digits.Length; i++)
+        {
+            if (i > 0 && (digits.Length - i) % 3 == 0)
+                formatted.Append(',');
+            formatted.Append(digits[i]);
+        }
+
+        return formatted.ToString();
     }
 
     private void OnDestroy()
     {
+        if (bindingRoutine != null) StopCoroutine(bindingRoutine);
+        if (floatingRoutine != null) StopCoroutine(floatingRoutine);
         if (subscribed && MoneyManager.Instance != null)
             MoneyManager.Instance.OnMoneyChanged -= UpdateMoneyText;
     }

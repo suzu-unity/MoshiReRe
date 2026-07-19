@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -12,6 +13,9 @@ public class ReReButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
     [SerializeField] private Image buttonImage;
     [SerializeField] private Image markerImage;
     [SerializeField] private AdviceBubble adviceBubble;
+    [SerializeField] private RectTransform screenRect;
+    [SerializeField] private Sprite reactionSprite;
+    [SerializeField] private Sprite notificationSprite;
 
     [Header("Idle Animation")]
     [SerializeField] private Sprite[] idleFrames;
@@ -35,6 +39,8 @@ public class ReReButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
     private bool isHovering;
     private int frameIndex;
     private float frameTimer;
+    private Coroutine reactionRoutine;
+    private Vector3 screenBaseScale = Vector3.one;
 
     private void Awake()
     {
@@ -48,6 +54,8 @@ public class ReReButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
 
         if (!button) button = GetComponent<Button>();
         if (!buttonImage) buttonImage = GetComponent<Image>();
+        if (!screenRect && buttonImage) screenRect = buttonImage.rectTransform;
+        if (screenRect) screenBaseScale = screenRect.localScale;
 
         if (button)
         {
@@ -83,6 +91,7 @@ public class ReReButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (Instance == this) Instance = null;
         if (button) button.onClick.RemoveListener(OnClicked);
+        if (reactionRoutine != null) StopCoroutine(reactionRoutine);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -101,6 +110,18 @@ public class ReReButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         currentAdvice = message ?? string.Empty;
         ApplyMarker(marker, false);
+        if (!string.IsNullOrWhiteSpace(marker)) PlayReaction();
+    }
+
+    public void SetHint(string message)
+    {
+        SetAdvice(message, "notification");
+    }
+
+    public void SetNotification(bool visible)
+    {
+        ApplyMarker(visible ? "notification" : string.Empty, !visible);
+        if (visible) PlayReaction();
     }
 
     private void OnClicked()
@@ -143,7 +164,47 @@ public class ReReButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
             }
         }
 
-        markerImage.sprite = sprite;
-        markerImage.enabled = sprite != null;
+        bool notification = !forceNone && !string.IsNullOrWhiteSpace(marker);
+        markerImage.sprite = sprite ? sprite : notificationSprite;
+        markerImage.enabled = notification;
+
+        var markerLabel = markerImage.GetComponentInChildren<TMPro.TextMeshProUGUI>(true);
+        if (markerLabel) markerLabel.enabled = sprite == null && notification;
+    }
+
+    private void PlayReaction()
+    {
+        if (!screenRect) return;
+        if (reactionRoutine != null) StopCoroutine(reactionRoutine);
+        reactionRoutine = StartCoroutine(PlayReactionRoutine());
+    }
+
+    private IEnumerator PlayReactionRoutine()
+    {
+        Sprite previous = buttonImage ? buttonImage.sprite : null;
+        if (buttonImage && reactionSprite) buttonImage.sprite = reactionSprite;
+
+        const float popDuration = 0.12f;
+        float t = 0f;
+        while (t < popDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            screenRect.localScale = Vector3.Lerp(screenBaseScale, screenBaseScale * 1.08f, t / popDuration);
+            yield return null;
+        }
+
+        yield return new WaitForSecondsRealtime(0.35f);
+
+        t = 0f;
+        while (t < popDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            screenRect.localScale = Vector3.Lerp(screenBaseScale * 1.08f, screenBaseScale, t / popDuration);
+            yield return null;
+        }
+
+        if (buttonImage && reactionSprite) buttonImage.sprite = previous;
+        ApplyCurrentVisual();
+        reactionRoutine = null;
     }
 }
