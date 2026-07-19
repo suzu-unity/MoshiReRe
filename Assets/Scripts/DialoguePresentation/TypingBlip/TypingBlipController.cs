@@ -26,10 +26,17 @@ namespace MoshiReRe.DialoguePresentation.TypingBlip
         private readonly TypingBlipRateLimiter rateLimiter = new();
         private bool subscribed;
 
+        // Kept in memory so a fresh checkout has an audible default without an external sound file.
+        private static AudioClip generatedBlip;
+
         private void Awake()
         {
             if (!audioSource) audioSource = GetComponent<AudioSource>();
-            if (audioSource) audioSource.playOnAwake = false;
+            if (audioSource)
+            {
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 0f;
+            }
         }
 
         private void OnEnable()
@@ -129,11 +136,33 @@ namespace MoshiReRe.DialoguePresentation.TypingBlip
 
         private void PlayBlip()
         {
-            if (!audioSource || currentEntry == null || !currentEntry.Clip) return;
+            if (!audioSource || currentEntry == null) return;
             if (!rateLimiter.TryAcquire(Time.unscaledTime, currentEntry.MinimumInterval)) return;
 
             audioSource.pitch = Mathf.Clamp(currentEntry.Pitch + Random.Range(-currentEntry.PitchRandomness, currentEntry.PitchRandomness), 0.01f, 3f);
-            audioSource.PlayOneShot(currentEntry.Clip, currentEntry.Volume);
+            audioSource.PlayOneShot(currentEntry.Clip ? currentEntry.Clip : GetGeneratedBlip(), currentEntry.Volume);
+        }
+
+        private static AudioClip GetGeneratedBlip()
+        {
+            if (generatedBlip) return generatedBlip;
+
+            const int sampleRate = 22050;
+            const float duration = .035f;
+            const float frequency = 680f;
+            var sampleCount = Mathf.CeilToInt(sampleRate * duration);
+            var samples = new float[sampleCount];
+            for (var i = 0; i < sampleCount; i++)
+            {
+                var time = i / (float)sampleRate;
+                var envelope = 1f - i / (float)sampleCount;
+                var squareWave = Mathf.Sin(2f * Mathf.PI * frequency * time) >= 0f ? 1f : -1f;
+                samples[i] = squareWave * envelope * .16f;
+            }
+
+            generatedBlip = AudioClip.Create("TypingBlip_Generated", sampleCount, 1, sampleRate, false);
+            generatedBlip.SetData(samples, 0);
+            return generatedBlip;
         }
 
         private bool IsSkipActive()

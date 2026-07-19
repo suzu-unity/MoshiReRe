@@ -1,8 +1,8 @@
 # Typing blip
 
-`TypingBlipController` を Naninovel の常駐Audioオブジェクトに追加し、`TypingBlipProfile` を割り当てます。Naninovel Engine初期化後にだけ `ITextPrinterManager` へ購読し、`OnPrintStarted/Finished` と `ITextPrinterActor.RevealProgress` を使って表示進捗に合わせて `AudioSource.PlayOneShot` を呼びます。
+`Dialogue.prefab` のルートに `TypingBlipController` と AudioSource を設定済みです。`DefaultTypingBlipProfile` にはReRe（高め）、Wanabi（低め）、未指定キャラクター用フォールバックが含まれます。Clip が空のエントリーはビルド互換の短いランタイム合成音を使うため、外部音源なしでも動作します。Naninovel Engine初期化後にだけ `ITextPrinterManager` へ購読し、`OnPrintStarted/Finished` と `ITextPrinterActor.RevealProgress` を使って表示進捗に合わせて `AudioSource.PlayOneShot` を呼びます。
 
-句読点・空白・TMPリッチテキストタグ、スキップ中・瞬間表示プリンター・表示中のバックログは対象外です。音素材が未設定のプロファイルは無音のまま動作し、警告を出しません。`TypingBlipProfile` の Entries に author ID別設定を追加し、空のAuthor Idをフォールバックにしてください。ReReは専用プロファイルを割り当てれば、電子音向けのpitch/interval等を独立して調整できます。
+句読点・空白・TMPリッチテキストタグ、スキップ中・瞬間表示プリンター・表示中のバックログは対象外です。Clip を空にしたエントリーは既定の合成音を使い、専用Clipを設定すればそれを優先します。`TypingBlipProfile` の Entries に author ID別設定を追加し、空のAuthor Idをフォールバックにしてください。ReReは専用プロファイルを割り当てれば、電子音向けのpitch/interval等を独立して調整できます。
 
 ## Editorプリセット
 

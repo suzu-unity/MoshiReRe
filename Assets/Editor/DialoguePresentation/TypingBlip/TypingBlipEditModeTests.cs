@@ -1,5 +1,6 @@
 using MoshiReRe.DialoguePresentation.TypingBlip;
 using NUnit.Framework;
+using UnityEditor;
 
 public sealed class TypingBlipEditModeTests
 {
@@ -45,6 +46,18 @@ public sealed class TypingBlipEditModeTests
         Assert.AreSame(fallbackEntry, profile.FindEntry("Unknown"));
 
         UnityEngine.Object.DestroyImmediate(profile);
+    }
+
+    [Test]
+    public void DefaultProfile_DefinesReReWanabiAndFallback()
+    {
+        var profile = AssetDatabase.LoadAssetAtPath<TypingBlipProfile>(
+            "Assets/Scripts/DialoguePresentation/TypingBlip/DefaultTypingBlipProfile.asset");
+
+        Assert.NotNull(profile);
+        Assert.That(profile.FindEntry("ReRe").Pitch, Is.GreaterThan(1f));
+        Assert.That(profile.FindEntry("Wanabi").Pitch, Is.LessThan(1f));
+        Assert.NotNull(profile.FindEntry("Unknown"));
     }
 
     [Test]
