@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using MoshiReRe.DialoguePresentation.CharacterStamp;
+using Naninovel;
 using Naninovel.UI;
 using TMPro;
 using UnityEditor;
@@ -43,6 +44,7 @@ namespace MoshiReRe.Editor.DialoguePresentation
                 PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
                 Configure(instance);
                 PrefabUtility.SaveAsPrefabAsset(instance, DestinationPath);
+                RegisterNaninovelOverride();
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 Debug.Log($"Created Character Stamp Dialogue override: {DestinationPath}");
@@ -182,6 +184,21 @@ namespace MoshiReRe.Editor.DialoguePresentation
             var serialized = new SerializedObject(panel);
             serialized.FindProperty("characterStamp").objectReferenceValue = stamp;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void RegisterNaninovelOverride ()
+        {
+            var configuration = ConfigurationSettings.LoadOrDefaultAndSave<TextPrintersConfiguration>();
+            var metadata = configuration.GetMetadataOrDefault("Dialogue");
+            var overrideGuid = AssetDatabase.AssetPathToGUID(DestinationPath);
+            if (string.IsNullOrEmpty(overrideGuid))
+                throw new InvalidOperationException($"Could not resolve the GUID for '{DestinationPath}'.");
+
+            var resources = EditorResources.LoadOrDefault();
+            var category = metadata.GetResourceCategoryId();
+            resources.RemoveAllRecordsWithPath(metadata.Loader.PathPrefix, "Dialogue", category);
+            resources.AddRecord(category, metadata.Loader.PathPrefix, "Dialogue", overrideGuid);
+            EditorUtility.SetDirty(resources);
         }
 
         private static GameObject CreateUIObject (string name, Transform parent)

@@ -17,7 +17,7 @@ MonoBehaviour:
     Resources:
     - name: Dialogue
       pathPrefix: TextPrinters
-      guid: 1bc08ccd31adff6439e97161aa6e1d8b
+      guid: 36bb887ddb27f1c46ab8ab45639bdaeb
   - Id: TextPrinters/4666008e-5897-484b-a314-73d9237a8295
     Resources:
     - name: Fullscreen
