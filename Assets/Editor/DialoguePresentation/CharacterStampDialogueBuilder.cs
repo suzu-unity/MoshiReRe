@@ -165,7 +165,7 @@ namespace MoshiReRe.Editor.DialoguePresentation
             indicatorSerialized.FindProperty("tintPingPong").boolValue = false;
             indicatorSerialized.ApplyModifiedPropertiesWithoutUndo();
 
-            var diamond = CreateLabel("DiamondGlyph", diamondRoot.transform, font, "◆", 22f, TextAnchor.MiddleCenter);
+            var diamond = CreateLabel("DiamondGlyph", diamondRoot.transform, font, "\u25C7", 22f, TextAnchor.MiddleCenter);
             SetRect(diamond.gameObject, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f));
             diamond.color = BorderColor;
             diamond.raycastTarget = false;

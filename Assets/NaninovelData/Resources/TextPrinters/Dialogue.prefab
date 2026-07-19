@@ -3811,7 +3811,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u25C6"
+  m_text: "\u25C7"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 76e9d6b1f1f805b4fb4987d3822639bf, type: 2}
   m_sharedMaterial: {fileID: -964634128524453309, guid: 76e9d6b1f1f805b4fb4987d3822639bf, type: 2}
