@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>立ち絵ポートレート・ワークベンチ</title>
+<style>
+:root{color-scheme:dark;--bg:#11161c;--panel:#19212a;--panel2:#202b36;--line:#344352;--text:#e8edf2;--muted:#9eacb9;--accent:#73b7ad;--accent2:#d7a968;--danger:#db7d7d;--radius:10px;font:14px/1.45 system-ui,-apple-system,"Segoe UI","Yu Gothic UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit;color:inherit}button,.button{border:1px solid var(--line);background:#26323d;border-radius:7px;padding:.48rem .72rem;cursor:pointer}button:hover,.button:hover{border-color:var(--accent)}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:#285d58;border-color:#448a82}button.danger{color:#ffb8b8}button:disabled{opacity:.45;cursor:not-allowed}input,select{width:100%;border:1px solid var(--line);background:#121920;border-radius:6px;padding:.45rem .55rem}input[type=checkbox],input[type=range]{width:auto}input[type=file]{position:absolute;inline-size:1px;block-size:1px;opacity:0}.app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}.top{display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;border-bottom:1px solid var(--line);background:#151c23;flex-wrap:wrap}.top h1{font-size:1rem;margin:0 auto 0 0;font-weight:650}.workspace{display:grid;grid-template-columns:250px minmax(360px,1fr) 320px;min-height:0}.side{background:var(--panel);padding:.8rem;border-right:1px solid var(--line);overflow:auto;min-height:0}.side.right{border-right:0;border-left:1px solid var(--line)}.section{margin-bottom:1rem}.section h2{font-size:.82rem;color:#bdc8d2;text-transform:uppercase;letter-spacing:.08em;margin:.2rem 0 .55rem}.drop{border:1px dashed #53697b;border-radius:var(--radius);padding:1rem;text-align:center;color:var(--muted);transition:.15s}.drop.over{border-color:var(--accent);background:#203633}.drop strong{display:block;color:var(--text);margin-bottom:.25rem}.list{display:grid;gap:.35rem;margin-top:.55rem}.item{display:grid;grid-template-columns:1fr auto;gap:.35rem;align-items:center;border:1px solid transparent;border-radius:7px;padding:.45rem .5rem;background:#151d25;cursor:pointer;min-width:0}.item:hover{border-color:#435566}.item.active{border-color:var(--accent);background:#20322f}.item.missing{border-color:#765252}.item .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item small{color:var(--muted);display:block}.badge{font-size:.72rem;border:1px solid var(--line);border-radius:10px;padding:.05rem .4rem;color:var(--muted)}.row{display:flex;gap:.45rem;align-items:center}.row>*{min-width:0}.row.grow>*{flex:1}.stack{display:grid;gap:.5rem}.field{display:grid;gap:.2rem}.field>span{font-size:.78rem;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}.canvasWrap{display:grid;grid-template-rows:auto minmax(300px,1fr) auto;background:#0c1014;min-height:0}.toolbar{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;padding:.55rem .7rem;background:#151c23;border-bottom:1px solid var(--line)}.toolbar .spacer{flex:1}.stage{position:relative;min-height:0;overflow:hidden}.stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.empty{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:var(--muted);pointer-events:none}.status{display:flex;gap:1rem;padding:.4rem .7rem;color:var(--muted);background:#151c23;border-top:1px solid var(--line);font-size:.78rem}.preview{background:#0c1014;border:1px solid var(--line);border-radius:8px;aspect-ratio:3/4;display:grid;place-items:center;overflow:hidden}.preview canvas{max-width:100%;max-height:100%;image-rendering:auto}.hint{font-size:.78rem;color:var(--muted);margin:.3rem 0}.notice{font-size:.78rem;padding:.55rem;background:#202a32;border-left:3px solid var(--accent2);color:#c8d1da}.path{word-break:break-all;background:#111820;padding:.5rem;border-radius:6px;color:#a9d5ce;font-family:ui-monospace,monospace;font-size:.76rem}.privacy{padding:.6rem 1rem;color:var(--muted);font-size:.76rem;border-top:1px solid var(--line)}dialog{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;max-width:520px;width:calc(100% - 2rem)}dialog::backdrop{background:#0009}.kbd{font-family:ui-monospace,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .3rem;font-size:.72rem}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:1050px){.workspace{grid-template-columns:220px 1fr}.side.right{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.side.right .section{margin:0}.preview{max-height:260px}}
+@media(max-width:700px){.workspace{display:block}.side{border:0;border-bottom:1px solid var(--line);max-height:none}.side.right{display:block}.canvasWrap{height:70vh}.top h1{width:100%}.status{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <h1>立ち絵ポートレート・ワークベンチ</h1>
+    <button id="undoBtn" title="Ctrl/Cmd + Z">元に戻す</button><button id="redoBtn" title="Ctrl/Cmd + Shift + Z">やり直す</button>
+    <button id="saveProject">プロジェクトJSON</button><label class="button" for="projectFile">JSONを読み込む</label><input id="projectFile" type="file" accept="application/json,.json">
+  </header>
+  <div class="workspace">
+    <aside class="side" aria-label="素材とスライス">
+      <section class="section">
+        <h2>素材画像</h2>
+        <label class="drop" id="dropZone" for="imageFiles" tabindex="0"><strong>画像をドロップ</strong>複数選択できます<br><small>PNG / JPEG / WebP</small></label>
+        <input id="imageFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+        <div id="imageList" class="list"></div>
+        <p class="hint">保存後の再開時は、同じ名前・サイズの画像を再度ドロップすると自動で再リンクします。</p>
+      </section>
+      <section class="section">
+        <div class="row"><h2 style="margin-right:auto">切り出し</h2><button id="addSlice">＋追加</button></div>
+        <div class="row grow"><button id="splitLeft">左半分</button><button id="splitRight">右半分</button></div>
+        <div id="sliceList" class="list"></div>
+      </section>
+    </aside>
+
+    <section class="canvasWrap" aria-label="切り出し編集">
+      <div class="toolbar">
+        <button id="fitView">全体表示</button><button id="centerCrop">枠を中央へ</button>
+        <span>表示 <input id="viewZoom" type="range" min="10" max="500" value="100" aria-label="表示倍率"></span>
+        <span class="spacer"></span>
+        <label><input id="showGuide" type="checkbox" checked> ガイド</label>
+      </div>
+      <div class="stage" id="stage"><canvas id="editor" aria-label="画像切り出しキャンバス"></canvas><div class="empty" id="empty">素材画像を追加してください</div></div>
+      <div class="status"><span id="cropStatus">切り出し: —</span><span id="zoomStatus">表示: —</span><span>枠内ドラッグ: 移動 / 角: サイズ / 空白・中ボタン: パン / ホイール: ズーム</span></div>
+    </section>
+
+    <aside class="side right" aria-label="出力設定">
+      <section class="section stack">
+        <h2>サイズと基準点</h2>
+        <div class="field"><span>出力プリセット</span><select id="sizePreset"><option value="768x1024">768 × 1024 (3:4)</option><option value="900x1200">900 × 1200 (3:4)</option><option value="1024x1024">1024 × 1024 (1:1)</option><option value="512x768">512 × 768 (2:3)</option><option value="custom">カスタム</option></select></div>
+        <div class="grid2"><label class="field"><span>幅 px</span><input id="outW" type="number" min="1" max="8192" value="768"></label><label class="field"><span>高さ px</span><input id="outH" type="number" min="1" max="8192" value="1024"></label></div>
+        <label><input id="lockRatio" type="checkbox" checked> 縦横比を固定</label>
+        <div class="grid2"><label class="field"><span>目・顔アンカー X%</span><input id="anchorX" type="number" min="0" max="100" step=".1" value="50"></label><label class="field"><span>Y%</span><input id="anchorY" type="number" min="0" max="100" step=".1" value="20"></label></div>
+        <div class="grid2"><label class="field"><span>目標 X%</span><input id="targetX" type="number" min="0" max="100" step=".1" value="50"></label><label class="field"><span>目標 Y%</span><input id="targetY" type="number" min="0" max="100" step=".1" value="20"></label></div>
+        <p class="hint">キャンバス上の丸をドラッグしてアンカーを置きます。破線の十字が出力上の目標位置です。</p>
+      </section>
+      <section class="section stack">
+        <h2>比較オーバーレイ</h2>
+        <select id="reference"><option value="">参照なし</option></select>
+        <label>濃さ <input id="overlayAlpha" type="range" min="0" max="100" value="35"></label>
+        <label><input id="referenceFlip" type="checkbox"> 参照を左右反転</label>
+      </section>
+      <section class="section stack">
+        <h2>命名メタデータ</h2>
+        <div class="grid2"><label class="field"><span>キャラクター</span><input id="character" data-meta placeholder="mio"></label><label class="field"><span>衣装</span><input id="outfit" data-meta placeholder="casual"></label></div>
+        <div class="grid2"><label class="field"><span>表情</span><input id="expression" data-meta placeholder="smile"></label><label class="field"><span>向き</span><input id="direction" data-meta placeholder="front"></label></div>
+        <div class="grid2"><label class="field"><span>連番</span><input id="sequence" data-meta placeholder="01"></label><label class="field"><span>タグ（カンマ区切り）</span><input id="tags" data-meta placeholder="day,normal"></label></div>
+        <label class="field"><span>サブフォルダ</span><input id="subfolder" data-meta placeholder="Characters/Mio"></label>
+        <div class="field"><span>保存先プレビュー</span><div class="path" id="pathPreview">—</div></div>
+      </section>
+      <section class="section stack">
+        <h2>書き出し</h2>
+        <div class="grid2"><label class="field"><span>形式</span><select id="format"><option value="png">PNG</option><option value="jpeg">JPEG</option><option value="webp">WebP</option></select></label><label class="field"><span>品質</span><input id="quality" type="number" min="1" max="100" value="92"></label></div>
+        <div class="preview"><canvas id="preview" width="240" height="320"></canvas></div>
+        <button class="primary" id="exportOne">選択中を書き出す</button><button id="exportBatch">全スライスを順次書き出す</button>
+        <div class="notice">一括出力はZIPではなく、画像を順番にダウンロードして最後に <b>manifest.json</b> を保存します。ブラウザーが複数ダウンロードの許可を求める場合があります。</div>
+      </section>
+    </aside>
+  </div>
+  <footer class="privacy">プライバシー: 画像処理はすべてこのブラウザー内で行われ、外部へ送信されません。自動保存するのは切り出し設定とメタデータだけで、元画像そのものは保存しません。</footer>
+</main>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const els = Object.fromEntries(['dropZone','imageFiles','imageList','sliceList','editor','stage','empty','addSlice','splitLeft','splitRight','fitView','centerCrop','viewZoom','showGuide','cropStatus','zoomStatus','sizePreset','outW','outH','lockRatio','anchorX','anchorY','targetX','targetY','reference','overlayAlpha','referenceFlip','character','outfit','expression','direction','sequence','tags','subfolder','pathPreview','format','quality','preview','exportOne','exportBatch','saveProject','projectFile','undoBtn','redoBtn'].map(x=>[x,$(x)]));
+const ctx=els.editor.getContext('2d'), pctx=els.preview.getContext('2d');
+const AUTOSAVE='moshirere.portraitWorkbench.v1';
+const freshMeta=()=>({character:'',outfit:'',expression:'',direction:'',sequence:'01',tags:'',subfolder:''});
+const state={images:[],sources:new Map(),selectedImage:null,selectedSlice:null,view:{zoom:1,panX:0,panY:0},interaction:null,history:[],future:[],restoring:false};
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function selectedImage(){return state.images.find(x=>x.id===state.selectedImage)||null}
+function selectedSlice(){const im=selectedImage();return im?.slices.find(x=>x.id===state.selectedSlice)||null}
+function defaultSlice(im,label){const ratio=3/4,w=Math.min(im.width,im.height*ratio),h=w/ratio;return{id:uid(),label:label||`切り出し ${im.slices.length+1}`,crop:{x:(im.width-w)/2,y:(im.height-h)/2,w,h},outW:768,outH:1024,lockRatio:true,anchor:{x:.5,y:.2},target:{x:.5,y:.2},meta:freshMeta()}}
+function serializable(){return{version:1,selectedImage:state.selectedImage,selectedSlice:state.selectedSlice,images:state.images.map(im=>({id:im.id,name:im.name,size:im.size,type:im.type,width:im.width,height:im.height,slices:im.slices.map(s=>JSON.parse(JSON.stringify(s)))}))}}
+function saveLocal(){try{localStorage.setItem(AUTOSAVE,JSON.stringify(serializable()))}catch(e){console.warn(e)}}
+function snapshot(){if(state.restoring)return;const s=JSON.stringify(serializable());if(state.history.at(-1)!==s){state.history.push(s);if(state.history.length>60)state.history.shift();state.future=[]}updateUndo()}
+function updateUndo(){els.undoBtn.disabled=state.history.length<2;els.redoBtn.disabled=!state.future.length}
+async function restore(raw,keepFiles=true){let data=typeof raw==='string'?JSON.parse(raw):raw;if(!data||data.version!==1||!Array.isArray(data.images))throw Error('対応していないプロジェクト形式です');state.restoring=true;if(!keepFiles)state.sources.clear();state.images=data.images.map(im=>{const linked=keepFiles?state.sources.get(im.name+'\0'+im.size):null;return{...im,url:linked?.url||'',image:linked?.image||null,missing:!linked}});state.selectedImage=data.selectedImage;state.selectedSlice=data.selectedSlice;if(!selectedImage())state.selectedImage=state.images[0]?.id||null;if(!selectedImage()?.slices.some(s=>s.id===state.selectedSlice))state.selectedSlice=selectedImage()?.slices[0]?.id||null;state.restoring=false;fitView();refresh();saveLocal()}
+function undo(){if(state.history.length<2)return;state.future.push(state.history.pop());restore(state.history.at(-1)).catch(alert);updateUndo()}
+function redo(){if(!state.future.length)return;const s=state.future.pop();state.history.push(s);restore(s).catch(alert);updateUndo()}
+function commit(){snapshot();saveLocal();refresh()}
+function createBitmap(file){return new Promise((resolve,reject)=>{const im=new Image(),url=URL.createObjectURL(file);im.onload=()=>resolve({image:im,url,width:im.naturalWidth,height:im.naturalHeight});im.onerror=()=>{URL.revokeObjectURL(url);reject(Error(`${file.name} を読み込めません`))};im.src=url})}
+async function addFiles(files){for(const file of files){if(!file.type.startsWith('image/'))continue;const loaded=await createBitmap(file),key=file.name+'\0'+file.size,previous=state.sources.get(key);if(previous?.url)URL.revokeObjectURL(previous.url);state.sources.set(key,loaded);let im=state.images.find(x=>x.name===file.name&&x.size===file.size);if(im){Object.assign(im,loaded,{type:file.type,missing:false})}else{im={id:uid(),name:file.name,size:file.size,type:file.type,...loaded,missing:false,slices:[]};im.slices.push(defaultSlice(im));state.images.push(im)}state.selectedImage=im.id;state.selectedSlice=im.slices[0]?.id||null}fitView();commit()}
+function removeImage(id){const i=state.images.findIndex(x=>x.id===id);if(i<0)return;state.images.splice(i,1);if(state.selectedImage===id){const n=state.images[Math.max(0,i-1)];state.selectedImage=n?.id||null;state.selectedSlice=n?.slices[0]?.id||null}fitView();commit()}
+function selectImage(id){state.selectedImage=id;const im=selectedImage();if(!im.slices.some(s=>s.id===state.selectedSlice))state.selectedSlice=im.slices[0]?.id||null;fitView();refresh()}
+function selectSlice(id){state.selectedSlice=id;syncForm();renderAll();renderLists()}
+function addSlice(mode){const im=selectedImage();if(!im)return;let s=defaultSlice(im);if(mode==='left'||mode==='right'){const w=im.width/2;s.crop={x:mode==='left'?0:w,y:0,w,height:im.height};s.label=mode==='left'?'左面':'右面';const ratio=s.outW/s.outH;if(s.lockRatio){const cw=Math.min(w,im.height*ratio),ch=cw/ratio;s.crop={x:(mode==='left'?0:w)+(w-cw)/2,y:(im.height-ch)/2,w:cw,h:ch}}}im.slices.push(s);state.selectedSlice=s.id;commit()}
+function removeSlice(id){const im=selectedImage();if(!im)return;const i=im.slices.findIndex(s=>s.id===id);if(i<0)return;im.slices.splice(i,1);if(state.selectedSlice===id)state.selectedSlice=im.slices[Math.max(0,i-1)]?.id||null;commit()}
+function sanitizePart(v){return String(v||'').normalize('NFKC').trim().replace(/[<>:"/\\|?*\x00-\x1f]/g,'_').replace(/[\s.]+/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'').slice(0,80)}
+function fileInfo(s=selectedSlice()){if(!s)return{filename:'—',path:'—'};const m=s.meta||freshMeta(),parts=[m.character,m.outfit,m.expression,m.direction,m.sequence,...String(m.tags||'').split(',')].map(sanitizePart).filter(Boolean);const ext=els.format.value||'png',filename=(parts.join('_')||sanitizePart(s.label)||'portrait')+'.'+ext;const folder=String(m.subfolder||'').split(/[\\/]+/).map(sanitizePart).filter(Boolean).join('/');return{filename,path:(folder?folder+'/':'')+filename,folder}}
+function renderLists(){els.imageList.replaceChildren(...state.images.map(im=>{const d=document.createElement('div');d.className='item '+(im.id===state.selectedImage?'active ':'')+(im.missing?'missing':'');d.tabIndex=0;d.innerHTML=`<span class="name"></span><button class="danger" aria-label="素材を削除">×</button><small></small><span class="badge"></span>`;d.querySelector('.name').textContent=im.name;d.querySelector('small').textContent=im.missing?'再リンク待ち':`${im.width}×${im.height}`;d.querySelector('.badge').textContent=im.slices.length;d.onclick=e=>{if(e.target.tagName==='BUTTON')removeImage(im.id);else selectImage(im.id)};d.onkeydown=e=>{if(e.key==='Enter')selectImage(im.id)};return d}));const im=selectedImage();els.sliceList.replaceChildren(...(im?.slices||[]).map((s,i)=>{const d=document.createElement('div');d.className='item '+(s.id===state.selectedSlice?'active':'');d.tabIndex=0;d.innerHTML=`<span class="name"></span><button class="danger" aria-label="切り出しを削除">×</button><small></small>`;d.querySelector('.name').textContent=s.label||`切り出し ${i+1}`;d.querySelector('small').textContent=`${Math.round(s.crop.w)}×${Math.round(s.crop.h)} → ${s.outW}×${s.outH}`;d.onclick=e=>{if(e.target.tagName==='BUTTON')removeSlice(s.id);else selectSlice(s.id)};d.onkeydown=e=>{if(e.key==='Enter')selectSlice(s.id)};return d}));els.addSlice.disabled=!im;els.splitLeft.disabled=!im;els.splitRight.disabled=!im}
+function allSlices(){return state.images.flatMap(im=>im.slices.map(s=>({im,s,key:im.id+':'+s.id})))}
+function updateReferences(){const value=els.reference.value;els.reference.replaceChildren(new Option('参照なし',''),...allSlices().filter(x=>x.s.id!==state.selectedSlice).map(x=>new Option(`${x.im.name} / ${x.s.label}`,x.key)));els.reference.value=[...els.reference.options].some(o=>o.value===value)?value:''}
+function syncForm(){const s=selectedSlice(),disabled=!s;['outW','outH','lockRatio','anchorX','anchorY','targetX','targetY','character','outfit','expression','direction','sequence','tags','subfolder','exportOne'].forEach(k=>els[k].disabled=disabled);if(!s){els.pathPreview.textContent='—';return}els.outW.value=s.outW;els.outH.value=s.outH;els.lockRatio.checked=s.lockRatio;els.anchorX.value=(s.anchor.x*100).toFixed(1);els.anchorY.value=(s.anchor.y*100).toFixed(1);els.targetX.value=(s.target.x*100).toFixed(1);els.targetY.value=(s.target.y*100).toFixed(1);for(const k of Object.keys(freshMeta()))els[k].value=s.meta?.[k]||'';els.sizePreset.value=[...els.sizePreset.options].some(o=>o.value===`${s.outW}x${s.outH}`)?`${s.outW}x${s.outH}`:'custom';updatePath()}
+function updatePath(){els.pathPreview.textContent=fileInfo().path}
+function resizeCanvas(){const r=els.stage.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.round(r.width*dpr)),h=Math.max(1,Math.round(r.height*dpr));if(els.editor.width!==w||els.editor.height!==h){els.editor.width=w;els.editor.height=h;ctx.setTransform(dpr,0,0,dpr,0,0)}return{w:r.width,h:r.height,dpr}}
+function baseScale(){const im=selectedImage(),r=els.stage.getBoundingClientRect();return im?Math.min((r.width-40)/im.width,(r.height-40)/im.height):1}
+function transform(){const im=selectedImage(),r=els.stage.getBoundingClientRect(),scale=baseScale()*state.view.zoom;return{scale,ox:r.width/2-im.width*scale/2+state.view.panX,oy:r.height/2-im.height*scale/2+state.view.panY}}
+const toScreen=(x,y)=>{const t=transform();return{x:t.ox+x*t.scale,y:t.oy+y*t.scale}};
+const toImage=(x,y)=>{const t=transform();return{x:(x-t.ox)/t.scale,y:(y-t.oy)/t.scale}};
+function fitView(){state.view={zoom:1,panX:0,panY:0};els.viewZoom.value=100;renderAll()}
+function drawChecker(x,y,w,h,size=14){ctx.save();ctx.fillStyle='#182027';ctx.fillRect(x,y,w,h);ctx.fillStyle='#202a32';for(let j=0;j<h/size;j++)for(let i=0;i<w/size;i++)if((i+j)%2===0)ctx.fillRect(x+i*size,y+j*size,size,size);ctx.restore()}
+function renderEditor(){resizeCanvas();const r=els.stage.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);const im=selectedImage(),s=selectedSlice();els.empty.hidden=!!im;if(!im){els.cropStatus.textContent='切り出し: —';return}const t=transform(),sw=im.width*t.scale,sh=im.height*t.scale;drawChecker(t.ox,t.oy,sw,sh);if(im.image)ctx.drawImage(im.image,t.ox,t.oy,sw,sh);else{ctx.fillStyle='#6f4c4c';ctx.fillRect(t.ox,t.oy,sw,sh);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText('元画像を再リンクしてください',t.ox+sw/2,t.oy+sh/2)}if(!s)return;const a=toScreen(s.crop.x,s.crop.y),b=toScreen(s.crop.x+s.crop.w,s.crop.y+s.crop.h);ctx.save();ctx.fillStyle='#0008';ctx.beginPath();ctx.rect(0,0,r.width,r.height);ctx.rect(a.x,a.y,b.x-a.x,b.y-a.y);ctx.fill('evenodd');drawReference(a.x,a.y,b.x-a.x,b.y-a.y);ctx.strokeStyle='#73b7ad';ctx.lineWidth=2;ctx.strokeRect(a.x+.5,a.y+.5,b.x-a.x-1,b.y-a.y-1);for(const p of [[a.x,a.y],[b.x,a.y],[b.x,b.y],[a.x,b.y]]){ctx.fillStyle='#e9f5f3';ctx.strokeStyle='#285d58';ctx.lineWidth=2;ctx.beginPath();ctx.rect(p[0]-6,p[1]-6,12,12);ctx.fill();ctx.stroke()}if(els.showGuide.checked){ctx.setLineDash([5,5]);ctx.strokeStyle='#d7a968';const tx=a.x+(b.x-a.x)*s.target.x,ty=a.y+(b.y-a.y)*s.target.y;ctx.beginPath();ctx.moveTo(tx,a.y);ctx.lineTo(tx,b.y);ctx.moveTo(a.x,ty);ctx.lineTo(b.x,ty);ctx.stroke();ctx.setLineDash([]);const ax=a.x+(b.x-a.x)*s.anchor.x,ay=a.y+(b.y-a.y)*s.anchor.y;ctx.fillStyle='#f1c87f';ctx.strokeStyle='#2a2020';ctx.beginPath();ctx.arc(ax,ay,7,0,Math.PI*2);ctx.fill();ctx.stroke()}ctx.restore();els.cropStatus.textContent=`切り出し: ${Math.round(s.crop.x)}, ${Math.round(s.crop.y)} / ${Math.round(s.crop.w)} × ${Math.round(s.crop.h)}`;els.zoomStatus.textContent=`表示: ${Math.round(state.view.zoom*100)}%`;els.viewZoom.value=Math.round(state.view.zoom*100)}
+function drawReference(x,y,w,h){const key=els.reference.value;if(!key)return;const found=allSlices().find(a=>a.key===key);if(!found?.im.image)return;const c=found.s.crop;ctx.save();ctx.globalAlpha=Number(els.overlayAlpha.value)/100;ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();if(els.referenceFlip.checked){ctx.translate(x+w,y);ctx.scale(-1,1);ctx.drawImage(found.im.image,c.x,c.y,c.w,c.h,0,0,w,h)}else ctx.drawImage(found.im.image,c.x,c.y,c.w,c.h,x,y,w,h);ctx.restore()}
+function renderPreview(){const s=selectedSlice(),im=selectedImage(),canvas=els.preview;if(!s||!im?.image){pctx.clearRect(0,0,canvas.width,canvas.height);return}const max=300,ratio=s.outW/s.outH;canvas.width=ratio>=1?max:Math.max(1,Math.round(max*ratio));canvas.height=ratio>=1?Math.max(1,Math.round(max/ratio)):max;pctx.clearRect(0,0,canvas.width,canvas.height);pctx.drawImage(im.image,s.crop.x,s.crop.y,s.crop.w,s.crop.h,0,0,canvas.width,canvas.height);if(els.showGuide.checked){pctx.strokeStyle='#d7a968aa';pctx.setLineDash([5,4]);pctx.beginPath();pctx.moveTo(s.target.x*canvas.width,0);pctx.lineTo(s.target.x*canvas.width,canvas.height);pctx.moveTo(0,s.target.y*canvas.height);pctx.lineTo(canvas.width,s.target.y*canvas.height);pctx.stroke();pctx.setLineDash([])}}
+function renderAll(){renderEditor();renderPreview()}
+function refresh(){renderLists();updateReferences();syncForm();renderAll();els.exportBatch.disabled=!allSlices().some(x=>x.im.image);updateUndo()}
+function pointerPos(e){const r=els.editor.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+function hitTest(p){const s=selectedSlice();if(!s)return null;const a=toScreen(s.crop.x,s.crop.y),b=toScreen(s.crop.x+s.crop.w,s.crop.y+s.crop.h),corners=[['nw',a.x,a.y],['ne',b.x,a.y],['se',b.x,b.y],['sw',a.x,b.y]];for(const [name,x,y] of corners)if(Math.hypot(p.x-x,p.y-y)<12)return{name};const ax=a.x+(b.x-a.x)*s.anchor.x,ay=a.y+(b.y-a.y)*s.anchor.y;if(Math.hypot(p.x-ax,p.y-ay)<14)return{name:'anchor'};if(p.x>=a.x&&p.x<=b.x&&p.y>=a.y&&p.y<=b.y)return{name:'move'};return{name:'pan'}}
+els.editor.addEventListener('pointerdown',e=>{if(!selectedImage())return;els.editor.setPointerCapture(e.pointerId);const p=pointerPos(e),hit=(e.button===1||e.shiftKey)?{name:'pan'}:hitTest(p),s=selectedSlice();snapshot();state.interaction={hit,start:p,startImage:toImage(p.x,p.y),crop:s?{...s.crop}:null,anchor:s?{...s.anchor}:null,panX:state.view.panX,panY:state.view.panY};e.preventDefault()});
+els.editor.addEventListener('pointermove',e=>{const it=state.interaction;if(!it)return;const p=pointerPos(e),im=selectedImage(),s=selectedSlice();if(it.hit.name==='pan'){state.view.panX=it.panX+p.x-it.start.x;state.view.panY=it.panY+p.y-it.start.y}else if(s){const q=toImage(p.x,p.y),dx=q.x-it.startImage.x,dy=q.y-it.startImage.y,c=it.crop;if(it.hit.name==='move'){s.crop.x=clamp(c.x+dx,0,im.width-c.w);s.crop.y=clamp(c.y+dy,0,im.height-c.h)}else if(it.hit.name==='anchor'){s.anchor.x=clamp(it.anchor.x+(p.x-it.start.x)/(c.w*transform().scale),0,1);s.anchor.y=clamp(it.anchor.y+(p.y-it.start.y)/(c.h*transform().scale),0,1);els.anchorX.value=(s.anchor.x*100).toFixed(1);els.anchorY.value=(s.anchor.y*100).toFixed(1)}else{resizeCrop(s,im,it.hit.name,c,dx,dy)}}renderAll()});
+function resizeCrop(s,im,corner,c,dx,dy){const min=8,ratio=s.outW/s.outH;let left=c.x,top=c.y,right=c.x+c.w,bottom=c.y+c.h;if(corner.includes('w'))left=clamp(c.x+dx,0,right-min);if(corner.includes('e'))right=clamp(c.x+c.w+dx,left+min,im.width);if(corner.includes('n'))top=clamp(c.y+dy,0,bottom-min);if(corner.includes('s'))bottom=clamp(c.y+c.h+dy,top+min,im.height);if(s.lockRatio){let w=right-left,h=bottom-top;if(w/h>ratio)w=h*ratio;else h=w/ratio;if(corner.includes('w'))left=right-w;else right=left+w;if(corner.includes('n'))top=bottom-h;else bottom=top+h}s.crop={x:left,y:top,w:right-left,h:bottom-top}}
+function endInteraction(){if(!state.interaction)return;state.interaction=null;commit()}
+els.editor.addEventListener('pointerup',endInteraction);els.editor.addEventListener('pointercancel',endInteraction);
+els.editor.addEventListener('wheel',e=>{if(!selectedImage())return;e.preventDefault();const p=pointerPos(e),before=toImage(p.x,p.y);state.view.zoom=clamp(state.view.zoom*Math.exp(-e.deltaY*.001),.1,5);const after=toScreen(before.x,before.y);state.view.panX+=p.x-after.x;state.view.panY+=p.y-after.y;renderAll()},{passive:false});
+function applyForm(push=true){const s=selectedSlice();if(!s)return;s.outW=clamp(parseInt(els.outW.value)||1,1,8192);s.outH=clamp(parseInt(els.outH.value)||1,1,8192);s.lockRatio=els.lockRatio.checked;s.anchor={x:clamp(Number(els.anchorX.value)/100,0,1),y:clamp(Number(els.anchorY.value)/100,0,1)};s.target={x:clamp(Number(els.targetX.value)/100,0,1),y:clamp(Number(els.targetY.value)/100,0,1)};for(const k of Object.keys(freshMeta()))s.meta[k]=els[k].value;if(s.lockRatio){const im=selectedImage(),ratio=s.outW/s.outH,cx=s.crop.x+s.crop.w/2,cy=s.crop.y+s.crop.h/2;let w=s.crop.w,h=w/ratio;if(h>im.height){h=im.height;w=h*ratio}if(w>im.width){w=im.width;h=w/ratio}s.crop={x:clamp(cx-w/2,0,im.width-w),y:clamp(cy-h/2,0,im.height-h),w,h}}if(push)commit();else{updatePath();renderAll()}}
+document.querySelectorAll('input[data-meta]').forEach(x=>x.addEventListener('input',()=>applyForm(false)));document.querySelectorAll('input[data-meta]').forEach(x=>x.addEventListener('change',()=>applyForm(true)));
+['outW','outH','lockRatio','anchorX','anchorY','targetX','targetY'].forEach(k=>els[k].addEventListener('change',()=>applyForm(true)));
+els.sizePreset.onchange=()=>{if(els.sizePreset.value!=='custom'){[els.outW.value,els.outH.value]=els.sizePreset.value.split('x');applyForm(true)}};
+els.format.onchange=()=>{updatePath();renderPreview()};els.showGuide.onchange=renderAll;els.reference.onchange=renderEditor;els.overlayAlpha.oninput=renderEditor;els.referenceFlip.onchange=renderEditor;
+els.viewZoom.oninput=()=>{state.view.zoom=Number(els.viewZoom.value)/100;renderAll()};els.fitView.onclick=fitView;els.centerCrop.onclick=()=>{const im=selectedImage(),s=selectedSlice();if(!s)return;s.crop.x=(im.width-s.crop.w)/2;s.crop.y=(im.height-s.crop.h)/2;commit()};
+els.addSlice.onclick=()=>addSlice();els.splitLeft.onclick=()=>addSlice('left');els.splitRight.onclick=()=>addSlice('right');
+els.imageFiles.onchange=e=>{addFiles([...e.target.files]).catch(err=>alert(err.message));e.target.value=''};['dragenter','dragover'].forEach(n=>els.dropZone.addEventListener(n,e=>{e.preventDefault();els.dropZone.classList.add('over')}));['dragleave','drop'].forEach(n=>els.dropZone.addEventListener(n,e=>{e.preventDefault();els.dropZone.classList.remove('over')}));els.dropZone.addEventListener('drop',e=>addFiles([...e.dataTransfer.files]).catch(err=>alert(err.message)));els.dropZone.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();els.imageFiles.click()}};
+function renderOutput(im,s){const c=document.createElement('canvas');c.width=s.outW;c.height=s.outH;const cctx=c.getContext('2d');if(els.format.value==='jpeg'){cctx.fillStyle='#fff';cctx.fillRect(0,0,c.width,c.height)}cctx.drawImage(im.image,s.crop.x,s.crop.y,s.crop.w,s.crop.h,0,0,c.width,c.height);return c}
+function canvasBlob(canvas){return new Promise(resolve=>canvas.toBlob(resolve,'image/'+els.format.value,Number(els.quality.value)/100))}
+function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
+async function exportSlice(im,s){if(!im.image)throw Error(`${im.name} は再リンクされていません`);const blob=await canvasBlob(renderOutput(im,s));if(!blob)throw Error('このブラウザーでは選択形式を書き出せません');download(blob,fileInfo(s).filename);return{source:{name:im.name,size:im.size,width:im.width,height:im.height},slice:s.label,path:fileInfo(s).path,output:{width:s.outW,height:s.outH,format:els.format.value},crop:s.crop,anchor:s.anchor,target:s.target,metadata:s.meta}}
+els.exportOne.onclick=async()=>{try{await exportSlice(selectedImage(),selectedSlice())}catch(e){alert(e.message)}};
+els.exportBatch.onclick=async()=>{const manifest={tool:'MoshiReRe Portrait Workbench',exportedAt:new Date().toISOString(),items:[]};for(const {im,s} of allSlices()){if(!im.image)continue;manifest.items.push(await exportSlice(im,s));await new Promise(r=>setTimeout(r,180))}download(new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'}),'manifest.json')};
+els.saveProject.onclick=()=>download(new Blob([JSON.stringify(serializable(),null,2)],{type:'application/json'}),'portrait-workbench.project.json');els.projectFile.onchange=async e=>{try{const text=await e.target.files[0].text();await restore(text);snapshot()}catch(err){alert(err.message)}e.target.value=''};
+els.undoBtn.onclick=undo;els.redoBtn.onclick=redo;document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo()}});
+new ResizeObserver(renderAll).observe(els.stage);window.addEventListener('beforeunload',saveLocal);
+try{const saved=localStorage.getItem(AUTOSAVE);if(saved){restore(saved,false).then(()=>{snapshot();refresh()}).catch(()=>{snapshot();refresh()})}else{snapshot();refresh()}}catch{snapshot();refresh()}
+})();
+</script>
+</body>
+</html>
