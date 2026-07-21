@@ -1,0 +1,4 @@
+interface:
+  display_name: "MOSS SFX Generator"
+  short_description: "Generate Unity-ready SFX with MOSS v2"
+  default_prompt: "Use $generate-moss-sfx to create a Unity-ready sound effect from my description."
