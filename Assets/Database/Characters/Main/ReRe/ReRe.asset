@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 
   displayName: 
-  category: 1
+  category: 2
   icon: {fileID: -5822698878311081497, guid: 9a6350f0382c040feb10a61e1354e45c, type: 3}
   portrait: {fileID: 1708836366053527102, guid: 016c2f5f1ccf764449f7627c3bd3a90e, type: 3}
   summary: "\u30AD\u30DF\u3092\u5C0E\u304F\u9802\u304D\u30B3\u30F3\u30B7\u30A7\u30EB\u30B8\u30E5AI\u3001ReRe\u3061\u3083\u3093\u3060\u3088\uFF01"

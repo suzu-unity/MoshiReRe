@@ -862,28 +862,15 @@ public static class MenuRootV2Builder
         var ojiListRoot = CharacterScrollList(contactsPage, "OjiContactScroll", new Rect(150f, 306f, 536f, 408f), artworkWidth, artworkHeight, out var ojiList);
         var itadakiListRoot = CharacterScrollList(contactsPage, "ItadakiContactScroll", new Rect(150f, 306f, 536f, 408f), artworkWidth, artworkHeight, out var itadakiList);
         itadakiListRoot.gameObject.SetActive(false);
-        var ojiNames = new[]
-        {
-            ("GRANDPA HIKO", "GIVER", true, Cyan),
-            ("MR. BOOKMAN", "MATCH", false, Cream),
-            ("CAPT. UMA", "TAKER", true, Peach),
-            ("BOSS SHIRO", "GIVER", false, new Color(0.92f, 0.98f, 0.96f, 1f)),
-            ("DR. KASAI", "MATCH", false, new Color(0.95f, 0.90f, 1f, 1f)),
-            ("???", "???", false, new Color(0.76f, 0.76f, 0.78f, 1f))
-        };
-        var itadakiNames = new[]
-        {
-            ("YUI", "TAKER", true, Coral),
-            ("MINA", "MATCH", false, Peach),
-            ("HINA", "GIVER", true, new Color(0.94f, 0.86f, 1f, 1f)),
-            ("RURU", "TAKER", false, new Color(1f, 0.90f, 0.94f, 1f)),
-            ("SAKI", "MATCH", false, new Color(0.92f, 0.98f, 0.96f, 1f)),
-            ("???", "???", false, new Color(0.76f, 0.76f, 0.78f, 1f))
-        };
-        for (int i = 0; i < ojiNames.Length; i++)
-            CharacterContactRow(ojiList, i, ojiNames[i].Item1, ojiNames[i].Item2, ojiNames[i].Item3, ojiNames[i].Item4, new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
-        for (int i = 0; i < itadakiNames.Length; i++)
-            CharacterContactRow(itadakiList, i, itadakiNames[i].Item1, itadakiNames[i].Item2, itadakiNames[i].Item3, itadakiNames[i].Item4, new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
+        var database = FindFirstAssetOfType<CharacterDatabase>();
+        var ojiCharacters = GetCharactersByCategory(database, CharacterCategory.Oj, 6);
+        var itadakiCharacters = GetCharactersByCategory(database, CharacterCategory.Itadaki, 6);
+        for (int i = 0; i < ojiCharacters.Length; i++)
+            CharacterContactRow(ojiList, i, GetContactName(ojiCharacters[i]), ojiCharacters[i] ? "OJI" : "???", false,
+                ojiCharacters[i] ? Cyan : new Color(0.76f, 0.76f, 0.78f, 1f), new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
+        for (int i = 0; i < itadakiCharacters.Length; i++)
+            CharacterContactRow(itadakiList, i, GetContactName(itadakiCharacters[i]), itadakiCharacters[i] ? "ITADAKI" : "???", false,
+                itadakiCharacters[i] ? Coral : new Color(0.76f, 0.76f, 0.78f, 1f), new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
 
         var detail = PixelPanelAt(contactsPage, "SelectedCharacterDetail", new Rect(724f, 224f, 794f, 410f), new Color(1f, 0.94f, 0.86f, 1f), artworkWidth, artworkHeight);
         CircleAt(detail.rectTransform, "SelectedPortrait", new Rect(34f, 34f, 188f, 188f), Lavender);
@@ -961,7 +948,6 @@ public static class MenuRootV2Builder
 
         var informationPanel = page.gameObject.AddComponent<CharacterInformationNodePanel>();
         var informationPanelSo = new SerializedObject(informationPanel);
-        var database = FindFirstAssetOfType<CharacterDatabase>();
         SetObject(informationPanelSo, "characterDatabase", database);
         SetObject(informationPanelSo, "selectedCharacterText", selectedNodeCharacterText);
         SetObject(informationPanelSo, "emptyText", emptyNodeText);
@@ -972,8 +958,13 @@ public static class MenuRootV2Builder
         for (var i = 0; i < itadakiList.childCount; i++) rows[ojiList.childCount + i] = itadakiList.GetChild(i).GetComponent<Button>();
         SetQuestObjectArray(informationPanelSo, "characterRowButtons", rows);
         var rowIndexes = new int[rows.Length];
-        var characterCount = database ? database.GetAll().Count : 0;
-        for (var i = 0; i < rowIndexes.Length; i++) rowIndexes[i] = characterCount > 0 ? i % characterCount : 0;
+        for (var i = 0; i < rowIndexes.Length; i++)
+        {
+            var character = i < ojiCharacters.Length ? ojiCharacters[i] : itadakiCharacters[i - ojiCharacters.Length];
+            rowIndexes[i] = FindCharacterIndex(database, character);
+            if (rowIndexes[i] < 0 && rows[i] is Button button)
+                button.interactable = false;
+        }
         SetIntArray(informationPanelSo, "characterRowIndexes", rowIndexes);
         informationPanelSo.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(informationPanel);
@@ -2596,6 +2587,39 @@ public static class MenuRootV2Builder
             return null;
         System.Array.Sort(guids, (left, right) => string.CompareOrdinal(AssetDatabase.GUIDToAssetPath(left), AssetDatabase.GUIDToAssetPath(right)));
         return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
+    }
+
+    private static CharacterInfo[] GetCharactersByCategory(CharacterDatabase database, CharacterCategory category, int capacity)
+    {
+        var result = new CharacterInfo[capacity];
+        if (!database) return result;
+
+        var writeIndex = 0;
+        foreach (var character in database.GetAll())
+        {
+            if (!character || character.category != category) continue;
+            result[writeIndex++] = character;
+            if (writeIndex == result.Length) break;
+        }
+
+        return result;
+    }
+
+    private static int FindCharacterIndex(CharacterDatabase database, CharacterInfo character)
+    {
+        if (!database || !character) return -1;
+        var characters = database.GetAll();
+        for (var i = 0; i < characters.Count; i++)
+            if (characters[i] == character) return i;
+        return -1;
+    }
+
+    private static string GetContactName(CharacterInfo character)
+    {
+        if (!character) return "???";
+        if (!string.IsNullOrWhiteSpace(character.displayName)) return character.displayName;
+        if (!string.IsNullOrWhiteSpace(character.id)) return character.id;
+        return character.name;
     }
 
     private static void EnsureFolder(string path)
