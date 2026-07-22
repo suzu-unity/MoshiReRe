@@ -1,4 +1,5 @@
 ﻿using TMPro;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,8 +20,11 @@ public class CharacterPage : MonoBehaviour
     [Header("External Dependencies")]
     [SerializeField] private AdviceClickTrigger sharedAdviceTrigger;
 
+    private CharacterInformationNodeState informationNodeState;
+
     private void Awake()
     {
+        informationNodeState = new CharacterInformationNodeState(characterDB);
         if (characterDetailCloseButton)
         {
             characterDetailCloseButton.onClick.RemoveAllListeners();
@@ -97,7 +101,7 @@ public class CharacterPage : MonoBehaviour
             characterNameText.text = string.IsNullOrEmpty(ch.displayName) ? ch.id : ch.displayName;
 
         if (characterDescriptionText)
-            characterDescriptionText.text = ch.description;
+            characterDescriptionText.text = BuildDescriptionWithInformationNodes(ch);
 
         characterDetailPanel.SetActive(true);
         MenuReReAdvisor.Instance?.ShowCharacterHint(ch);
@@ -112,5 +116,27 @@ public class CharacterPage : MonoBehaviour
     public void SetAdviceTrigger(AdviceClickTrigger trigger)
     {
         sharedAdviceTrigger = trigger;
+    }
+
+    private string BuildDescriptionWithInformationNodes(CharacterInfo character)
+    {
+        var description = character.description ?? string.Empty;
+        if (informationNodeState == null || character.nodes == null || character.nodes.Count == 0) return description;
+
+        var nodes = informationNodeState.GetNodes(CharacterInformationNodeState.GetCharacterId(character));
+        if (nodes.Count == 0) return description;
+
+        var result = new StringBuilder(description);
+        result.AppendLine().AppendLine().Append("情報ノード");
+        foreach (var node in nodes)
+        {
+            result.AppendLine();
+            result.Append(CharacterInformationNodePanel.GetCategoryLabel(node.Category))
+                .Append(" / ").Append(CharacterInformationNodePanel.GetConfidenceLabel(node.Confidence))
+                .Append(" : ").Append(node.Title).Append(" — ")
+                .Append(node.IsHidden ? "?????" : node.Content);
+        }
+
+        return result.ToString();
     }
 }

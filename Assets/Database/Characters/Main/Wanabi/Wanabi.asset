@@ -19,3 +19,24 @@ MonoBehaviour:
   portrait: {fileID: 0}
   summary: 
   description: 
+  nodes:
+  - id: basic
+    title: "\u57FA\u672C\u60C5\u5831"
+    category: 0
+    content: "\u767B\u9332\u6E08\u307F\u306E\u30D7\u30ED\u30D5\u30A3\u30FC\u30EB\u3002"
+    initialConfidence: 2
+  - id: self_image
+    title: "\u81EA\u5DF1\u50CF"
+    category: 1
+    content: "\u8A00\u52D5\u304B\u3089\u63A8\u6E2C\u4E2D\u3002"
+    initialConfidence: 1
+  - id: desire
+    title: "\u6B32\u671B"
+    category: 2
+    content: "\u30B9\u30C8\u30FC\u30EA\u30FC\u306E\u624B\u639B\u304B\u308A\u304C\u5FC5\u8981\u3002"
+    initialConfidence: 0
+  - id: risk
+    title: "\u5371\u967A\u6027"
+    category: 5
+    content: "\u63A5\u89E6\u6642\u306F\u6CE8\u610F\u304C\u5FC5\u8981\u3002"
+    initialConfidence: 3

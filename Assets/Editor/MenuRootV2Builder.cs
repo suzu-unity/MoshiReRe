@@ -894,6 +894,22 @@ public static class MenuRootV2Builder
         TextBox("AREA    Moshi Village", detail.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(38f, -274f), new Vector2(514f, 42f));
         LocalPixelButton(detail.rectTransform, "GoAreaButton", "GO >", new Vector2(620f, -292f), new Vector2(120f, 48f), Lavender);
 
+        var nodePanel = PixelPanelAt(contactsPage, "CharacterInformationNodes", new Rect(724f, 224f, 794f, 410f), new Color(0.92f, 0.96f, 1f, 1f), artworkWidth, artworkHeight);
+        var selectedNodeCharacterText = TextBox("CHARACTER INTEL", nodePanel.rectTransform, 27f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(28f, -24f), new Vector2(724f, 38f));
+        TextBox("RE: INFORMATION NODES", nodePanel.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.31f, 0.39f, 0.54f, 1f),
+            new Vector2(28f, -68f), new Vector2(460f, 30f));
+        var emptyNodeText = TextBox("NO INTEL NODES REGISTERED", nodePanel.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.42f, 0.42f, 0.50f, 1f),
+            new Vector2(40f, -192f), new Vector2(714f, 46f));
+        var nodeListRoot = RectRoot("InformationNodeList", nodePanel.rectTransform);
+        SetRect(nodeListRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -108f), new Vector2(738f, 272f));
+        var nodeTemplate = Panel(nodeListRoot, "InformationNodeRowTemplate", Vector2.zero, new Vector2(738f, 76f), new Color(0.68f, 0.70f, 0.76f, 1f));
+        PixelBorder(nodeTemplate.rectTransform, "NodeFrame", Ink, 2f);
+        TextBox("NODE", nodeTemplate.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(14f, -8f), new Vector2(270f, 26f));
+        TextBox("CATEGORY  CONFIDENCE", nodeTemplate.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Right, Ink, new Vector2(304f, -10f), new Vector2(416f, 24f));
+        TextBox("CONTENT", nodeTemplate.rectTransform, 16f, FontStyles.Normal, TextAlignmentOptions.Left, Ink, new Vector2(14f, -38f), new Vector2(708f, 28f));
+        nodeTemplate.gameObject.SetActive(false);
+
         var memo = PixelPanelAt(contactsPage, "ReReMemo", new Rect(760f, 660f, 700f, 112f), new Color(1f, 0.98f, 0.90f, 1f), artworkWidth, artworkHeight);
         var memoFace = CircleAt(memo.rectTransform, "ReReFace", new Rect(20f, 18f, 76f, 76f), Color.white);
         memoFace.sprite = LoadSprite(CommonUiCropFolder + "/rere_happy.png");
@@ -942,6 +958,25 @@ public static class MenuRootV2Builder
         SetObject(so, "relationHintText", hintText);
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
+
+        var informationPanel = page.gameObject.AddComponent<CharacterInformationNodePanel>();
+        var informationPanelSo = new SerializedObject(informationPanel);
+        var database = FindFirstAssetOfType<CharacterDatabase>();
+        SetObject(informationPanelSo, "characterDatabase", database);
+        SetObject(informationPanelSo, "selectedCharacterText", selectedNodeCharacterText);
+        SetObject(informationPanelSo, "emptyText", emptyNodeText);
+        SetObject(informationPanelSo, "nodeListRoot", nodeListRoot);
+        SetObject(informationPanelSo, "nodeRowPrefab", nodeTemplate.gameObject);
+        var rows = new Object[ojiList.childCount + itadakiList.childCount];
+        for (var i = 0; i < ojiList.childCount; i++) rows[i] = ojiList.GetChild(i).GetComponent<Button>();
+        for (var i = 0; i < itadakiList.childCount; i++) rows[ojiList.childCount + i] = itadakiList.GetChild(i).GetComponent<Button>();
+        SetQuestObjectArray(informationPanelSo, "characterRowButtons", rows);
+        var rowIndexes = new int[rows.Length];
+        var characterCount = database ? database.GetAll().Count : 0;
+        for (var i = 0; i < rowIndexes.Length; i++) rowIndexes[i] = characterCount > 0 ? i % characterCount : 0;
+        SetIntArray(informationPanelSo, "characterRowIndexes", rowIndexes);
+        informationPanelSo.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(informationPanel);
         BuildUnifiedPageNavigation(page, artworkWidth, artworkHeight);
         return page;
     }
@@ -2552,6 +2587,15 @@ public static class MenuRootV2Builder
 
         sprites.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
         return sprites.ToArray();
+    }
+
+    private static T FindFirstAssetOfType<T>() where T : Object
+    {
+        var guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] { "Assets/Database" });
+        if (guids.Length == 0)
+            return null;
+        System.Array.Sort(guids, (left, right) => string.CompareOrdinal(AssetDatabase.GUIDToAssetPath(left), AssetDatabase.GUIDToAssetPath(right)));
+        return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
     }
 
     private static void EnsureFolder(string path)
