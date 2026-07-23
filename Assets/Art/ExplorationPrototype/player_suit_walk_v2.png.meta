@@ -1,0 +1,325 @@
+fileFormatVersion: 2
+guid: eebccbb9cf30198498d10a6b396a4ea5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6127235669371433232
+    second: player_suit_walk_v2_0
+  - first:
+      213: -3531085718399558905
+    second: player_suit_walk_v2_1
+  - first:
+      213: -697107100136372290
+    second: player_suit_walk_v2_2
+  - first:
+      213: 6825342565894906053
+    second: player_suit_walk_v2_3
+  - first:
+      213: 4044359175138175958
+    second: player_suit_walk_v2_4
+  - first:
+      213: -623133683205599377
+    second: player_suit_walk_v2_5
+  - first:
+      213: -1157286031930094344
+    second: player_suit_walk_v2_6
+  - first:
+      213: -5476538230163192592
+    second: player_suit_walk_v2_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 110
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PlayerSuitWalk_01
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 222
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7281d157161dc14bb3a9870c7242f2a
+      internalID: -61453646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_02
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 0
+        width: 222
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8330ad56f187ed49ac2356874ab8ad7
+      internalID: 176561397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_03
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 0
+        width: 221
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf0ad356c9978574595a4628b2843e4c
+      internalID: 702609514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_04
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 0
+        width: 222
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 520e212082d14dc4da8c4e2ca475c467
+      internalID: 36316146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_05
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 0
+        width: 222
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 610718f88eb74fc4d922292c47c7b74c
+      internalID: 1330523251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_06
+      rect:
+        serializedVersion: 2
+        x: 1109
+        y: 0
+        width: 221
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 684f896368fa27645bf56f01bafda799
+      internalID: -834551982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_07
+      rect:
+        serializedVersion: 2
+        x: 1330
+        y: 0
+        width: 222
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0015c16ec8d102343804e0637d7d6808
+      internalID: 1014459460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerSuitWalk_08
+      rect:
+        serializedVersion: 2
+        x: 1552
+        y: 0
+        width: 222
+        height: 887
+      alignment: 9
+      pivot: {x: 0.5, y: 0.206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b76e277d162653841a65a043e86147fd
+      internalID: 1550108853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: be89246d46bc52449926bdda8552c3c8
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      PlayerSuitWalk_01: -61453646
+      PlayerSuitWalk_02: 176561397
+      PlayerSuitWalk_03: 702609514
+      PlayerSuitWalk_04: 36316146
+      PlayerSuitWalk_05: 1330523251
+      PlayerSuitWalk_06: -834551982
+      PlayerSuitWalk_07: 1014459460
+      PlayerSuitWalk_08: 1550108853
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

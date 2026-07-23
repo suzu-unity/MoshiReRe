@@ -14,9 +14,9 @@ namespace MoshiReRe.Exploration
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField, Min(0.01f)] private float framesPerSecond = 8f;
-        [SerializeField, Tooltip("Assign the five default-outfit walk frames in display order.")]
+        [SerializeField, Tooltip("Assign the default-outfit walk frames in display order.")]
         private Sprite[] defaultWalkFrames;
-        [SerializeField, Tooltip("Assign the five wardrobe-outfit walk frames in display order.")]
+        [SerializeField, Tooltip("Assign the wardrobe-outfit walk frames in display order.")]
         private Sprite[] wardrobeWalkFrames;
         [SerializeField] private Sprite defaultIdleSprite;
         [SerializeField] private Sprite wardrobeIdleSprite;

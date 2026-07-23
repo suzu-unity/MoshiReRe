@@ -27,11 +27,14 @@ namespace MoshiReRe.Exploration
 
         private void LateUpdate()
         {
-            if (hideFramesRemaining <= 0 || !Engine.Initialized)
+            if (!Engine.Initialized)
                 return;
 
-            Engine.GetService<IUIManager>()?.GetUI<ITitleUI>()?.Hide();
-            hideFramesRemaining--;
+            if (hideFramesRemaining > 0)
+            {
+                Engine.GetService<IUIManager>()?.GetUI<ITitleUI>()?.Hide();
+                hideFramesRemaining--;
+            }
         }
 
         private void ScheduleTitleHide()

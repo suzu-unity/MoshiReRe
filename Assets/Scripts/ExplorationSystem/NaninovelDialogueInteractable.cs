@@ -46,6 +46,8 @@ namespace MoshiReRe.Exploration
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
 
                     await scriptPlayer.LoadAndPlay(naninovelScriptPath);
+                    while (scriptPlayer.Playing)
+                        await AsyncUtils.WaitEndOfFrame();
                 }
                 else if (fallbackOverlay != null)
                 {

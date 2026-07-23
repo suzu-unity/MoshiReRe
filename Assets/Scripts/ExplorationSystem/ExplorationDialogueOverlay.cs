@@ -20,7 +20,7 @@ namespace MoshiReRe.Exploration
         private int lineIndex;
         private int openedFrame;
 
-        public bool Visible => panelRoot != null && panelRoot.activeSelf;
+        public bool Visible => completion != null;
 
         private void Awake()
         {
@@ -71,11 +71,19 @@ namespace MoshiReRe.Exploration
             if (!Visible)
                 return;
 
-            lineIndex++;
-            if (lineIndex >= lines.Length)
+            if (ShouldCloseAfterAdvance(lineIndex, lines.Length))
+            {
                 Close();
-            else
-                RefreshLine();
+                return;
+            }
+
+            lineIndex++;
+            RefreshLine();
+        }
+
+        public static bool ShouldCloseAfterAdvance(int currentLineIndex, int lineCount)
+        {
+            return lineCount <= 0 || currentLineIndex >= lineCount - 1;
         }
 
         private void RefreshLine()
@@ -86,11 +94,12 @@ namespace MoshiReRe.Exploration
 
         private void Close()
         {
+            var pending = completion;
+            completion = null;
+
             if (panelRoot != null)
                 panelRoot.SetActive(false);
 
-            var pending = completion;
-            completion = null;
             pending?.TrySetResult(true);
         }
     }

@@ -22,20 +22,26 @@ public static class ExplorationPrototypeBuilder
 
     private static readonly Slice[] CasualSlices =
     {
-        new("PlayerCasual_01", 42, 245, 191, 704),
-        new("PlayerCasual_02", 319, 231, 238, 706),
-        new("PlayerCasual_03", 603, 226, 239, 701),
-        new("PlayerCasual_04", 901, 223, 233, 697),
-        new("PlayerCasual_05", 1169, 219, 225, 698)
+        new("PlayerCasualWalk_01", 0, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_02", 222, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_03", 444, 0, 221, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_04", 665, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_05", 887, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_06", 1109, 0, 221, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_07", 1330, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerCasualWalk_08", 1552, 0, 222, 887, 0.5f, 0.206f)
     };
 
     private static readonly Slice[] SuitSlices =
     {
-        new("PlayerSuit_01", 55, 232, 192, 715),
-        new("PlayerSuit_02", 338, 222, 238, 710),
-        new("PlayerSuit_03", 620, 216, 245, 705),
-        new("PlayerSuit_04", 909, 216, 235, 700),
-        new("PlayerSuit_05", 1174, 214, 215, 697)
+        new("PlayerSuitWalk_01", 0, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_02", 222, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_03", 444, 0, 221, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_04", 665, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_05", 887, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_06", 1109, 0, 221, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_07", 1330, 0, 222, 887, 0.5f, 0.206f),
+        new("PlayerSuitWalk_08", 1552, 0, 222, 887, 0.5f, 0.206f)
     };
 
     private static readonly Slice[] NpcSlices =
@@ -53,17 +59,15 @@ public static class ExplorationPrototypeBuilder
         EnsureFolder(GeneratedRoot);
 
         var background = ConfigureSingleSprite(ArtRoot + "/exploration_room_background.png", 100f);
-        var casualPath = GenerateTransparentCopy(
-            ArtRoot + "/player_casual_strip.png", GeneratedRoot + "/player_casual_transparent.png");
-        var suitPath = GenerateTransparentCopy(
-            ArtRoot + "/player_suit_strip.png", GeneratedRoot + "/player_suit_transparent.png");
+        var casualPath = ArtRoot + "/player_casual_walk_v2.png";
+        var suitPath = ArtRoot + "/player_suit_walk_v2.png";
         var npcPath = GenerateTransparentCopy(
             ArtRoot + "/npc_strip.png", GeneratedRoot + "/npc_transparent.png");
-        var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 150f);
-        var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 150f);
+        var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 110f);
+        var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
         var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
 
-        if (background == null || casualFrames.Length != 5 || suitFrames.Length != 5 || npcFrames.Length != 5)
+        if (background == null || casualFrames.Length != 8 || suitFrames.Length != 8 || npcFrames.Length != 5)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -142,7 +146,7 @@ public static class ExplorationPrototypeBuilder
 
         var animator = player.AddComponent<ExplorationSpriteAnimator>();
         SetObject(animator, "spriteRenderer", renderer);
-        SetFloat(animator, "framesPerSecond", 7f);
+        SetFloat(animator, "framesPerSecond", 9f);
         SetObjectArray(animator, "defaultWalkFrames", casualFrames);
         SetObjectArray(animator, "wardrobeWalkFrames", suitFrames);
         SetObject(animator, "defaultIdleSprite", casualFrames[0]);
@@ -214,8 +218,9 @@ public static class ExplorationPrototypeBuilder
         cameraObject.transform.position = new Vector3(-2.15f, 0f, -10f);
 
         var camera = cameraObject.AddComponent<Camera>();
+        camera.depth = 0.5f;
         camera.orthographic = true;
-        camera.orthographicSize = 4.25f;
+        camera.orthographicSize = 3.15f;
         camera.clearFlags = CameraClearFlags.SolidColor;
         camera.backgroundColor = new Color32(9, 18, 35, 255);
         cameraObject.AddComponent<UniversalAdditionalCameraData>();
@@ -224,9 +229,10 @@ public static class ExplorationPrototypeBuilder
         var follow = cameraObject.AddComponent<SideScrollCamera>();
         SetObject(follow, "target", target);
         SetFloat(follow, "smoothTime", 0.16f);
+        SetFloat(follow, "horizontalDeadZone", 0.8f);
         SetBool(follow, "clampHorizontalPosition", true);
-        SetFloat(follow, "minX", -2.15f);
-        SetFloat(follow, "maxX", 2.15f);
+        SetFloat(follow, "minX", -3.95f);
+        SetFloat(follow, "maxX", 3.95f);
     }
 
     private static void CreateLight()
@@ -381,7 +387,7 @@ public static class ExplorationPrototypeBuilder
                 name = slice.Name,
                 rect = new Rect(slice.X, slice.Y, slice.Width, slice.Height),
                 alignment = SpriteAlignment.Custom,
-                pivot = new Vector2(0.5f, 0f),
+                pivot = new Vector2(slice.PivotX, slice.PivotY),
                 spriteID = previousIds.TryGetValue(slice.Name, out var existingId) ? existingId : GUID.Generate()
             };
         }
@@ -553,14 +559,18 @@ public static class ExplorationPrototypeBuilder
         public readonly int Y;
         public readonly int Width;
         public readonly int Height;
+        public readonly float PivotX;
+        public readonly float PivotY;
 
-        public Slice(string name, int x, int y, int width, int height)
+        public Slice(string name, int x, int y, int width, int height, float pivotX = 0.5f, float pivotY = 0f)
         {
             Name = name;
             X = x;
             Y = y;
             Width = width;
             Height = height;
+            PivotX = pivotX;
+            PivotY = pivotY;
         }
     }
 }

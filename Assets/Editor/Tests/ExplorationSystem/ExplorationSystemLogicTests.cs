@@ -41,5 +41,23 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             Assert.That(ExplorationPlayerController.ClampHorizontalPosition(positionX, enabled, minX, maxX), Is.EqualTo(expected));
             Assert.That(SideScrollCamera.ClampHorizontalPosition(positionX, enabled, minX, maxX), Is.EqualTo(expected));
         }
+
+        [TestCase(0f, 0.5f, 1f, 0f)]
+        [TestCase(0f, 2f, 0.5f, 1.5f)]
+        [TestCase(3f, 1f, 0.5f, 1.5f)]
+        [TestCase(0f, 2f, 0f, 2f)]
+        public void CalculateFollowX_UsesDeadZoneBeforePanning(float cameraX, float targetX, float deadZone, float expected)
+        {
+            Assert.That(SideScrollCamera.CalculateFollowX(cameraX, targetX, deadZone), Is.EqualTo(expected));
+        }
+
+        [TestCase(0, 1, true)]
+        [TestCase(1, 2, true)]
+        [TestCase(0, 2, false)]
+        [TestCase(0, 0, true)]
+        public void ShouldCloseAfterAdvance_ClosesOnlyOnFinalLine(int currentLineIndex, int lineCount, bool expected)
+        {
+            Assert.That(ExplorationDialogueOverlay.ShouldCloseAfterAdvance(currentLineIndex, lineCount), Is.EqualTo(expected));
+        }
     }
 }
