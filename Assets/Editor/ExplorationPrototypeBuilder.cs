@@ -76,6 +76,7 @@ public static class ExplorationPrototypeBuilder
         CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
         CreateCamera(player.transform);
         CreateLight();
+        CreateNaninovelUiGuard();
 
         EditorSceneManager.MarkSceneDirty(scene);
         if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -235,6 +236,12 @@ public static class ExplorationPrototypeBuilder
         var light = lightObject.AddComponent<Light>();
         light.type = LightType.Directional;
         light.intensity = 1f;
+    }
+
+    private static void CreateNaninovelUiGuard()
+    {
+        var guardObject = new GameObject("ExplorationNaninovelUiGuard");
+        guardObject.AddComponent<ExplorationNaninovelUiGuard>();
     }
 
     private static ExplorationDialogueOverlay CreateHud(ExplorationInteractionController interactionController)
