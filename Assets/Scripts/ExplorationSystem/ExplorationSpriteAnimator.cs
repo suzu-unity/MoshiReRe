@@ -20,6 +20,8 @@ namespace MoshiReRe.Exploration
         private Sprite[] wardrobeWalkFrames;
         [SerializeField] private Sprite defaultIdleSprite;
         [SerializeField] private Sprite wardrobeIdleSprite;
+        [SerializeField, Tooltip("Optional cutout rig. When assigned, it replaces frame sprites while preserving this component's public API.")]
+        private ExplorationCutoutRigController cutoutRig;
 
         private ExplorationOutfit outfit;
         private bool walking;
@@ -37,12 +39,19 @@ namespace MoshiReRe.Exploration
             if (spriteRenderer == null)
                 spriteRenderer = GetComponent<SpriteRenderer>();
 
+            if (cutoutRig != null)
+            {
+                if (spriteRenderer != null)
+                    spriteRenderer.enabled = false;
+                cutoutRig.SetOutfit(outfit);
+            }
+
             RefreshSprite();
         }
 
         private void Update()
         {
-            if (!walking)
+            if (!walking || cutoutRig != null)
                 return;
 
             walkElapsed += Time.deltaTime;
@@ -51,6 +60,7 @@ namespace MoshiReRe.Exploration
 
         public void SetWalking(bool value)
         {
+            cutoutRig?.SetWalking(value);
             if (walking == value)
                 return;
 
@@ -61,12 +71,14 @@ namespace MoshiReRe.Exploration
 
         public void SetFacingRight(bool facingRight)
         {
+            cutoutRig?.SetFacingRight(facingRight);
             if (spriteRenderer != null)
                 spriteRenderer.flipX = !facingRight;
         }
 
         public void SetOutfit(ExplorationOutfit value)
         {
+            cutoutRig?.SetOutfit(value);
             if (outfit == value)
                 return;
 
@@ -86,6 +98,9 @@ namespace MoshiReRe.Exploration
 
         private void RefreshSprite()
         {
+            if (cutoutRig != null)
+                return;
+
             if (spriteRenderer == null)
                 return;
 

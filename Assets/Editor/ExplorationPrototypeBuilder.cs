@@ -16,6 +16,9 @@ public static class ExplorationPrototypeBuilder
 {
     private const string ArtRoot = "Assets/Art/ExplorationPrototype";
     private const string GeneratedRoot = ArtRoot + "/Generated";
+    private const string RigRoot = ArtRoot + "/Rig";
+    private const string CasualRigPartsRoot = RigRoot + "/CasualParts";
+    private const string SuitRigPartsRoot = RigRoot + "/SuitParts";
     private const string ScenePath = "Assets/Scenes/ExplorationPrototype.unity";
     private const string RestoreStartSceneKey = "MoshiReRe.ExplorationPrototype.RestoreStartScene";
     private const string PreviousStartSceneKey = "MoshiReRe.ExplorationPrototype.PreviousStartScene";
@@ -66,15 +69,18 @@ public static class ExplorationPrototypeBuilder
         var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 110f);
         var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
         var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
+        var casualRigSprites = LoadRigSpriteSet(CasualRigPartsRoot);
+        var suitRigSprites = LoadRigSpriteSet(SuitRigPartsRoot);
 
-        if (background == null || casualFrames.Length != 8 || suitFrames.Length != 8 || npcFrames.Length != 5)
+        if (background == null || casualFrames.Length != 8 || suitFrames.Length != 8 ||
+            npcFrames.Length != 5 || !casualRigSprites.IsComplete || !suitRigSprites.IsComplete)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "ExplorationPrototype";
 
         CreateBackground(background);
-        var player = CreatePlayer(casualFrames, suitFrames);
+        var player = CreatePlayer(casualFrames, suitFrames, casualRigSprites, suitRigSprites);
         var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
         CreateNpc(npcFrames[0], dialogueOverlay);
         CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
@@ -136,13 +142,20 @@ public static class ExplorationPrototypeBuilder
         renderer.sortingOrder = -20;
     }
 
-    private static GameObject CreatePlayer(Sprite[] casualFrames, Sprite[] suitFrames)
+    private static GameObject CreatePlayer(
+        Sprite[] casualFrames,
+        Sprite[] suitFrames,
+        RigSpriteSet casualRigSprites,
+        RigSpriteSet suitRigSprites)
     {
         var player = new GameObject("Player");
         player.transform.position = new Vector3(-5.7f, -2.82f, 0f);
 
         var renderer = player.AddComponent<SpriteRenderer>();
         renderer.sortingOrder = 10;
+        renderer.enabled = false;
+
+        var cutoutRig = CreateCutoutRig(player.transform, casualRigSprites, suitRigSprites);
 
         var animator = player.AddComponent<ExplorationSpriteAnimator>();
         SetObject(animator, "spriteRenderer", renderer);
@@ -151,6 +164,7 @@ public static class ExplorationPrototypeBuilder
         SetObjectArray(animator, "wardrobeWalkFrames", suitFrames);
         SetObject(animator, "defaultIdleSprite", casualFrames[0]);
         SetObject(animator, "wardrobeIdleSprite", suitFrames[0]);
+        SetObject(animator, "cutoutRig", cutoutRig);
 
         var controller = player.AddComponent<ExplorationPlayerController>();
         SetFloat(controller, "movementSpeed", 3.4f);
@@ -163,6 +177,98 @@ public static class ExplorationPrototypeBuilder
         SetObject(interactions, "player", controller);
         SetFloat(interactions, "interactionRadius", 1.55f);
         return player;
+    }
+
+    private static ExplorationCutoutRigController CreateCutoutRig(
+        Transform player,
+        RigSpriteSet casual,
+        RigSpriteSet suit)
+    {
+        var rigRoot = new GameObject("CutoutRig").transform;
+        rigRoot.SetParent(player, false);
+        rigRoot.localScale = new Vector3(0.42f, 0.42f, 1f);
+
+        var torso = CreateRigBone("Torso", rigRoot, new Vector3(0f, 5.75f, 0f), casual.Torso, 10);
+        var backHair = CreateRigBone("BackHair", torso, new Vector3(0f, 3.08f, 0f), casual.BackHair, 6);
+        var head = CreateRigBone("Head", torso, new Vector3(0.02f, 3.08f, 0f), casual.Head, 12);
+
+        var leftUpperArm = CreateRigBone(
+            "BackUpperArm", torso, new Vector3(-0.38f, 2.58f, 0f), casual.UpperArm, 7);
+        leftUpperArm.localScale = new Vector3(0.72f, 0.72f, 1f);
+        var leftForearm = CreateRigBone(
+            "BackForearm", leftUpperArm, new Vector3(0f, -2.52f, 0f), casual.Forearm, 7);
+        var rightUpperArm = CreateRigBone(
+            "FrontUpperArm", torso, new Vector3(0.52f, 2.58f, 0f), casual.UpperArm, 15);
+        rightUpperArm.localScale = new Vector3(0.72f, 0.72f, 1f);
+        var rightForearm = CreateRigBone(
+            "FrontForearm", rightUpperArm, new Vector3(0f, -2.52f, 0f), casual.Forearm, 15);
+
+        var leftThigh = CreateRigBone(
+            "BackThigh", torso, new Vector3(-0.22f, 0.18f, 0f), casual.Thigh, 5);
+        var leftCalf = CreateRigBone(
+            "BackCalf", leftThigh, new Vector3(0f, -2.55f, 0f), casual.Calf, 5);
+        var leftFoot = CreateRigBone(
+            "BackFoot", leftCalf, new Vector3(0f, -2.4f, 0f), casual.Foot, 5);
+
+        var rightThigh = CreateRigBone(
+            "FrontThigh", torso, new Vector3(0.22f, 0.18f, 0f), casual.Thigh, 13);
+        var rightCalf = CreateRigBone(
+            "FrontCalf", rightThigh, new Vector3(0f, -2.55f, 0f), casual.Calf, 13);
+        var rightFoot = CreateRigBone(
+            "FrontFoot", rightCalf, new Vector3(0f, -2.4f, 0f), casual.Foot, 13);
+
+        var controller = rigRoot.gameObject.AddComponent<ExplorationCutoutRigController>();
+        SetObject(controller, "torso", torso);
+        SetObject(controller, "head", head);
+        SetObject(controller, "backHair", backHair);
+        SetObject(controller, "leftUpperArm", leftUpperArm);
+        SetObject(controller, "rightUpperArm", rightUpperArm);
+        SetObject(controller, "leftForearm", leftForearm);
+        SetObject(controller, "rightForearm", rightForearm);
+        SetObject(controller, "leftThigh", leftThigh);
+        SetObject(controller, "rightThigh", rightThigh);
+        SetObject(controller, "leftCalf", leftCalf);
+        SetObject(controller, "rightCalf", rightCalf);
+        SetObject(controller, "leftFoot", leftFoot);
+        SetObject(controller, "rightFoot", rightFoot);
+        SetObject(controller, "mirrorRoot", rigRoot);
+
+        SetObject(controller, "torsoRenderer", torso.GetComponent<SpriteRenderer>());
+        SetObject(controller, "headRenderer", head.GetComponent<SpriteRenderer>());
+        SetObject(controller, "backHairRenderer", backHair.GetComponent<SpriteRenderer>());
+        SetObject(controller, "leftUpperArmRenderer", leftUpperArm.GetComponent<SpriteRenderer>());
+        SetObject(controller, "rightUpperArmRenderer", rightUpperArm.GetComponent<SpriteRenderer>());
+        SetObject(controller, "leftForearmRenderer", leftForearm.GetComponent<SpriteRenderer>());
+        SetObject(controller, "rightForearmRenderer", rightForearm.GetComponent<SpriteRenderer>());
+        SetObject(controller, "leftThighRenderer", leftThigh.GetComponent<SpriteRenderer>());
+        SetObject(controller, "rightThighRenderer", rightThigh.GetComponent<SpriteRenderer>());
+        SetObject(controller, "leftCalfRenderer", leftCalf.GetComponent<SpriteRenderer>());
+        SetObject(controller, "rightCalfRenderer", rightCalf.GetComponent<SpriteRenderer>());
+        SetObject(controller, "leftFootRenderer", leftFoot.GetComponent<SpriteRenderer>());
+        SetObject(controller, "rightFootRenderer", rightFoot.GetComponent<SpriteRenderer>());
+        SetFloat(controller, "walkPosesPerSecond", 12f);
+        SetBool(controller, "showBackLimbsInBlack", false);
+        SetEnum(controller, "backLimbSide", (int)ExplorationCutoutRigSide.Left);
+        SetRigOutfit(controller, "defaultOutfit", casual);
+        SetRigOutfit(controller, "wardrobeOutfit", suit);
+        controller.CaptureRestPose();
+        return controller;
+    }
+
+    private static Transform CreateRigBone(
+        string name,
+        Transform parent,
+        Vector3 localPosition,
+        Sprite sprite,
+        int sortingOrder)
+    {
+        var bone = new GameObject(name).transform;
+        bone.SetParent(parent, false);
+        bone.localPosition = localPosition;
+        var renderer = bone.gameObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.sortingOrder = sortingOrder;
+        return bone;
     }
 
     private static void CreateNpc(Sprite idleSprite, ExplorationDialogueOverlay fallbackOverlay)
@@ -358,6 +464,40 @@ public static class ExplorationPrototypeBuilder
         return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
+    private static RigSpriteSet LoadRigSpriteSet(string root)
+    {
+        const float pixelsPerUnit = 100f;
+        return new RigSpriteSet(
+            ConfigureRigSprite(root + "/torso.png", pixelsPerUnit, new Vector2(0.5f, 0.05f)),
+            ConfigureRigSprite(root + "/head.png", pixelsPerUnit, new Vector2(0.5f, 0.05f)),
+            ConfigureRigSprite(root + "/back_hair.png", pixelsPerUnit, new Vector2(0.5f, 0.28f)),
+            ConfigureRigSprite(root + "/upper_arm.png", pixelsPerUnit, new Vector2(0.5f, 0.92f)),
+            ConfigureRigSprite(root + "/forearm.png", pixelsPerUnit, new Vector2(0.5f, 0.92f)),
+            ConfigureRigSprite(root + "/thigh.png", pixelsPerUnit, new Vector2(0.5f, 0.93f)),
+            ConfigureRigSprite(root + "/calf.png", pixelsPerUnit, new Vector2(0.5f, 0.94f)),
+            ConfigureRigSprite(root + "/foot.png", pixelsPerUnit, new Vector2(0.3f, 0.72f)));
+    }
+
+    private static Sprite ConfigureRigSprite(string path, float pixelsPerUnit, Vector2 pivot)
+    {
+        var importer = GetTextureImporter(path);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePixelsPerUnit = pixelsPerUnit;
+        importer.alphaIsTransparency = true;
+        importer.mipmapEnabled = false;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.maxTextureSize = 1024;
+        var settings = new TextureImporterSettings();
+        importer.ReadTextureSettings(settings);
+        settings.spriteAlignment = (int)SpriteAlignment.Custom;
+        settings.spritePivot = pivot;
+        importer.SetTextureSettings(settings);
+        importer.SaveAndReimport();
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+    }
+
     private static Sprite[] ConfigureSpriteStrip(string path, IReadOnlyList<Slice> slices, float pixelsPerUnit)
     {
         var importer = GetTextureImporter(path);
@@ -522,6 +662,28 @@ public static class ExplorationPrototypeBuilder
                 property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
         });
 
+    private static void SetRigOutfit(
+        ExplorationCutoutRigController target,
+        string propertyName,
+        RigSpriteSet sprites)
+    {
+        var serialized = new SerializedObject(target);
+        var outfit = serialized.FindProperty(propertyName);
+        if (outfit == null)
+            throw new InvalidOperationException(
+                $"Serialized property '{propertyName}' was not found on {target.GetType().Name}.");
+
+        outfit.FindPropertyRelative("torso").objectReferenceValue = sprites.Torso;
+        outfit.FindPropertyRelative("head").objectReferenceValue = sprites.Head;
+        outfit.FindPropertyRelative("backHair").objectReferenceValue = sprites.BackHair;
+        outfit.FindPropertyRelative("upperArm").objectReferenceValue = sprites.UpperArm;
+        outfit.FindPropertyRelative("forearm").objectReferenceValue = sprites.Forearm;
+        outfit.FindPropertyRelative("thigh").objectReferenceValue = sprites.Thigh;
+        outfit.FindPropertyRelative("calf").objectReferenceValue = sprites.Calf;
+        outfit.FindPropertyRelative("foot").objectReferenceValue = sprites.Foot;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
     private static void SetString(UnityEngine.Object target, string propertyName, string value) =>
         SetProperty(target, propertyName, property => property.stringValue = value);
 
@@ -571,6 +733,42 @@ public static class ExplorationPrototypeBuilder
             Height = height;
             PivotX = pivotX;
             PivotY = pivotY;
+        }
+    }
+
+    private readonly struct RigSpriteSet
+    {
+        public readonly Sprite Torso;
+        public readonly Sprite Head;
+        public readonly Sprite BackHair;
+        public readonly Sprite UpperArm;
+        public readonly Sprite Forearm;
+        public readonly Sprite Thigh;
+        public readonly Sprite Calf;
+        public readonly Sprite Foot;
+
+        public bool IsComplete =>
+            Torso != null && Head != null && BackHair != null && UpperArm != null &&
+            Forearm != null && Thigh != null && Calf != null && Foot != null;
+
+        public RigSpriteSet(
+            Sprite torso,
+            Sprite head,
+            Sprite backHair,
+            Sprite upperArm,
+            Sprite forearm,
+            Sprite thigh,
+            Sprite calf,
+            Sprite foot)
+        {
+            Torso = torso;
+            Head = head;
+            BackHair = backHair;
+            UpperArm = upperArm;
+            Forearm = forearm;
+            Thigh = thigh;
+            Calf = calf;
+            Foot = foot;
         }
     }
 }

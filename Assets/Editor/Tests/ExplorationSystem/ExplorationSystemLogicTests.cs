@@ -59,5 +59,110 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         {
             Assert.That(ExplorationDialogueOverlay.ShouldCloseAfterAdvance(currentLineIndex, lineCount), Is.EqualTo(expected));
         }
+
+        [Test]
+        public void GetWalkPose_AllTwelvePosesContainFiniteValues()
+        {
+            for (var poseIndex = 0; poseIndex < ExplorationCutoutRigController.WalkPoseCount; poseIndex++)
+            {
+                var pose = ExplorationCutoutRigController.GetWalkPose(poseIndex);
+                Assert.That(float.IsFinite(pose.LeftHipAngle), Is.True);
+                Assert.That(float.IsFinite(pose.RightHipAngle), Is.True);
+                Assert.That(float.IsFinite(pose.LeftKneeBend), Is.True);
+                Assert.That(float.IsFinite(pose.RightKneeBend), Is.True);
+                Assert.That(float.IsFinite(pose.LeftAnkleAngle), Is.True);
+                Assert.That(float.IsFinite(pose.RightAnkleAngle), Is.True);
+                Assert.That(float.IsFinite(pose.LeftShoulderAngle), Is.True);
+                Assert.That(float.IsFinite(pose.RightShoulderAngle), Is.True);
+                Assert.That(float.IsFinite(pose.LeftElbowBend), Is.True);
+                Assert.That(float.IsFinite(pose.RightElbowBend), Is.True);
+                Assert.That(float.IsFinite(pose.BodyYOffset), Is.True);
+                Assert.That(float.IsFinite(pose.BodyTilt), Is.True);
+            }
+        }
+
+        [Test]
+        public void GetWalkPose_HalfCycleInvertsLegSwing()
+        {
+            for (var poseIndex = 0; poseIndex < ExplorationCutoutRigController.WalkPoseCount / 2; poseIndex++)
+            {
+                var firstHalfPose = ExplorationCutoutRigController.GetWalkPose(poseIndex);
+                var secondHalfPose = ExplorationCutoutRigController.GetWalkPose(poseIndex + ExplorationCutoutRigController.WalkPoseCount / 2);
+                Assert.That(firstHalfPose.LeftHipAngle, Is.EqualTo(secondHalfPose.RightHipAngle).Within(0.001f));
+                Assert.That(firstHalfPose.RightHipAngle, Is.EqualTo(secondHalfPose.LeftHipAngle).Within(0.001f));
+                Assert.That(firstHalfPose.LeftKneeBend, Is.EqualTo(secondHalfPose.RightKneeBend).Within(0.001f));
+                Assert.That(firstHalfPose.RightKneeBend, Is.EqualTo(secondHalfPose.LeftKneeBend).Within(0.001f));
+                Assert.That(firstHalfPose.LeftShoulderAngle, Is.EqualTo(secondHalfPose.RightShoulderAngle).Within(0.001f));
+                Assert.That(firstHalfPose.RightShoulderAngle, Is.EqualTo(secondHalfPose.LeftShoulderAngle).Within(0.001f));
+            }
+        }
+
+        [Test]
+        public void GetWalkPose_KneeBendsNeverHyperextend()
+        {
+            for (var poseIndex = 0; poseIndex < ExplorationCutoutRigController.WalkPoseCount; poseIndex++)
+            {
+                var pose = ExplorationCutoutRigController.GetWalkPose(poseIndex);
+                Assert.That(pose.LeftKneeBend, Is.GreaterThanOrEqualTo(0f));
+                Assert.That(pose.RightKneeBend, Is.GreaterThanOrEqualTo(0f));
+            }
+        }
+
+        [Test]
+        public void AreBoneReferencesStable_RequiresEachSideToKeepItsOwnTransform()
+        {
+            var leftLeg = new GameObject("LeftLeg").transform;
+            var rightLeg = new GameObject("RightLeg").transform;
+            var leftArm = new GameObject("LeftArm").transform;
+            var rightArm = new GameObject("RightArm").transform;
+
+            try
+            {
+                Assert.That(ExplorationCutoutRigController.AreBoneReferencesStable(
+                    leftLeg, rightLeg, leftArm, rightArm,
+                    leftLeg, rightLeg, leftArm, rightArm), Is.True);
+                Assert.That(ExplorationCutoutRigController.AreBoneReferencesStable(
+                    leftLeg, rightLeg, leftArm, rightArm,
+                    rightLeg, leftLeg, leftArm, rightArm), Is.False);
+            }
+            finally
+            {
+                Object.DestroyImmediate(leftLeg.gameObject);
+                Object.DestroyImmediate(rightLeg.gameObject);
+                Object.DestroyImmediate(leftArm.gameObject);
+                Object.DestroyImmediate(rightArm.gameObject);
+            }
+        }
+
+        [Test]
+        public void AreLimbChainReferencesStable_RejectsSwappingLeftAndRightBones()
+        {
+            var bones = new[]
+            {
+                new GameObject("LeftUpperArm").transform,
+                new GameObject("LeftForearm").transform,
+                new GameObject("LeftThigh").transform,
+                new GameObject("LeftCalf").transform,
+                new GameObject("LeftFoot").transform,
+                new GameObject("RightUpperArm").transform,
+                new GameObject("RightForearm").transform,
+                new GameObject("RightThigh").transform,
+                new GameObject("RightCalf").transform,
+                new GameObject("RightFoot").transform
+            };
+
+            try
+            {
+                var swapped = (Transform[])bones.Clone();
+                (swapped[0], swapped[5]) = (swapped[5], swapped[0]);
+                Assert.That(ExplorationCutoutRigController.AreLimbChainReferencesStable(bones, bones), Is.True);
+                Assert.That(ExplorationCutoutRigController.AreLimbChainReferencesStable(bones, swapped), Is.False);
+            }
+            finally
+            {
+                foreach (var bone in bones)
+                    Object.DestroyImmediate(bone.gameObject);
+            }
+        }
     }
 }
