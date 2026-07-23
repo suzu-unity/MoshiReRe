@@ -1,0 +1,559 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using MoshiReRe.Exploration;
+using TMPro;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEditor.U2D.Sprites;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public static class ExplorationPrototypeBuilder
+{
+    private const string ArtRoot = "Assets/Art/ExplorationPrototype";
+    private const string GeneratedRoot = ArtRoot + "/Generated";
+    private const string ScenePath = "Assets/Scenes/ExplorationPrototype.unity";
+    private const string RestoreStartSceneKey = "MoshiReRe.ExplorationPrototype.RestoreStartScene";
+    private const string PreviousStartSceneKey = "MoshiReRe.ExplorationPrototype.PreviousStartScene";
+
+    private static readonly Slice[] CasualSlices =
+    {
+        new("PlayerCasual_01", 42, 245, 191, 704),
+        new("PlayerCasual_02", 319, 231, 238, 706),
+        new("PlayerCasual_03", 603, 226, 239, 701),
+        new("PlayerCasual_04", 901, 223, 233, 697),
+        new("PlayerCasual_05", 1169, 219, 225, 698)
+    };
+
+    private static readonly Slice[] SuitSlices =
+    {
+        new("PlayerSuit_01", 55, 232, 192, 715),
+        new("PlayerSuit_02", 338, 222, 238, 710),
+        new("PlayerSuit_03", 620, 216, 245, 705),
+        new("PlayerSuit_04", 909, 216, 235, 700),
+        new("PlayerSuit_05", 1174, 214, 215, 697)
+    };
+
+    private static readonly Slice[] NpcSlices =
+    {
+        new("Npc_01", 77, 159, 185, 694),
+        new("Npc_02", 392, 150, 235, 692),
+        new("Npc_03", 684, 139, 271, 697),
+        new("Npc_04", 1019, 142, 242, 691),
+        new("Npc_05", 1341, 137, 276, 687)
+    };
+
+    [MenuItem("Tools/MoshiReRe/Build Exploration Prototype")]
+    public static void Build()
+    {
+        EnsureFolder(GeneratedRoot);
+
+        var background = ConfigureSingleSprite(ArtRoot + "/exploration_room_background.png", 100f);
+        var casualPath = GenerateTransparentCopy(
+            ArtRoot + "/player_casual_strip.png", GeneratedRoot + "/player_casual_transparent.png");
+        var suitPath = GenerateTransparentCopy(
+            ArtRoot + "/player_suit_strip.png", GeneratedRoot + "/player_suit_transparent.png");
+        var npcPath = GenerateTransparentCopy(
+            ArtRoot + "/npc_strip.png", GeneratedRoot + "/npc_transparent.png");
+        var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 150f);
+        var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 150f);
+        var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
+
+        if (background == null || casualFrames.Length != 5 || suitFrames.Length != 5 || npcFrames.Length != 5)
+            throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
+
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        scene.name = "ExplorationPrototype";
+
+        CreateBackground(background);
+        var player = CreatePlayer(casualFrames, suitFrames);
+        var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
+        CreateNpc(npcFrames[0], dialogueOverlay);
+        CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
+        CreateCamera(player.transform);
+        CreateLight();
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        if (!EditorSceneManager.SaveScene(scene, ScenePath))
+            throw new InvalidOperationException($"Failed to save prototype scene at '{ScenePath}'.");
+
+        Selection.activeGameObject = player;
+        AssetDatabase.SaveAssets();
+        Debug.Log($"[ExplorationPrototypeBuilder] Built {ScenePath}");
+    }
+
+    [InitializeOnLoadMethod]
+    private static void RegisterPlayModeRestore()
+    {
+        EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
+        EditorApplication.playModeStateChanged += HandlePlayModeStateChanged;
+    }
+
+    [MenuItem("Tools/MoshiReRe/Play Exploration Prototype")]
+    public static void PlayPrototype()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        var prototype = AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath);
+        if (prototype == null)
+            throw new InvalidOperationException($"Build the prototype scene first: {ScenePath}");
+
+        var previous = EditorSceneManager.playModeStartScene;
+        SessionState.SetString(PreviousStartSceneKey, previous == null ? string.Empty : AssetDatabase.GetAssetPath(previous));
+        SessionState.SetBool(RestoreStartSceneKey, true);
+        EditorSceneManager.playModeStartScene = prototype;
+        EditorApplication.isPlaying = true;
+    }
+
+    private static void HandlePlayModeStateChanged(PlayModeStateChange state)
+    {
+        if (state != PlayModeStateChange.EnteredEditMode || !SessionState.GetBool(RestoreStartSceneKey, false))
+            return;
+
+        var previousPath = SessionState.GetString(PreviousStartSceneKey, string.Empty);
+        EditorSceneManager.playModeStartScene = string.IsNullOrEmpty(previousPath)
+            ? null
+            : AssetDatabase.LoadAssetAtPath<SceneAsset>(previousPath);
+        SessionState.EraseBool(RestoreStartSceneKey);
+        SessionState.EraseString(PreviousStartSceneKey);
+    }
+
+    private static void CreateBackground(Sprite sprite)
+    {
+        var root = new GameObject("RoomBackground");
+        var renderer = root.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.sortingOrder = -20;
+    }
+
+    private static GameObject CreatePlayer(Sprite[] casualFrames, Sprite[] suitFrames)
+    {
+        var player = new GameObject("Player");
+        player.transform.position = new Vector3(-5.7f, -2.82f, 0f);
+
+        var renderer = player.AddComponent<SpriteRenderer>();
+        renderer.sortingOrder = 10;
+
+        var animator = player.AddComponent<ExplorationSpriteAnimator>();
+        SetObject(animator, "spriteRenderer", renderer);
+        SetFloat(animator, "framesPerSecond", 7f);
+        SetObjectArray(animator, "defaultWalkFrames", casualFrames);
+        SetObjectArray(animator, "wardrobeWalkFrames", suitFrames);
+        SetObject(animator, "defaultIdleSprite", casualFrames[0]);
+        SetObject(animator, "wardrobeIdleSprite", suitFrames[0]);
+
+        var controller = player.AddComponent<ExplorationPlayerController>();
+        SetFloat(controller, "movementSpeed", 3.4f);
+        SetBool(controller, "clampHorizontalPosition", true);
+        SetFloat(controller, "minX", -8.1f);
+        SetFloat(controller, "maxX", 8.1f);
+        SetObject(controller, "spriteAnimator", animator);
+
+        var interactions = player.AddComponent<ExplorationInteractionController>();
+        SetObject(interactions, "player", controller);
+        SetFloat(interactions, "interactionRadius", 1.55f);
+        return player;
+    }
+
+    private static void CreateNpc(Sprite idleSprite, ExplorationDialogueOverlay fallbackOverlay)
+    {
+        var npc = new GameObject("PrototypeNPC");
+        npc.transform.position = new Vector3(3.7f, -2.82f, 0f);
+
+        var renderer = npc.AddComponent<SpriteRenderer>();
+        renderer.sprite = idleSprite;
+        renderer.flipX = true;
+        renderer.sortingOrder = 9;
+
+        var collider = npc.AddComponent<CapsuleCollider2D>();
+        collider.isTrigger = true;
+        collider.direction = CapsuleDirection2D.Vertical;
+        collider.size = new Vector2(1.15f, 4.55f);
+        collider.offset = new Vector2(0f, 2.25f);
+
+        var dialogue = npc.AddComponent<NaninovelDialogueInteractable>();
+        SetString(dialogue, "promptText", "話す");
+        SetString(dialogue, "naninovelScriptPath", "Scenario/ExplorationPrototypeNpc");
+        SetFloat(dialogue, "initializationTimeout", 2f);
+        SetObject(dialogue, "fallbackOverlay", fallbackOverlay);
+        SetString(dialogue, "fallbackSpeaker", "仮置きのNPC");
+        SetStringArray(dialogue, "fallbackLines", new[]
+        {
+            "こんばんは。部屋の中を歩いて、私に話しかけられたみたいね。",
+            "壁のスーツを調べると、主人公の服装も変えられるはずよ。",
+            "これは探索ADV用のダミー会話です。"
+        });
+    }
+
+    private static void CreateWardrobe(ExplorationSpriteAnimator playerAnimator)
+    {
+        var wardrobe = new GameObject("WallSuitInteraction");
+        wardrobe.transform.position = new Vector3(7.05f, -2.82f, 0f);
+
+        var collider = wardrobe.AddComponent<BoxCollider2D>();
+        collider.isTrigger = true;
+        collider.size = new Vector2(1.45f, 2.1f);
+        collider.offset = new Vector2(0f, 1.05f);
+
+        var outfit = wardrobe.AddComponent<OutfitInteractable>();
+        SetString(outfit, "promptText", "調べる：壁のスーツ");
+        SetObject(outfit, "targetAnimator", playerAnimator);
+        SetEnum(outfit, "outfit", (int)ExplorationOutfit.Wardrobe);
+    }
+
+    private static void CreateCamera(Transform target)
+    {
+        var cameraObject = new GameObject("Main Camera");
+        cameraObject.tag = "MainCamera";
+        cameraObject.transform.position = new Vector3(-2.15f, 0f, -10f);
+
+        var camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 4.25f;
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = new Color32(9, 18, 35, 255);
+        cameraObject.AddComponent<UniversalAdditionalCameraData>();
+        cameraObject.AddComponent<AudioListener>();
+
+        var follow = cameraObject.AddComponent<SideScrollCamera>();
+        SetObject(follow, "target", target);
+        SetFloat(follow, "smoothTime", 0.16f);
+        SetBool(follow, "clampHorizontalPosition", true);
+        SetFloat(follow, "minX", -2.15f);
+        SetFloat(follow, "maxX", 2.15f);
+    }
+
+    private static void CreateLight()
+    {
+        var lightObject = new GameObject("Directional Light");
+        lightObject.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+        var light = lightObject.AddComponent<Light>();
+        light.type = LightType.Directional;
+        light.intensity = 1f;
+    }
+
+    private static ExplorationDialogueOverlay CreateHud(ExplorationInteractionController interactionController)
+    {
+        var canvasObject = new GameObject("ExplorationHUD");
+        var canvas = canvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 200;
+        var scaler = canvasObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.matchWidthOrHeight = 0.5f;
+        canvasObject.AddComponent<GraphicRaycaster>();
+
+        var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Font/PixelMplus12-Regular SDF.asset");
+
+        var instructions = CreateText("Instructions", canvasObject.transform, font, 27f);
+        instructions.text = "A / D・← →：移動　　E / Space：話す・調べる";
+        instructions.alignment = TextAlignmentOptions.Left;
+        instructions.color = new Color32(239, 242, 248, 255);
+        SetRect(instructions.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f),
+            new Vector2(38f, -35f), new Vector2(850f, 56f), new Vector2(0f, 1f));
+
+        var panelObject = new GameObject("InteractionPrompt", typeof(RectTransform), typeof(Image));
+        panelObject.transform.SetParent(canvasObject.transform, false);
+        var panelRect = panelObject.GetComponent<RectTransform>();
+        SetRect(panelRect, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(0f, 48f), new Vector2(620f, 82f), new Vector2(0.5f, 0f));
+        var panelImage = panelObject.GetComponent<Image>();
+        panelImage.color = new Color32(8, 18, 36, 225);
+
+        var promptText = CreateText("PromptText", panelObject.transform, font, 32f);
+        promptText.alignment = TextAlignmentOptions.Center;
+        promptText.color = Color.white;
+        SetStretch(promptText.rectTransform, new Vector2(22f, 10f), new Vector2(-22f, -10f));
+
+        var promptControllerObject = new GameObject("InteractionPromptController");
+        promptControllerObject.transform.SetParent(canvasObject.transform, false);
+        var prompt = promptControllerObject.AddComponent<InteractionPromptUI>();
+        SetObject(prompt, "interactionController", interactionController);
+        SetObject(prompt, "promptRoot", panelObject);
+        SetObject(prompt, "promptText", promptText);
+        SetString(prompt, "promptFormat", "E：{0}");
+
+        panelObject.SetActive(false);
+
+        var dialoguePanel = new GameObject("DialoguePanel", typeof(RectTransform), typeof(Image));
+        dialoguePanel.transform.SetParent(canvasObject.transform, false);
+        var dialogueRect = dialoguePanel.GetComponent<RectTransform>();
+        SetRect(dialogueRect, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(0f, 26f), new Vector2(1510f, 245f), new Vector2(0.5f, 0f));
+        dialoguePanel.GetComponent<Image>().color = new Color32(8, 18, 36, 242);
+
+        var speakerText = CreateText("Speaker", dialoguePanel.transform, font, 29f);
+        speakerText.alignment = TextAlignmentOptions.Left;
+        speakerText.color = new Color32(116, 211, 224, 255);
+        SetRect(speakerText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f),
+            new Vector2(34f, -24f), new Vector2(900f, 44f), new Vector2(0f, 1f));
+
+        var bodyText = CreateText("Body", dialoguePanel.transform, font, 31f);
+        bodyText.alignment = TextAlignmentOptions.TopLeft;
+        bodyText.color = Color.white;
+        bodyText.textWrappingMode = TextWrappingModes.Normal;
+        SetRect(bodyText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f),
+            new Vector2(34f, -78f), new Vector2(1420f, 130f), new Vector2(0f, 1f));
+
+        var continueText = CreateText("ContinueHint", dialoguePanel.transform, font, 22f);
+        continueText.text = "E / Space：次へ";
+        continueText.alignment = TextAlignmentOptions.BottomRight;
+        continueText.color = new Color32(190, 202, 218, 255);
+        SetRect(continueText.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f),
+            new Vector2(-28f, 18f), new Vector2(320f, 38f), new Vector2(1f, 0f));
+
+        var overlayController = new GameObject("DialogueOverlayController");
+        overlayController.transform.SetParent(canvasObject.transform, false);
+        var overlay = overlayController.AddComponent<ExplorationDialogueOverlay>();
+        SetObject(overlay, "panelRoot", dialoguePanel);
+        SetObject(overlay, "speakerText", speakerText);
+        SetObject(overlay, "bodyText", bodyText);
+        SetString(overlay, "defaultSpeaker", "仮置きのNPC");
+        dialoguePanel.SetActive(false);
+        return overlay;
+    }
+
+    private static TextMeshProUGUI CreateText(string name, Transform parent, TMP_FontAsset font, float size)
+    {
+        var textObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        textObject.transform.SetParent(parent, false);
+        var text = textObject.GetComponent<TextMeshProUGUI>();
+        text.font = font;
+        text.fontSize = size;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        text.raycastTarget = false;
+        return text;
+    }
+
+    private static Sprite ConfigureSingleSprite(string path, float pixelsPerUnit)
+    {
+        var importer = GetTextureImporter(path);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePixelsPerUnit = pixelsPerUnit;
+        importer.mipmapEnabled = false;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.maxTextureSize = 2048;
+        importer.SaveAndReimport();
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+    }
+
+    private static Sprite[] ConfigureSpriteStrip(string path, IReadOnlyList<Slice> slices, float pixelsPerUnit)
+    {
+        var importer = GetTextureImporter(path);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.spritePixelsPerUnit = pixelsPerUnit;
+        importer.mipmapEnabled = false;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.maxTextureSize = 2048;
+        importer.SaveAndReimport();
+
+        var factories = new SpriteDataProviderFactories();
+        factories.Init();
+        var provider = factories.GetSpriteEditorDataProviderFromObject(importer);
+        provider.InitSpriteEditorDataProvider();
+        var previousIds = provider.GetSpriteRects()
+            .Where(rect => !string.IsNullOrEmpty(rect.name))
+            .ToDictionary(rect => rect.name, rect => rect.spriteID);
+
+        var spriteRects = new SpriteRect[slices.Count];
+        for (var i = 0; i < slices.Count; i++)
+        {
+            var slice = slices[i];
+            spriteRects[i] = new SpriteRect
+            {
+                name = slice.Name,
+                rect = new Rect(slice.X, slice.Y, slice.Width, slice.Height),
+                alignment = SpriteAlignment.Custom,
+                pivot = new Vector2(0.5f, 0f),
+                spriteID = previousIds.TryGetValue(slice.Name, out var existingId) ? existingId : GUID.Generate()
+            };
+        }
+
+        provider.SetSpriteRects(spriteRects);
+        var nameProvider = provider.GetDataProvider<ISpriteNameFileIdDataProvider>();
+        nameProvider?.SetNameFileIdPairs(spriteRects.Select(rect => new SpriteNameFileIdPair(rect.name, rect.spriteID)));
+        provider.Apply();
+        importer.SaveAndReimport();
+
+        var byName = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>()
+            .ToDictionary(sprite => sprite.name, sprite => sprite);
+        return slices.Select(slice => byName.TryGetValue(slice.Name, out var sprite) ? sprite : null).ToArray();
+    }
+
+    private static string GenerateTransparentCopy(string sourcePath, string destinationPath)
+    {
+        var importer = GetTextureImporter(sourcePath);
+        importer.isReadable = true;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.SaveAndReimport();
+
+        var source = AssetDatabase.LoadAssetAtPath<Texture2D>(sourcePath);
+        if (source == null)
+            throw new InvalidOperationException($"Source texture was not found at '{sourcePath}'.");
+
+        var width = source.width;
+        var height = source.height;
+        var pixels = source.GetPixels32();
+        var background = new bool[pixels.Length];
+        var queue = new Queue<int>(width * 2 + height * 2);
+
+        void TryEnqueue(int index)
+        {
+            if (background[index] || !IsConnectedBackgroundColor(pixels[index]))
+                return;
+            background[index] = true;
+            queue.Enqueue(index);
+        }
+
+        for (var x = 0; x < width; x++)
+        {
+            TryEnqueue(x);
+            TryEnqueue((height - 1) * width + x);
+        }
+        for (var y = 0; y < height; y++)
+        {
+            TryEnqueue(y * width);
+            TryEnqueue(y * width + width - 1);
+        }
+
+        while (queue.Count > 0)
+        {
+            var index = queue.Dequeue();
+            var x = index % width;
+            var y = index / width;
+            if (x > 0) TryEnqueue(index - 1);
+            if (x + 1 < width) TryEnqueue(index + 1);
+            if (y > 0) TryEnqueue(index - width);
+            if (y + 1 < height) TryEnqueue(index + width);
+        }
+
+        for (var i = 0; i < pixels.Length; i++)
+            if (background[i])
+                pixels[i].a = 0;
+
+        var output = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        output.SetPixels32(pixels);
+        output.Apply(false, false);
+        File.WriteAllBytes(Path.GetFullPath(destinationPath), output.EncodeToPNG());
+        UnityEngine.Object.DestroyImmediate(output);
+        AssetDatabase.ImportAsset(destinationPath, ImportAssetOptions.ForceSynchronousImport);
+        return destinationPath;
+    }
+
+    private static bool IsConnectedBackgroundColor(Color32 color)
+    {
+        var max = Mathf.Max(color.r, Mathf.Max(color.g, color.b));
+        var min = Mathf.Min(color.r, Mathf.Min(color.g, color.b));
+        var bright = color.r >= 185 && color.g >= 168 && color.b >= 150;
+        var warmOrNeutral = color.r + 5 >= color.g && color.g + 8 >= color.b;
+        return bright && warmOrNeutral && max - min <= 82;
+    }
+
+    private static TextureImporter GetTextureImporter(string path)
+    {
+        var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer == null)
+            throw new InvalidOperationException($"Texture importer was not found for '{path}'.");
+        return importer;
+    }
+
+    private static void EnsureFolder(string folder)
+    {
+        var parts = folder.Split('/');
+        var current = parts[0];
+        for (var i = 1; i < parts.Length; i++)
+        {
+            var next = current + "/" + parts[i];
+            if (!AssetDatabase.IsValidFolder(next))
+                AssetDatabase.CreateFolder(current, parts[i]);
+            current = next;
+        }
+    }
+
+    private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax,
+        Vector2 anchoredPosition, Vector2 sizeDelta, Vector2 pivot)
+    {
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = sizeDelta;
+        rect.pivot = pivot;
+    }
+
+    private static void SetStretch(RectTransform rect, Vector2 offsetMin, Vector2 offsetMax)
+    {
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = offsetMin;
+        rect.offsetMax = offsetMax;
+    }
+
+    private static void SetObject(UnityEngine.Object target, string propertyName, UnityEngine.Object value) =>
+        SetProperty(target, propertyName, property => property.objectReferenceValue = value);
+
+    private static void SetObjectArray(UnityEngine.Object target, string propertyName, IReadOnlyList<Sprite> values) =>
+        SetProperty(target, propertyName, property =>
+        {
+            property.arraySize = values.Count;
+            for (var i = 0; i < values.Count; i++)
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+        });
+
+    private static void SetString(UnityEngine.Object target, string propertyName, string value) =>
+        SetProperty(target, propertyName, property => property.stringValue = value);
+
+    private static void SetStringArray(UnityEngine.Object target, string propertyName, IReadOnlyList<string> values) =>
+        SetProperty(target, propertyName, property =>
+        {
+            property.arraySize = values.Count;
+            for (var i = 0; i < values.Count; i++)
+                property.GetArrayElementAtIndex(i).stringValue = values[i];
+        });
+
+    private static void SetFloat(UnityEngine.Object target, string propertyName, float value) =>
+        SetProperty(target, propertyName, property => property.floatValue = value);
+
+    private static void SetBool(UnityEngine.Object target, string propertyName, bool value) =>
+        SetProperty(target, propertyName, property => property.boolValue = value);
+
+    private static void SetEnum(UnityEngine.Object target, string propertyName, int value) =>
+        SetProperty(target, propertyName, property => property.enumValueIndex = value);
+
+    private static void SetProperty(UnityEngine.Object target, string propertyName, Action<SerializedProperty> setter)
+    {
+        var serialized = new SerializedObject(target);
+        var property = serialized.FindProperty(propertyName);
+        if (property == null)
+            throw new InvalidOperationException($"Serialized property '{propertyName}' was not found on {target.GetType().Name}.");
+        setter(property);
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private readonly struct Slice
+    {
+        public readonly string Name;
+        public readonly int X;
+        public readonly int Y;
+        public readonly int Width;
+        public readonly int Height;
+
+        public Slice(string name, int x, int y, int width, int height)
+        {
+            Name = name;
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+        }
+    }
+}

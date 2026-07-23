@@ -173,6 +173,9 @@ MonoBehaviour:
     - name: NaninovelData/Resources/Scripts/ComicDemoDemo
       pathPrefix: Scripts
       guid: dae8328948fb7d04eab35b46cfe65e1d
+    - name: Scenario/ExplorationPrototypeNpc
+      pathPrefix: Scripts
+      guid: 2690a1465baa09243ad4bdc78cb614db
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default
