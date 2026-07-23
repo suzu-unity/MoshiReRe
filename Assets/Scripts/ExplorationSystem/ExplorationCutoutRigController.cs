@@ -153,6 +153,8 @@ namespace MoshiReRe.Exploration
 
         [Header("Animation")]
         [SerializeField, Min(0.01f)] private float walkPosesPerSecond = 8f;
+        [SerializeField, Range(0f, 1f), Tooltip("Scales the authored walk pose. Unified mesh rigs use a gentler value to avoid rubber-like deformation.")]
+        private float motionScale = 1f;
         [SerializeField, Min(0f)] private float neutralLegAngle = 2f;
         [SerializeField, Min(0f)] private float neutralArmAngle = 2f;
         [SerializeField] private bool showBackLimbsInBlack;
@@ -162,6 +164,10 @@ namespace MoshiReRe.Exploration
         [Header("Outfits")]
         [SerializeField] private ExplorationCutoutOutfitSprites defaultOutfit;
         [SerializeField] private ExplorationCutoutOutfitSprites wardrobeOutfit;
+        [SerializeField, Tooltip("Optional single SpriteSkin source renderer. When assigned, outfit changes replace one coherent sprite instead of separate body parts.")]
+        private SpriteRenderer unifiedRenderer;
+        [SerializeField] private Sprite defaultUnifiedSprite;
+        [SerializeField] private Sprite wardrobeUnifiedSprite;
 
         private readonly Dictionary<SpriteRenderer, Color> diagnosticColors = new();
         private bool walking;
@@ -314,17 +320,17 @@ namespace MoshiReRe.Exploration
 
         private void ApplyWalkPose(ExplorationCutoutWalkPose pose)
         {
-            ApplyBone(torso, torsoRestPose, pose.BodyYOffset, pose.BodyTilt);
-            ApplyBone(leftThigh, leftThighRestPose, 0f, pose.LeftHipAngle);
-            ApplyBone(rightThigh, rightThighRestPose, 0f, pose.RightHipAngle);
-            ApplyBone(leftCalf, leftCalfRestPose, 0f, pose.LeftKneeBend);
-            ApplyBone(rightCalf, rightCalfRestPose, 0f, pose.RightKneeBend);
-            ApplyBone(leftFoot, leftFootRestPose, 0f, pose.LeftAnkleAngle);
-            ApplyBone(rightFoot, rightFootRestPose, 0f, pose.RightAnkleAngle);
-            ApplyBone(leftUpperArm, leftUpperArmRestPose, 0f, pose.LeftShoulderAngle);
-            ApplyBone(rightUpperArm, rightUpperArmRestPose, 0f, pose.RightShoulderAngle);
-            ApplyBone(leftForearm, leftForearmRestPose, 0f, pose.LeftElbowBend);
-            ApplyBone(rightForearm, rightForearmRestPose, 0f, pose.RightElbowBend);
+            ApplyBone(torso, torsoRestPose, pose.BodyYOffset * motionScale, pose.BodyTilt * motionScale);
+            ApplyBone(leftThigh, leftThighRestPose, 0f, pose.LeftHipAngle * motionScale);
+            ApplyBone(rightThigh, rightThighRestPose, 0f, pose.RightHipAngle * motionScale);
+            ApplyBone(leftCalf, leftCalfRestPose, 0f, pose.LeftKneeBend * motionScale);
+            ApplyBone(rightCalf, rightCalfRestPose, 0f, pose.RightKneeBend * motionScale);
+            ApplyBone(leftFoot, leftFootRestPose, 0f, pose.LeftAnkleAngle * motionScale);
+            ApplyBone(rightFoot, rightFootRestPose, 0f, pose.RightAnkleAngle * motionScale);
+            ApplyBone(leftUpperArm, leftUpperArmRestPose, 0f, pose.LeftShoulderAngle * motionScale);
+            ApplyBone(rightUpperArm, rightUpperArmRestPose, 0f, pose.RightShoulderAngle * motionScale);
+            ApplyBone(leftForearm, leftForearmRestPose, 0f, pose.LeftElbowBend * motionScale);
+            ApplyBone(rightForearm, rightForearmRestPose, 0f, pose.RightElbowBend * motionScale);
         }
 
         private void ApplyNeutralPose()
@@ -355,6 +361,10 @@ namespace MoshiReRe.Exploration
         private void ApplyOutfitSprites()
         {
             var selectedOutfit = outfit == ExplorationOutfit.Wardrobe ? wardrobeOutfit : defaultOutfit;
+            var selectedUnifiedSprite = outfit == ExplorationOutfit.Wardrobe
+                ? wardrobeUnifiedSprite
+                : defaultUnifiedSprite;
+            AssignSpriteIfProvided(unifiedRenderer, selectedUnifiedSprite);
             AssignSpriteIfProvided(torsoRenderer, selectedOutfit.torso);
             AssignSpriteIfProvided(headRenderer, selectedOutfit.head);
             AssignSpriteIfProvided(backHairRenderer, selectedOutfit.backHair);

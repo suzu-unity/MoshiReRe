@@ -8,6 +8,8 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.U2D.Sprites;
 using UnityEngine;
+using UnityEngine.U2D;
+using UnityEngine.U2D.Animation;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,6 +21,9 @@ public static class ExplorationPrototypeBuilder
     private const string RigRoot = ArtRoot + "/Rig";
     private const string CasualRigPartsRoot = RigRoot + "/CasualParts";
     private const string SuitRigPartsRoot = RigRoot + "/SuitParts";
+    private const string SkinnedRigRoot = ArtRoot + "/RigV2";
+    private const string CasualSkinnedSpritePath = SkinnedRigRoot + "/player_casual_apose_v1.png";
+    private const string SuitSkinnedSpritePath = SkinnedRigRoot + "/player_suit_apose_v1.png";
     private const string ScenePath = "Assets/Scenes/ExplorationPrototype.unity";
     private const string RestoreStartSceneKey = "MoshiReRe.ExplorationPrototype.RestoreStartScene";
     private const string PreviousStartSceneKey = "MoshiReRe.ExplorationPrototype.PreviousStartScene";
@@ -69,18 +74,20 @@ public static class ExplorationPrototypeBuilder
         var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 110f);
         var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
         var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
-        var casualRigSprites = LoadRigSpriteSet(CasualRigPartsRoot);
-        var suitRigSprites = LoadRigSpriteSet(SuitRigPartsRoot);
+        var casualSkinnedSprite = ExplorationSkinnedSpriteConfigurator.Configure(
+            CasualSkinnedSpritePath, ExplorationSkinnedSpriteConfigurator.RigProfile.Default, 300f);
+        var suitSkinnedSprite = ExplorationSkinnedSpriteConfigurator.Configure(
+            SuitSkinnedSpritePath, ExplorationSkinnedSpriteConfigurator.RigProfile.Suit, 300f);
 
         if (background == null || casualFrames.Length != 8 || suitFrames.Length != 8 ||
-            npcFrames.Length != 5 || !casualRigSprites.IsComplete || !suitRigSprites.IsComplete)
+            npcFrames.Length != 5 || casualSkinnedSprite == null || suitSkinnedSprite == null)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "ExplorationPrototype";
 
         CreateBackground(background);
-        var player = CreatePlayer(casualFrames, suitFrames, casualRigSprites, suitRigSprites);
+        var player = CreatePlayer(casualFrames, suitFrames, casualSkinnedSprite, suitSkinnedSprite);
         var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
         CreateNpc(npcFrames[0], dialogueOverlay);
         CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
@@ -145,8 +152,8 @@ public static class ExplorationPrototypeBuilder
     private static GameObject CreatePlayer(
         Sprite[] casualFrames,
         Sprite[] suitFrames,
-        RigSpriteSet casualRigSprites,
-        RigSpriteSet suitRigSprites)
+        Sprite casualSkinnedSprite,
+        Sprite suitSkinnedSprite)
     {
         var player = new GameObject("Player");
         player.transform.position = new Vector3(-5.7f, -2.82f, 0f);
@@ -155,7 +162,7 @@ public static class ExplorationPrototypeBuilder
         renderer.sortingOrder = 10;
         renderer.enabled = false;
 
-        var cutoutRig = CreateCutoutRig(player.transform, casualRigSprites, suitRigSprites);
+        var cutoutRig = CreateSkinnedRig(player.transform, casualSkinnedSprite, suitSkinnedSprite);
 
         var animator = player.AddComponent<ExplorationSpriteAnimator>();
         SetObject(animator, "spriteRenderer", renderer);
@@ -177,6 +184,77 @@ public static class ExplorationPrototypeBuilder
         SetObject(interactions, "player", controller);
         SetFloat(interactions, "interactionRadius", 1.55f);
         return player;
+    }
+
+    private static ExplorationCutoutRigController CreateSkinnedRig(
+        Transform player,
+        Sprite casualSprite,
+        Sprite suitSprite)
+    {
+        var rigRoot = new GameObject("SkinnedRig").transform;
+        rigRoot.SetParent(player, false);
+
+        var renderer = rigRoot.gameObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = casualSprite;
+        renderer.sortingOrder = 10;
+
+        var spriteBones = casualSprite.GetBones();
+        if (spriteBones.Length != ExplorationSkinnedSpriteConfigurator.BoneCount)
+            throw new InvalidOperationException(
+                $"Expected {ExplorationSkinnedSpriteConfigurator.BoneCount} bones, but '{casualSprite.name}' has {spriteBones.Length}.");
+
+        var boneTransforms = CreateBoneHierarchy(rigRoot, spriteBones);
+        rigRoot.localPosition = Vector3.up * -spriteBones[0].position.y;
+
+        var spriteSkin = rigRoot.gameObject.AddComponent<SpriteSkin>();
+        spriteSkin.alwaysUpdate = true;
+        spriteSkin.SetRootBone(boneTransforms[0]);
+        var skinState = spriteSkin.SetBoneTransforms(boneTransforms);
+        if (skinState != SpriteSkinState.Ready)
+            throw new InvalidOperationException($"Unified exploration SpriteSkin is not ready: {skinState}.");
+
+        var byName = boneTransforms.ToDictionary(bone => bone.name, bone => bone);
+        Transform Bone(string name) => byName.TryGetValue(name, out var bone) ? bone : null;
+
+        var controller = rigRoot.gameObject.AddComponent<ExplorationCutoutRigController>();
+        SetObject(controller, "torso", Bone("Hips"));
+        SetObject(controller, "head", Bone("Head"));
+        SetObject(controller, "leftUpperArm", Bone("LeftUpperArm"));
+        SetObject(controller, "rightUpperArm", Bone("RightUpperArm"));
+        SetObject(controller, "leftForearm", Bone("LeftForearm"));
+        SetObject(controller, "rightForearm", Bone("RightForearm"));
+        SetObject(controller, "leftThigh", Bone("LeftThigh"));
+        SetObject(controller, "rightThigh", Bone("RightThigh"));
+        SetObject(controller, "leftCalf", Bone("LeftCalf"));
+        SetObject(controller, "rightCalf", Bone("RightCalf"));
+        SetObject(controller, "leftFoot", Bone("LeftFoot"));
+        SetObject(controller, "rightFoot", Bone("RightFoot"));
+        SetObject(controller, "mirrorRoot", rigRoot);
+        SetObject(controller, "unifiedRenderer", renderer);
+        SetObject(controller, "defaultUnifiedSprite", casualSprite);
+        SetObject(controller, "wardrobeUnifiedSprite", suitSprite);
+        SetFloat(controller, "walkPosesPerSecond", 12f);
+        SetFloat(controller, "motionScale", 0.42f);
+        SetFloat(controller, "neutralLegAngle", 0f);
+        SetFloat(controller, "neutralArmAngle", 0f);
+        controller.CaptureRestPose();
+        return controller;
+    }
+
+    private static Transform[] CreateBoneHierarchy(Transform rigRoot, IReadOnlyList<SpriteBone> spriteBones)
+    {
+        var transforms = new Transform[spriteBones.Count];
+        for (var i = 0; i < spriteBones.Count; i++)
+        {
+            var spriteBone = spriteBones[i];
+            var bone = new GameObject(spriteBone.name).transform;
+            bone.SetParent(spriteBone.parentId >= 0 ? transforms[spriteBone.parentId] : rigRoot, false);
+            bone.localPosition = spriteBone.position;
+            bone.localRotation = spriteBone.rotation;
+            transforms[i] = bone;
+        }
+
+        return transforms;
     }
 
     private static ExplorationCutoutRigController CreateCutoutRig(
