@@ -9,6 +9,14 @@ AI assistants should read this file before making code modifications.
 
 MoshiReRe is a Unity-based visual novel style project.
 
+Current scenario and game-loop planning context is maintained in:
+
+`シナリオ候補/00_ゲーム概形_頂き女子と会社パート.md`
+
+Read that file before discussing or implementing the ReRe app, the nighttime
+"itadaki" loop, character information nodes, debt deadlines, or the daytime
+company-game loop.
+
 Key characteristics:
 
 - Story-driven game using Naninovel
