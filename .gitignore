@@ -94,6 +94,7 @@ Assets/**/*.sln
 tools/grok/.env
 tools/grok/.env.local
 tools/grok/data/
+tools/grok/__pycache__/
 
 # Coplay checkpoints
 Packages/Coplay/Editor/Checkpoints/

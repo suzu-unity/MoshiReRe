@@ -43,6 +43,12 @@ class GrokToolsTests(unittest.TestCase):
         with self.assertRaises(GrokApiError):
             validate_attachments([{"name": ".env", "content": "XAI_API_KEY=secret"}])
 
+    def test_image_attachment_becomes_multimodal_content(self):
+        files = validate_attachments([{"name": "ref.png", "kind": "image", "mime": "image/png", "content": "data:image/png;base64,AA=="}])
+        content = content_with_files("Describe this", files)
+        self.assertEqual(content[0]["type"], "text")
+        self.assertEqual(content[1]["type"], "image_url")
+
     def test_conversation_store_persists_and_hides_attachment_contents(self):
         with tempfile.TemporaryDirectory() as directory:
             store = ConversationStore(Path(directory))
@@ -55,7 +61,7 @@ class GrokToolsTests(unittest.TestCase):
             store.save(conversation)
             loaded = store.get(conversation["id"])
             public = public_conversation(loaded)
-            self.assertEqual(public["messages"][0]["files"], ["Example.cs"])
+            self.assertEqual(public["messages"][0]["files"][0]["name"], "Example.cs")
             self.assertNotIn("secret source", json.dumps(public, ensure_ascii=False))
 
 

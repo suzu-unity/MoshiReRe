@@ -24,7 +24,7 @@
     main { min-width:0; min-height:100vh; display:flex; flex-direction:column; }
     header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:17px 22px 13px; border-bottom:1px solid rgba(48,56,72,.7); }
     h1 { font-size:19px; margin:0; } .status { color:var(--muted); font-size:12px; margin-top:2px; }
-    .header-actions { display:flex; gap:8px; align-items:center; } .header-actions label { color:var(--muted); font-size:12px; }
+    .header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; } .header-actions label { color:var(--muted); font-size:12px; }
     #messages { flex:1; width:min(980px,100%); margin:0 auto; padding:24px 22px; display:flex; flex-direction:column; gap:14px; overflow:auto; }
     .empty { margin:auto; color:var(--muted); text-align:center; max-width:540px; }
     .message { max-width:88%; padding:12px 15px; border:1px solid var(--line); border-radius:14px; white-space:pre-wrap; overflow-wrap:anywhere; }
@@ -32,15 +32,18 @@
     .message-meta { color:var(--muted); font-size:11px; margin-bottom:5px; display:flex; gap:8px; align-items:center; }
     .copy { margin-left:auto; padding:2px 6px; font-size:11px; }
     .file-chip { display:inline-block; margin:7px 5px 0 0; padding:3px 7px; color:var(--accent); border:1px solid rgba(139,213,202,.35); border-radius:99px; font-size:11px; }
+    .artifact { margin-top:12px; border-top:1px solid var(--line); padding-top:10px; }
+    .artifact img { display:block; max-width:100%; max-height:420px; border-radius:8px; margin-bottom:8px; }
+    .artifact video { display:block; max-width:100%; max-height:420px; border-radius:8px; margin-bottom:8px; }
+    .artifact a { color:var(--accent); font-size:12px; }
     #composer { width:min(980px,100%); margin:0 auto; padding:0 22px 17px; }
     .attachments { display:flex; gap:6px; flex-wrap:wrap; min-height:0; margin-bottom:7px; }
     .pending-file { border:1px solid var(--line); border-radius:99px; padding:3px 7px 3px 10px; color:var(--muted); font-size:12px; }
     .pending-file button { border:0; background:transparent; padding:0 0 0 6px; color:var(--danger); }
     form { display:flex; gap:9px; align-items:flex-end; } textarea { flex:1; resize:vertical; min-height:70px; max-height:260px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 12px; outline:none; } textarea:focus { border-color:var(--accent); }
     #send { min-width:76px; min-height:48px; background:var(--accent); color:#102321; border-color:transparent; font-weight:700; }
-    .composer-tools { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:7px; color:var(--muted); font-size:11px; }
-    #attach { padding:5px 8px; } .warning { color:#d7bd85; }
-    @media (max-width:720px) { .app { grid-template-columns:1fr; } aside { max-height:230px; border-right:0; border-bottom:1px solid var(--line); } #conversation-list { max-height:100px; } header { align-items:flex-start; flex-direction:column; } .header-actions { width:100%; flex-wrap:wrap; } .message { max-width:95%; } }
+    .composer-tools { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:7px; color:var(--muted); font-size:11px; } #attach { padding:5px 8px; } .warning { color:#d7bd85; }
+    @media (max-width:720px) { .app { grid-template-columns:1fr; } aside { max-height:230px; border-right:0; border-bottom:1px solid var(--line); } #conversation-list { max-height:100px; } header { align-items:flex-start; flex-direction:column; } .message { max-width:95%; } }
   </style>
 </head>
 <body>
@@ -55,134 +58,53 @@
       <header>
         <div><h1 id="conversation-title">読み込み中…</h1><div id="status" class="status">ローカルサーバー経由で接続</div></div>
         <div class="header-actions">
-          <button id="rename" type="button">名前変更</button>
-          <button id="delete" type="button">削除</button>
-          <label for="mode">モード</label>
-          <select id="mode"><option value="consult">相談</option><option value="review">レビュー</option><option value="implement">編集案</option></select>
-          <label for="effort">推論</label>
-          <select id="effort"><option value="">環境設定</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option></select>
+          <button id="rename" type="button">名前変更</button><button id="delete" type="button">削除</button>
+          <label for="mode">モード</label><select id="mode"><option value="consult">相談</option><option value="review">レビュー</option><option value="implement">編集案</option><option value="agent">Agent（画像・動画生成）</option></select>
+          <label for="effort">推論</label><select id="effort"><option value="">環境設定</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option></select>
         </div>
       </header>
       <section id="messages" aria-live="polite"></section>
       <section id="composer">
         <div id="attachments" class="attachments"></div>
-        <form id="chat-form">
-          <textarea id="input" placeholder="相談内容を入力… (Ctrl+Enterで送信)" required></textarea>
-          <button id="send" type="submit">送信</button>
-        </form>
-        <div class="composer-tools"><span id="file-summary">ファイル未選択</span><span class="warning">選択したファイル内容はxAI APIへ送信されます。秘密情報は添付しないでください。</span><button id="attach" type="button">📎 ファイル</button><input id="file-input" type="file" multiple hidden accept=".txt,.md,.cs,.nani,.json,.yaml,.yml,.xml,.js,.ts,.py,.ps1,.shader,.uxml,.uss,.meta,.prefab,.asset,.asmdef,.html,.css,.csproj,.sln"></div>
+        <form id="chat-form"><textarea id="input" placeholder="相談内容を入力… (Ctrl+Enterで送信)" required></textarea><button id="send" type="submit">送信</button></form>
+        <div class="composer-tools"><span id="file-summary">ファイル未選択</span><span class="warning">添付内容はxAIへ送信されます。生成URLは一時的な場合があります。</span><button id="attach" type="button">📎 ファイル</button><input id="file-input" type="file" multiple hidden accept="image/*,.txt,.md,.cs,.nani,.json,.yaml,.yml,.xml,.js,.ts,.py,.ps1,.shader,.uxml,.uss,.meta,.prefab,.asset,.asmdef,.html,.css,.csproj,.sln"></div>
       </section>
     </main>
   </div>
   <script>
+    const MAX_CLIENT_FILE_BYTES = 25 * 1024 * 1024;
     const state = { conversations: [], current: null, pendingFiles: [] };
     const $ = (selector) => document.querySelector(selector);
-    const messagesEl = $('#messages');
-    const statusEl = $('#status');
-    const input = $('#input');
-    const send = $('#send');
+    const messagesEl = $('#messages'), statusEl = $('#status'), input = $('#input'), send = $('#send');
 
     async function api(path, options = {}) {
-      const response = await fetch(path, options);
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data.ok === false) throw new Error(data.error || `HTTP ${response.status}`);
-      return data;
+      const response = await fetch(path, options); const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) throw new Error(data.error || `HTTP ${response.status}`); return data;
     }
-
     function jsonOptions(method, body) { return { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }; }
+    function modeLabel(mode) { return ({consult:'相談',review:'レビュー',implement:'編集案',agent:'Agent'})[mode] || mode; }
+    function isImageFile(file) { return file.type.startsWith('image/') || /\.(png|jpe?g|webp|gif)$/i.test(file.name); }
+    function imageMime(file) { return file.type || ({png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',gif:'image/gif'}[file.name.split('.').pop().toLowerCase()] || 'image/png'); }
+    function readAsDataUrl(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload=()=>resolve(reader.result); reader.onerror=()=>reject(new Error(`画像を読み込めません: ${file.name}`)); reader.readAsDataURL(file); }); }
 
     async function boot() {
-      try {
-        const data = await api('/api/conversations');
-        state.conversations = data.conversations || [];
-        if (!state.conversations.length) {
-          const created = await api('/api/conversations', jsonOptions('POST', {title:'新しい会話'}));
-          state.conversations = [{id:created.id,title:created.title,updated_at:created.updated_at,message_count:0}];
-        }
-        renderConversationList();
-        await openConversation(state.conversations[0].id);
-      } catch (error) { statusEl.textContent = `接続エラー: ${error.message}`; }
+      try { const data=await api('/api/conversations'); state.conversations=data.conversations||[]; if(!state.conversations.length){ const created=await api('/api/conversations',jsonOptions('POST',{title:'新しい会話'})); state.conversations=[{id:created.id,title:created.title,updated_at:created.updated_at,message_count:0}]; } renderConversationList(); await openConversation(state.conversations[0].id); }
+      catch(error) { statusEl.textContent=`接続エラー: ${error.message}`; }
     }
-
-    async function openConversation(id) {
-      const conversation = await api(`/api/conversations/${encodeURIComponent(id)}`);
-      state.current = conversation;
-      state.pendingFiles = [];
-      $('#conversation-title').textContent = conversation.title;
-      renderConversationList(); renderMessages(); renderAttachments();
-      statusEl.textContent = 'ローカル保存済みの会話';
-    }
-
-    function renderConversationList() {
-      const list = $('#conversation-list'); list.replaceChildren();
-      for (const item of state.conversations) {
-        const row = document.createElement('div'); row.className = `conversation ${state.current && state.current.id === item.id ? 'active' : ''}`;
-        const title = document.createElement('button'); title.className='conversation-title'; title.textContent=item.title; title.title=item.title; title.onclick=()=>openConversation(item.id);
-        const rename = document.createElement('button'); rename.className='conversation-action'; rename.textContent='✎'; rename.title='名前変更'; rename.onclick=(event)=>{event.stopPropagation(); renameConversation(item.id);};
-        row.append(title, rename); list.append(row);
-      }
-    }
-
-    function renderMessages() {
-      messagesEl.replaceChildren();
-      const messages = state.current?.messages || [];
-      if (!messages.length) { const empty=document.createElement('div'); empty.className='empty'; empty.innerHTML='<h2>新しい会話</h2><p>ファイルを添付してコードの相談、レビュー、編集案の作成ができます。</p>'; messagesEl.append(empty); return; }
-      for (const message of messages) {
-        const bubble=document.createElement('div'); bubble.className=`message ${message.role}`;
-        const meta=document.createElement('div'); meta.className='message-meta'; meta.textContent=message.role==='user' ? `あなた${message.mode ? ` / ${modeLabel(message.mode)}` : ''}` : 'Grok 4.5';
-        if (message.role==='assistant') { const copy=document.createElement('button'); copy.className='copy'; copy.textContent='コピー'; copy.onclick=()=>copyText(message.content, copy); meta.append(copy); }
-        bubble.append(meta); const content=document.createElement('div'); content.textContent=message.content; bubble.append(content);
-        for (const name of (message.files || [])) { const chip=document.createElement('span'); chip.className='file-chip'; chip.textContent=`📄 ${name}`; bubble.append(chip); }
-        messagesEl.append(bubble);
-      }
-      messagesEl.scrollTop=messagesEl.scrollHeight;
-    }
-
-    function modeLabel(mode) { return ({consult:'相談',review:'レビュー',implement:'編集案'})[mode] || mode; }
-    async function copyText(text, button) { try { await navigator.clipboard.writeText(text); const old=button.textContent; button.textContent='コピー済み'; setTimeout(()=>button.textContent=old,1200); } catch (_) { statusEl.textContent='コピーに失敗しました'; } }
-
-    function renderAttachments() {
-      const container=$('#attachments'); container.replaceChildren();
-      for (const [index, file] of state.pendingFiles.entries()) { const chip=document.createElement('span'); chip.className='pending-file'; chip.textContent=file.name; const remove=document.createElement('button'); remove.textContent='×'; remove.title='添付を外す'; remove.onclick=()=>{state.pendingFiles.splice(index,1); renderAttachments();}; chip.append(remove); container.append(chip); }
-      $('#file-summary').textContent = state.pendingFiles.length ? `${state.pendingFiles.length}ファイルを送信予定` : 'ファイル未選択';
-    }
-
-    async function createConversation() {
-      const created=await api('/api/conversations', jsonOptions('POST',{title:'新しい会話'}));
-      state.conversations.unshift({id:created.id,title:created.title,updated_at:created.updated_at,message_count:0});
-      renderConversationList(); await openConversation(created.id); input.focus();
-    }
-
-    async function renameConversation(id) {
-      const current=state.conversations.find(item=>item.id===id); const title=window.prompt('会話名',current?.title||''); if (!title?.trim()) return;
-      const updated=await api(`/api/conversations/${encodeURIComponent(id)}`,jsonOptions('PATCH',{title}));
-      const item=state.conversations.find(entry=>entry.id===id); if(item) item.title=updated.title;
-      if(state.current?.id===id) $('#conversation-title').textContent=updated.title; renderConversationList();
-    }
-
-    async function deleteConversation() {
-      if (!state.current || !window.confirm(`「${state.current.title}」を削除しますか？`)) return;
-      const id=state.current.id; await api(`/api/conversations/${encodeURIComponent(id)}`,{method:'DELETE'}); state.conversations=state.conversations.filter(item=>item.id!==id);
-      if(!state.conversations.length) { await createConversation(); } else { renderConversationList(); await openConversation(state.conversations[0].id); }
-    }
-
-    $('#new-chat').onclick=()=>createConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`);
-    $('#rename').onclick=()=>state.current && renameConversation(state.current.id).catch(error=>statusEl.textContent=`エラー: ${error.message}`);
-    $('#delete').onclick=()=>deleteConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`);
-    $('#attach').onclick=()=>$('#file-input').click();
-    $('#file-input').onchange=async (event)=>{
-      try { for (const file of event.target.files) { if(file.size>200000) throw new Error(`${file.name} は200KBを超えています`); if(state.pendingFiles.some(item=>item.name===file.name)) continue; state.pendingFiles.push({name:file.name,content:await file.text()}); } renderAttachments(); }
-      catch(error) { statusEl.textContent=`添付エラー: ${error.message}`; } finally { event.target.value=''; }
-    };
-    $('#chat-form').onsubmit=async (event)=>{
-      event.preventDefault(); const content=input.value.trim(); if(!content || !state.current || send.disabled) return;
-      send.disabled=true; statusEl.textContent='Grok 4.5に問い合わせ中…';
-      try { const data=await api('/api/chat',jsonOptions('POST',{conversation_id:state.current.id,content,mode:$('#mode').value,reasoning_effort:$('#effort').value||null,files:state.pendingFiles})); input.value=''; state.pendingFiles=[]; await refreshConversationList(data.conversation); await openConversation(state.current.id); statusEl.textContent=`接続中 / ${data.model||'grok-4.5'}`; }
-      catch(error) { statusEl.textContent=`エラー: ${error.message}`; }
-      finally { send.disabled=false; input.focus(); }
-    };
-    async function refreshConversationList(updated) { const data=await api('/api/conversations'); state.conversations=data.conversations||[]; if(updated && !state.conversations.some(item=>item.id===updated.id)) state.conversations.unshift(updated); renderConversationList(); }
-    input.onkeydown=(event)=>{ if(event.ctrlKey && event.key==='Enter') $('#chat-form').requestSubmit(); };
+    async function openConversation(id) { const conversation=await api(`/api/conversations/${encodeURIComponent(id)}`); state.current=conversation; state.pendingFiles=[]; $('#conversation-title').textContent=conversation.title; renderConversationList(); renderMessages(); renderAttachments(); statusEl.textContent='ローカル保存済みの会話'; }
+    function renderConversationList() { const list=$('#conversation-list'); list.replaceChildren(); for(const item of state.conversations){ const row=document.createElement('div'); row.className=`conversation ${state.current&&state.current.id===item.id?'active':''}`; const title=document.createElement('button'); title.className='conversation-title'; title.textContent=item.title; title.title=item.title; title.onclick=()=>openConversation(item.id); const rename=document.createElement('button'); rename.className='conversation-action'; rename.textContent='✎'; rename.title='名前変更'; rename.onclick=(event)=>{event.stopPropagation();renameConversation(item.id);}; row.append(title,rename); list.append(row); } }
+    function renderMessages() { messagesEl.replaceChildren(); const messages=state.current?.messages||[]; if(!messages.length){ const empty=document.createElement('div'); empty.className='empty'; empty.innerHTML='<h2>新しい会話</h2><p>テキスト・画像を添付して相談できます。Agentモードでは画像・動画生成も依頼できます。</p>'; messagesEl.append(empty); return; } for(const message of messages){ const bubble=document.createElement('div'); bubble.className=`message ${message.role}`; const meta=document.createElement('div'); meta.className='message-meta'; meta.textContent=message.role==='user'?`あなた${message.mode?` / ${modeLabel(message.mode)}`:''}`:`Grok 4.5${message.tools?.length?` / ${message.tools.join(', ')}`:''}`; if(message.role==='assistant'){ const copy=document.createElement('button'); copy.className='copy'; copy.textContent='コピー'; copy.onclick=()=>copyText(message.content,copy); meta.append(copy); } bubble.append(meta); const content=document.createElement('div'); content.textContent=message.content; bubble.append(content); for(const file of (message.files||[])){ const chip=document.createElement('span'); chip.className='file-chip'; chip.textContent=`${file.kind==='image'?'🖼️':'📄'} ${typeof file==='string'?file:file.name}`; bubble.append(chip); } for(const artifact of (message.artifacts||[])) appendArtifact(bubble,artifact); messagesEl.append(bubble); } messagesEl.scrollTop=messagesEl.scrollHeight; }
+    function appendArtifact(container, artifact) { if(!artifact?.url) return; const wrap=document.createElement('div'); wrap.className='artifact'; if(artifact.type==='image'){ const image=document.createElement('img'); image.src=artifact.url; image.alt='Generated image'; wrap.append(image); } if(artifact.type==='video'){ const video=document.createElement('video'); video.controls=true; video.src=artifact.url; wrap.append(video); } const link=document.createElement('a'); link.href=artifact.url; link.target='_blank'; link.rel='noopener'; link.textContent=artifact.type==='video'?'動画を新しいタブで開く':'画像を新しいタブで開く'; wrap.append(link); container.append(wrap); }
+    async function copyText(text,button){ try{await navigator.clipboard.writeText(text); const old=button.textContent; button.textContent='コピー済み'; setTimeout(()=>button.textContent=old,1200);}catch(_){statusEl.textContent='コピーに失敗しました';} }
+    function renderAttachments(){ const container=$('#attachments'); container.replaceChildren(); for(const [index,file] of state.pendingFiles.entries()){ const chip=document.createElement('span'); chip.className='pending-file'; chip.textContent=`${file.kind==='image'?'🖼️':'📄'} ${file.name}`; const remove=document.createElement('button'); remove.textContent='×'; remove.onclick=()=>{state.pendingFiles.splice(index,1);renderAttachments();}; chip.append(remove); container.append(chip); } $('#file-summary').textContent=state.pendingFiles.length?`${state.pendingFiles.length}ファイルを送信予定`:'ファイル未選択'; }
+    async function createConversation(){ const created=await api('/api/conversations',jsonOptions('POST',{title:'新しい会話'})); state.conversations.unshift({id:created.id,title:created.title,updated_at:created.updated_at,message_count:0}); renderConversationList(); await openConversation(created.id); input.focus(); }
+    async function renameConversation(id){ const current=state.conversations.find(item=>item.id===id); const title=window.prompt('会話名',current?.title||''); if(!title?.trim())return; const updated=await api(`/api/conversations/${encodeURIComponent(id)}`,jsonOptions('PATCH',{title})); const item=state.conversations.find(entry=>entry.id===id); if(item)item.title=updated.title; if(state.current?.id===id)$('#conversation-title').textContent=updated.title; renderConversationList(); }
+    async function deleteConversation(){ if(!state.current||!window.confirm(`「${state.current.title}」を削除しますか？`))return; const id=state.current.id; await api(`/api/conversations/${encodeURIComponent(id)}`,{method:'DELETE'}); state.conversations=state.conversations.filter(item=>item.id!==id); if(!state.conversations.length)await createConversation(); else{renderConversationList();await openConversation(state.conversations[0].id);} }
+    $('#new-chat').onclick=()=>createConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`); $('#rename').onclick=()=>state.current&&renameConversation(state.current.id).catch(error=>statusEl.textContent=`エラー: ${error.message}`); $('#delete').onclick=()=>deleteConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`); $('#attach').onclick=()=>$('#file-input').click();
+    $('#file-input').onchange=async(event)=>{ try{ for(const file of event.target.files){ if(file.size>MAX_CLIENT_FILE_BYTES)throw new Error(`${file.name} は25MBを超えています`); if(state.pendingFiles.some(item=>item.name===file.name))continue; if(isImageFile(file))state.pendingFiles.push({name:file.name,mime:imageMime(file),kind:'image',content:await readAsDataUrl(file)}); else state.pendingFiles.push({name:file.name,mime:file.type||'text/plain',kind:'text',content:await file.text()}); } renderAttachments(); }catch(error){statusEl.textContent=`添付エラー: ${error.message}`;}finally{event.target.value='';} };
+    $('#chat-form').onsubmit=async(event)=>{ event.preventDefault(); const content=input.value.trim(); if(!content||!state.current||send.disabled)return; send.disabled=true; statusEl.textContent=$('#mode').value==='agent'?'Agentが処理中（動画生成は数分かかる場合があります）…':'Grok 4.5に問い合わせ中…'; try{ const data=await api('/api/chat',jsonOptions('POST',{conversation_id:state.current.id,content,mode:$('#mode').value,reasoning_effort:$('#effort').value||null,files:state.pendingFiles})); input.value='';state.pendingFiles=[];await refreshConversationList();await openConversation(state.current.id);statusEl.textContent=`接続中 / ${data.model||'grok-4.5'}`; }catch(error){statusEl.textContent=`エラー: ${error.message}`;}finally{send.disabled=false;input.focus();} };
+    async function refreshConversationList(){const data=await api('/api/conversations');state.conversations=data.conversations||[];renderConversationList();}
+    input.onkeydown=(event)=>{if(event.ctrlKey&&event.key==='Enter')$('#chat-form').requestSubmit();};
     boot();
   </script>
 </body>

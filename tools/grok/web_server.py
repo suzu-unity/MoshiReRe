@@ -1,9 +1,11 @@
-"""Local-only, persistent WebUI server for chatting with Grok 4.5."""
+"""Local-only, persistent WebUI server for Grok chat and Imagine agent tools."""
 
 from __future__ import annotations
 
+import base64
 import argparse
 import json
+import os
 import re
 import threading
 import uuid
@@ -11,34 +13,89 @@ from datetime import datetime, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import unquote, urlparse
 
 from grok_client import GrokApiError, GrokClient, GrokConfig, message_text
+from grok_media import XaiMediaClient
+
+
+def _positive_env(name: str, fallback: int) -> int:
+    raw = os.environ.get(name)
+    if not raw:
+        return fallback
+    try:
+        value = int(raw)
+    except ValueError as error:
+        raise RuntimeError(f"{name} must be a positive integer") from error
+    if value <= 0:
+        raise RuntimeError(f"{name} must be a positive integer")
+    return value
 
 
 ROOT = Path(__file__).resolve().parent
 WEB_ROOT = ROOT / "web"
 DATA_ROOT = ROOT / "data" / "conversations"
-MAX_BODY_BYTES = 2_000_000
-MAX_FILE_BYTES = 200_000
-MAX_TOTAL_FILE_BYTES = 800_000
+MAX_BODY_BYTES = _positive_env("GROK_MAX_REQUEST_BYTES", 64 * 1024 * 1024)
+MAX_FILE_BYTES = _positive_env("GROK_MAX_FILE_BYTES", 25 * 1024 * 1024)
+MAX_TOTAL_FILE_BYTES = _positive_env("GROK_MAX_TOTAL_FILE_BYTES", 50 * 1024 * 1024)
+MAX_MESSAGE_BYTES = _positive_env("GROK_MAX_MESSAGE_BYTES", 2 * 1024 * 1024)
 ALLOWED_ROLES = {"system", "user", "assistant"}
 CONVERSATION_ID_RE = re.compile(r"^[0-9a-f-]{36}$", re.IGNORECASE)
 SECRET_NAMES = {".env", ".env.local", "credentials.json", "secrets.json"}
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+MAX_AGENT_STEPS = 4
 
-SYSTEM_PROMPT = """あなたはMoshiReRe開発を支援するローカル相談アシスタントです。
-与えられた会話履歴と添付ファイルだけを根拠に回答してください。
-ファイルを直接変更したとは主張せず、編集を求められた場合は変更理由、unified diff、検証方法を返してください。
-APIキーやその他の秘密情報を出力しないでください。
-実行時モデルの質問には、設定上のモデルIDが grok-4.5 であることを前提に答えてください。
+SYSTEM_PROMPT = """You are the local MoshiReRe development assistant.
+Use only the conversation and attached files as evidence. Do not claim that you edited local files.
+For code edits, return a minimal unified diff and verification steps. Never reveal API keys or secrets.
+When agent tools are available, use them for image or video creation requests instead of merely describing how to do it.
+The configured chat model is grok-4.5. Image and video generation use xAI Imagine models.
 """
 
 MODE_INSTRUCTIONS = {
-    "consult": "相談モードです。内容を説明し、質問に答えてください。",
-    "review": "レビュー modeです。問題点を優先度付きで示し、具体的な改善案を提示してください。",
-    "implement": "編集案モードです。最小変更の unified diff と検証コマンドを提示してください。直接ファイルを書き換えないでください。",
+    "consult": "相談モード。内容を説明し、質問に答えてください。",
+    "review": "レビュー mode。問題点を優先度付きで示し、改善案を提示してください。",
+    "implement": "編集案モード。最小変更の unified diff と検証コマンドを提示してください。直接ファイルを書き換えないでください。",
+    "agent": "Agentモード。必要に応じて利用可能な画像・動画生成ツールを実行し、結果を説明してください。",
 }
+
+AGENT_TOOLS: List[Dict[str, Any]] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_image",
+            "description": "Generate an image with xAI Imagine when the user asks to create or edit a visual.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prompt": {"type": "string", "description": "Detailed image generation prompt."},
+                    "resolution": {"type": "string", "enum": ["1k", "2k"]},
+                    "n": {"type": "integer", "minimum": 1, "maximum": 4},
+                },
+                "required": ["prompt"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_video",
+            "description": "Generate a video with xAI Imagine when the user asks to create or animate a video.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prompt": {"type": "string", "description": "Detailed video generation prompt."},
+                    "duration": {"type": "integer", "minimum": 2, "maximum": 15},
+                    "aspect_ratio": {"type": "string", "enum": ["16:9", "9:16", "1:1"]},
+                    "resolution": {"type": "string", "enum": ["480p", "720p"]},
+                    "use_first_attached_image": {"type": "boolean", "description": "Use the first attached image as the video source."},
+                },
+                "required": ["prompt"],
+            },
+        },
+    },
+]
 
 
 def now_iso() -> str:
@@ -124,6 +181,22 @@ def clean_title(value: Any) -> str:
     return title[:80] or "新しい会話"
 
 
+def attachment_kind(item: Dict[str, Any]) -> str:
+    if item.get("kind") in {"text", "image"}:
+        return item["kind"]
+    mime = str(item.get("mime", ""))
+    name = str(item.get("name", ""))
+    return "image" if mime.startswith("image/") or Path(name).suffix.lower() in IMAGE_EXTENSIONS else "text"
+
+
+def public_file(item: Dict[str, Any]) -> Dict[str, str]:
+    return {
+        "name": str(item.get("name", "")),
+        "kind": attachment_kind(item),
+        "mime": str(item.get("mime", "")),
+    }
+
+
 def public_conversation(conversation: Dict[str, Any]) -> Dict[str, Any]:
     messages = []
     for message in conversation.get("messages", []):
@@ -133,7 +206,9 @@ def public_conversation(conversation: Dict[str, Any]) -> Dict[str, Any]:
                 "content": message.get("content", ""),
                 "mode": message.get("mode"),
                 "created_at": message.get("created_at"),
-                "files": [item.get("name", "") for item in message.get("files", [])],
+                "files": [public_file(item) for item in message.get("files", [])],
+                "tools": message.get("tools", []),
+                "artifacts": message.get("artifacts", []),
             }
         )
     return {
@@ -167,6 +242,8 @@ def validate_attachments(raw: Any) -> List[Dict[str, str]]:
         if not isinstance(item, dict):
             raise GrokApiError("添付ファイルの形式が不正です")
         name = str(item.get("name", "")).strip()
+        mime = str(item.get("mime", "")).strip().lower()
+        kind = attachment_kind(item)
         content = item.get("content")
         if not name or len(name) > 200 or "/" in name or "\\" in name:
             raise GrokApiError("添付ファイル名が不正です")
@@ -174,27 +251,40 @@ def validate_attachments(raw: Any) -> List[Dict[str, str]]:
             raise GrokApiError("秘密ファイルは添付できません")
         if not isinstance(content, str) or not content:
             raise GrokApiError(f"添付ファイルの内容が空か不正です: {name}")
+
+        if kind == "image":
+            if not content.startswith("data:image/") or "," not in content:
+                raise GrokApiError(f"画像はdata URL形式で送信してください: {name}")
+            try:
+                base64.b64decode(content.split(",", 1)[1], validate=True)
+            except (ValueError, base64.binascii.Error) as error:
+                raise GrokApiError(f"画像データが不正です: {name}") from error
         size = len(content.encode("utf-8"))
         if size > MAX_FILE_BYTES:
-            raise GrokApiError(f"添付ファイルが大きすぎます（最大200KB）: {name}")
+            raise GrokApiError(f"添付ファイルが大きすぎます（現在の上限: {MAX_FILE_BYTES // (1024 * 1024)}MB）: {name}")
         total += size
         if total > MAX_TOTAL_FILE_BYTES:
-            raise GrokApiError("1回の添付ファイル合計は800KBまでです")
-        attachments.append({"name": name, "content": content})
+            raise GrokApiError(f"1回の添付ファイル合計が大きすぎます（現在の上限: {MAX_TOTAL_FILE_BYTES // (1024 * 1024)}MB）")
+        attachments.append({"name": name, "mime": mime, "kind": kind, "content": content})
     return attachments
 
 
-def content_with_files(content: str, files: List[Dict[str, str]]) -> str:
-    if not files:
-        return content
-    parts = [content, "", "--- 添付ファイル ---"]
+def content_with_files(content: str, files: List[Dict[str, str]]) -> Any:
+    text_parts = [content]
+    image_parts: List[Dict[str, Any]] = []
     for file in files:
-        parts.extend([f"### {file['name']}", file["content"], ""])
-    return "\n".join(parts)
+        if attachment_kind(file) == "image":
+            image_parts.append({"type": "image_url", "image_url": {"url": file["content"]}})
+        else:
+            text_parts.extend(["", f"--- 添付テキスト: {file['name']} ---", file["content"]])
+    text = "\n".join(text_parts)
+    if not image_parts:
+        return text
+    return [{"type": "text", "text": text}, *image_parts]
 
 
-def api_messages(conversation: Dict[str, Any], current_content: str, mode: str, files: List[Dict[str, str]]) -> List[Dict[str, str]]:
-    messages: List[Dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+def api_messages(conversation: Dict[str, Any], current_content: str, mode: str, files: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+    messages: List[Dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
     for message in conversation.get("messages", []):
         role = message.get("role")
         if role not in {"user", "assistant"}:
@@ -206,8 +296,99 @@ def api_messages(conversation: Dict[str, Any], current_content: str, mode: str, 
     return messages
 
 
+def run_agent(
+    client: GrokClient,
+    messages: List[Dict[str, Any]],
+    *,
+    conversation_id: str,
+    reasoning_effort: Optional[str],
+    files: List[Dict[str, str]],
+) -> Tuple[Dict[str, Any], List[str], List[Dict[str, Any]]]:
+    working = list(messages)
+    tools_used: List[str] = []
+    artifacts: List[Dict[str, Any]] = []
+    media = XaiMediaClient(client.config)
+    for _ in range(MAX_AGENT_STEPS):
+        payload = client.chat(
+            working,
+            conversation_id=conversation_id,
+            reasoning_effort=reasoning_effort,
+            tools=AGENT_TOOLS,
+            tool_choice="auto",
+        )
+        assistant_message = payload.get("choices", [{}])[0].get("message", {})
+        tool_calls = assistant_message.get("tool_calls", []) if isinstance(assistant_message, dict) else []
+        if not tool_calls:
+            return payload, tools_used, artifacts
+        working.append(assistant_message)
+        for tool_call in tool_calls:
+            result, tool_artifacts = execute_agent_tool(tool_call, media, files)
+            tool_name = tool_call.get("function", {}).get("name", "unknown")
+            tools_used.append(tool_name)
+            artifacts.extend(tool_artifacts)
+            working.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tool_call.get("id", ""),
+                    "content": json.dumps(result, ensure_ascii=False),
+                }
+            )
+    raise GrokApiError("Agent tool loop exceeded the safety limit")
+
+
+def execute_agent_tool(
+    tool_call: Dict[str, Any], media: XaiMediaClient, files: List[Dict[str, str]]
+) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
+    function = tool_call.get("function", {})
+    name = function.get("name")
+    try:
+        arguments = json.loads(function.get("arguments", "{}"))
+    except json.JSONDecodeError as error:
+        raise GrokApiError(f"Agent tool arguments were invalid: {error}") from error
+    if not isinstance(arguments, dict):
+        raise GrokApiError("Agent tool arguments must be an object")
+
+    if name == "generate_image":
+        result = media.generate_image(
+            str(arguments.get("prompt", "")),
+            resolution=str(arguments.get("resolution", "1k")),
+            n=int(arguments.get("n", 1)),
+        )
+        artifacts = image_artifacts(result)
+        return {"ok": True, "artifacts": artifacts}, artifacts
+    if name == "generate_video":
+        image_data_url = None
+        if arguments.get("use_first_attached_image"):
+            image_data_url = next((item["content"] for item in files if attachment_kind(item) == "image"), None)
+        result = media.generate_video(
+            str(arguments.get("prompt", "")),
+            duration=int(arguments.get("duration", 5)),
+            aspect_ratio=str(arguments.get("aspect_ratio", "16:9")),
+            resolution=str(arguments.get("resolution", "720p")),
+            image_data_url=image_data_url,
+        )
+        artifacts = video_artifacts(result)
+        return {"ok": True, "artifacts": artifacts}, artifacts
+    raise GrokApiError(f"Unknown agent tool: {name}")
+
+
+def image_artifacts(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
+    artifacts = []
+    for item in payload.get("data", []):
+        if item.get("url"):
+            artifacts.append({"type": "image", "url": item["url"]})
+        elif item.get("b64_json"):
+            artifacts.append({"type": "image", "url": f"data:image/png;base64,{item['b64_json']}"})
+    return artifacts
+
+
+def video_artifacts(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
+    video = payload.get("video", {})
+    return [{"type": "video", "url": video["url"]}] if video.get("url") else []
+
+
 class WebHandler(BaseHTTPRequestHandler):
-    server_version = "MoshiReReGrokWeb/2.0"
+    server_version = "MoshiReReGrokWeb/3.0"
 
     @property
     def store(self) -> ConversationStore:
@@ -246,7 +427,7 @@ class WebHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": False, "error": str(error)}, HTTPStatus.BAD_REQUEST)
         except KeyError:
             self._send_json({"ok": False, "error": "会話が見つかりません"}, HTTPStatus.NOT_FOUND)
-        except Exception as error:  # Do not expose secrets or stack traces to the browser.
+        except Exception as error:
             self.log_error("request failed: %s", error)
             self._send_json({"ok": False, "error": "Unexpected server error"}, HTTPStatus.INTERNAL_SERVER_ERROR)
 
@@ -283,17 +464,29 @@ class WebHandler(BaseHTTPRequestHandler):
             raise GrokApiError("conversation_idが不正です")
         if not isinstance(content, str) or not content.strip():
             raise GrokApiError("メッセージを入力してください")
-        if len(content) > 200_000:
+        if len(content.encode("utf-8")) > MAX_MESSAGE_BYTES:
             raise GrokApiError("メッセージが大きすぎます")
         if mode not in MODE_INSTRUCTIONS:
             raise GrokApiError("modeが不正です")
         files = validate_attachments(request.get("files"))
         conversation = self.store.get(conversation_id)
-        payload = GrokClient(GrokConfig.from_environment()).chat(
-            api_messages(conversation, content, mode, files),
-            conversation_id=conversation_id,
-            reasoning_effort=request.get("reasoning_effort"),
-        )
+        messages = api_messages(conversation, content, mode, files)
+        client = GrokClient(GrokConfig.from_environment())
+        if mode == "agent":
+            payload, tools_used, artifacts = run_agent(
+                client,
+                messages,
+                conversation_id=conversation_id,
+                reasoning_effort=request.get("reasoning_effort"),
+                files=files,
+            )
+        else:
+            payload = client.chat(
+                messages,
+                conversation_id=conversation_id,
+                reasoning_effort=request.get("reasoning_effort"),
+            )
+            tools_used, artifacts = [], []
         assistant_text = message_text(payload)
         conversation["messages"].append(
             {
@@ -305,7 +498,14 @@ class WebHandler(BaseHTTPRequestHandler):
             }
         )
         conversation["messages"].append(
-            {"role": "assistant", "content": assistant_text, "files": [], "created_at": now_iso()}
+            {
+                "role": "assistant",
+                "content": assistant_text,
+                "files": [],
+                "tools": tools_used,
+                "artifacts": artifacts,
+                "created_at": now_iso(),
+            }
         )
         if conversation.get("title") == "新しい会話":
             conversation["title"] = clean_title(content)
@@ -315,12 +515,11 @@ class WebHandler(BaseHTTPRequestHandler):
                 "ok": True,
                 "text": assistant_text,
                 "model": payload.get("model"),
+                "tools": tools_used,
+                "artifacts": artifacts,
                 "conversation": public_metadata(saved),
             }
         )
-
-    def log_message(self, format: str, *args: Any) -> None:
-        super().log_message(format, *args)
 
     def _read_json(self) -> Dict[str, Any]:
         try:
@@ -328,7 +527,7 @@ class WebHandler(BaseHTTPRequestHandler):
         except ValueError as error:
             raise GrokApiError("Content-Lengthが不正です") from error
         if length <= 0 or length > MAX_BODY_BYTES:
-            raise GrokApiError("Request body must be between 1 byte and 2 MB")
+            raise GrokApiError(f"リクエストが大きすぎます（現在の上限: {MAX_BODY_BYTES // (1024 * 1024)}MB）")
         try:
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
@@ -380,6 +579,7 @@ def main() -> int:
     server.store = ConversationStore()  # type: ignore[attr-defined]
     print(f"Grok WebUI: http://{args.host}:{args.port}")
     print(f"Conversation data: {DATA_ROOT}")
+    print(f"Upload limits: {MAX_FILE_BYTES // (1024 * 1024)}MB/file, {MAX_TOTAL_FILE_BYTES // (1024 * 1024)}MB/request")
     print("API key is read server-side from XAI_API_KEY; press Ctrl+C to stop.")
     try:
         server.serve_forever()

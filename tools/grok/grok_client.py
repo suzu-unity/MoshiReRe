@@ -58,6 +58,8 @@ class GrokClient:
         *,
         conversation_id: Optional[str] = None,
         reasoning_effort: Optional[str] = None,
+        tools: Optional[List[Dict[str, Any]]] = None,
+        tool_choice: Optional[Any] = None,
     ) -> Dict[str, Any]:
         if not messages:
             raise GrokApiError("At least one message is required")
@@ -73,6 +75,10 @@ class GrokClient:
             body["reasoning_effort"] = effort
         if self.config.max_output_tokens is not None:
             body["max_tokens"] = self.config.max_output_tokens
+        if tools:
+            body["tools"] = tools
+        if tool_choice is not None:
+            body["tool_choice"] = tool_choice
 
         headers = {
             "Authorization": f"Bearer {self.config.api_key}",
