@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: ce896bad1f508134db6bc015f8db60fd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -9213161004265152520
+    second: motion_b_0
+  - first:
+      213: 9034287545234809931
+    second: motion_b_1
+  - first:
+      213: -6114030900744789291
+    second: motion_b_2
+  - first:
+      213: -1155462010931009462
+    second: motion_b_3
+  - first:
+      213: 7872666337821251819
+    second: motion_b_4
+  - first:
+      213: 4920151328510153522
+    second: motion_b_5
+  - first:
+      213: 7733091875196470453
+    second: motion_b_6
+  - first:
+      213: 9136447756035629189
+    second: motion_b_7
+  - first:
+      213: 159417121354078524
+    second: motion_b_8
+  - first:
+      213: 5460080125181019074
+    second: motion_b_9
+  - first:
+      213: -3101763484964066362
+    second: motion_b_10
+  - first:
+      213: 2580205687573431847
+    second: motion_b_11
+  - first:
+      213: 2244391181787592578
+    second: motion_b_12
+  - first:
+      213: -558715163336566844
+    second: motion_b_13
+  - first:
+      213: 1968115161231109325
+    second: motion_b_14
+  - first:
+      213: 5472189503808118907
+    second: motion_b_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: motion_b_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 965
+        width: 219
+        height: 269
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ff5b4a41e6442080800000000000000
+      internalID: -9213161004265152520
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_1
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 967
+        width: 219
+        height: 267
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b44e47c18ac306d70800000000000000
+      internalID: 9034287545234809931
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_2
+      rect:
+        serializedVersion: 2
+        x: 637
+        y: 965
+        width: 222
+        height: 269
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d2685f0a49962ba0800000000000000
+      internalID: -6114030900744789291
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_3
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 965
+        width: 217
+        height: 269
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a48aff64c69f6ffe0800000000000000
+      internalID: -1155462010931009462
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_4
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 656
+        width: 192
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be8d205b254514d60800000000000000
+      internalID: 7872666337821251819
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_5
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 656
+        width: 163
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2339301b093e74440800000000000000
+      internalID: 4920151328510153522
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_6
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 656
+        width: 164
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b48b8cb616715b60800000000000000
+      internalID: 7733091875196470453
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_7
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 656
+        width: 173
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5802b6fb3de2bce70800000000000000
+      internalID: 9136447756035629189
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_8
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 339
+        width: 166
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c39dc69f60d563200800000000000000
+      internalID: 159417121354078524
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_9
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 339
+        width: 195
+        height: 273
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c3c592f1f916cb40800000000000000
+      internalID: 5460080125181019074
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_10
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 339
+        width: 194
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb60755b8254f4d0800000000000000
+      internalID: -3101763484964066362
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_11
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 339
+        width: 194
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 726c14ff66bbec320800000000000000
+      internalID: 2580205687573431847
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_12
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 23
+        width: 165
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 287f77773eda52f10800000000000000
+      internalID: 2244391181787592578
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_13
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 23
+        width: 167
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c713b6e48b0f38f0800000000000000
+      internalID: -558715163336566844
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_14
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 23
+        width: 220
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dccad36cf46205b10800000000000000
+      internalID: 1968115161231109325
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_b_15
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 23
+        width: 188
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b70aa1e5c5f11fb40800000000000000
+      internalID: 5472189503808118907
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData:
+    physicsShape: []
+    bones: []
+    spriteID:
+    internalID: 0
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      motion_b_0: -9213161004265152520
+      motion_b_1: 9034287545234809931
+      motion_b_10: -3101763484964066362
+      motion_b_11: 2580205687573431847
+      motion_b_12: 2244391181787592578
+      motion_b_13: -558715163336566844
+      motion_b_14: 1968115161231109325
+      motion_b_15: 5472189503808118907
+      motion_b_2: -6114030900744789291
+      motion_b_3: -1155462010931009462
+      motion_b_4: 7872666337821251819
+      motion_b_5: 4920151328510153522
+      motion_b_6: 7733091875196470453
+      motion_b_7: 9136447756035629189
+      motion_b_8: 159417121354078524
+      motion_b_9: 5460080125181019074
+  mipmapLimitGroupName:
+  pSDRemoveMatte: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

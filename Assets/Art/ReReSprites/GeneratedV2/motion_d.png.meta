@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: c710ce03bd34ca64a92102dbe9e23b23
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6232456002503733610
+    second: motion_d_0
+  - first:
+      213: -3075375108769381792
+    second: motion_d_1
+  - first:
+      213: -278336682513948021
+    second: motion_d_2
+  - first:
+      213: -9094281488733551447
+    second: motion_d_3
+  - first:
+      213: -7813626935433301904
+    second: motion_d_4
+  - first:
+      213: 3714035130320610992
+    second: motion_d_5
+  - first:
+      213: 6300474629051226141
+    second: motion_d_6
+  - first:
+      213: -2887869974880863999
+    second: motion_d_7
+  - first:
+      213: -4513114688542970496
+    second: motion_d_8
+  - first:
+      213: -503455680217458970
+    second: motion_d_9
+  - first:
+      213: 294972670833093735
+    second: motion_d_10
+  - first:
+      213: -1786579116914389547
+    second: motion_d_11
+  - first:
+      213: 6464283401305998979
+    second: motion_d_12
+  - first:
+      213: 6556088759101395551
+    second: motion_d_13
+  - first:
+      213: 8353525595150447913
+    second: motion_d_14
+  - first:
+      213: -2825445118995020256
+    second: motion_d_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: motion_d_0
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 954
+        width: 207
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a617c7b96b12e7650800000000000000
+      internalID: 6232456002503733610
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_1
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 954
+        width: 210
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06209b2f1a21255d0800000000000000
+      internalID: -3075375108769381792
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_2
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 954
+        width: 211
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b82abce0346232cf0800000000000000
+      internalID: -278336682513948021
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_3
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 954
+        width: 207
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a440a86b2f9ac180800000000000000
+      internalID: -9094281488733551447
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_4
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 651
+        width: 177
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 070f21a53bb609390800000000000000
+      internalID: -7813626935433301904
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_5
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 649
+        width: 180
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b6e412f547ea8330800000000000000
+      internalID: 3714035130320610992
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_6
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 650
+        width: 180
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1895f43b48cf6750800000000000000
+      internalID: 6300474629051226141
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_7
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 649
+        width: 179
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 109b5b5fe893ce7d0800000000000000
+      internalID: -2887869974880863999
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_8
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 350
+        width: 174
+        height: 266
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08d6cce2a123e51c0800000000000000
+      internalID: -4513114688542970496
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_9
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 350
+        width: 174
+        height: 267
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e65c7ce9bd5309f0800000000000000
+      internalID: -503455680217458970
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_10
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 350
+        width: 176
+        height: 265
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76c647fc414f71400800000000000000
+      internalID: 294972670833093735
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_11
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 350
+        width: 171
+        height: 268
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ddcf2542cbc437e0800000000000000
+      internalID: -1786579116914389547
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_12
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 42
+        width: 176
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3864c46118fb5b950800000000000000
+      internalID: 6464283401305998979
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_13
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 42
+        width: 175
+        height: 277
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f529b22adf7ebfa50800000000000000
+      internalID: 6556088759101395551
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_14
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 42
+        width: 175
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9257319154fade370800000000000000
+      internalID: 8353525595150447913
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: motion_d_15
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 42
+        width: 175
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 026c0f552a00ac8d0800000000000000
+      internalID: -2825445118995020256
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData:
+    physicsShape: []
+    bones: []
+    spriteID:
+    internalID: 0
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      motion_d_0: 6232456002503733610
+      motion_d_1: -3075375108769381792
+      motion_d_10: 294972670833093735
+      motion_d_11: -1786579116914389547
+      motion_d_12: 6464283401305998979
+      motion_d_13: 6556088759101395551
+      motion_d_14: 8353525595150447913
+      motion_d_15: -2825445118995020256
+      motion_d_2: -278336682513948021
+      motion_d_3: -9094281488733551447
+      motion_d_4: -7813626935433301904
+      motion_d_5: 3714035130320610992
+      motion_d_6: 6300474629051226141
+      motion_d_7: -2887869974880863999
+      motion_d_8: -4513114688542970496
+      motion_d_9: -503455680217458970
+  mipmapLimitGroupName:
+  pSDRemoveMatte: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 24ca83aadc50d4842aefe85b5d3b03b1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -51894485383696943
+    second: master_poses_0
+  - first:
+      213: -6709910868013192123
+    second: master_poses_1
+  - first:
+      213: -5833305006909917621
+    second: master_poses_2
+  - first:
+      213: -2266006166964624958
+    second: master_poses_3
+  - first:
+      213: 2248188772583737085
+    second: master_poses_4
+  - first:
+      213: 6174707324465174197
+    second: master_poses_5
+  - first:
+      213: 4697365444663013796
+    second: master_poses_6
+  - first:
+      213: -783409635003680465
+    second: master_poses_7
+  - first:
+      213: -8257626349201862140
+    second: master_poses_8
+  - first:
+      213: 6651744927001824655
+    second: master_poses_9
+  - first:
+      213: 5099394018386028141
+    second: master_poses_10
+  - first:
+      213: 7093195033905190627
+    second: master_poses_11
+  - first:
+      213: 3922454469842123155
+    second: master_poses_12
+  - first:
+      213: -6759717819748028806
+    second: master_poses_13
+  - first:
+      213: -1764133852805638795
+    second: master_poses_14
+  - first:
+      213: 910764635539163291
+    second: master_poses_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: master_poses_0
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 954
+        width: 207
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dd27e09d32a74ff0800000000000000
+      internalID: -51894485383696943
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_1
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 954
+        width: 210
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54c6a8dbd9b91e2a0800000000000000
+      internalID: -6709910868013192123
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_2
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 954
+        width: 211
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4670ac9000fb0fa0800000000000000
+      internalID: -5833305006909917621
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_3
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 954
+        width: 207
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c1aa3f95678d80e0800000000000000
+      internalID: -2266006166964624958
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_4
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 651
+        width: 177
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df600e9f6cb233f10800000000000000
+      internalID: 2248188772583737085
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_5
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 649
+        width: 180
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b6dfbab897f0b550800000000000000
+      internalID: 6174707324465174197
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_6
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 650
+        width: 180
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a17555fbf4603140800000000000000
+      internalID: 4697365444663013796
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_7
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 649
+        width: 179
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f29bcff6615c025f0800000000000000
+      internalID: -783409635003680465
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_8
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 350
+        width: 174
+        height: 266
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 402daef0694076d80800000000000000
+      internalID: -8257626349201862140
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_9
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 350
+        width: 174
+        height: 267
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8d4376c4cebf4c50800000000000000
+      internalID: 6651744927001824655
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_10
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 350
+        width: 176
+        height: 265
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d66a6ab87dfa4c640800000000000000
+      internalID: 5099394018386028141
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_11
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 350
+        width: 171
+        height: 268
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e6db7e4d47107260800000000000000
+      internalID: 7093195033905190627
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_12
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 42
+        width: 176
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 399359aee8b5f6630800000000000000
+      internalID: 3922454469842123155
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_13
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 42
+        width: 175
+        height: 277
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7e6a0c1578a032a0800000000000000
+      internalID: -6759717819748028806
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_14
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 42
+        width: 175
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 575574f8b998487e0800000000000000
+      internalID: -1764133852805638795
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: master_poses_15
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 42
+        width: 175
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b98cc4f4c9fa3ac00800000000000000
+      internalID: 910764635539163291
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData:
+    physicsShape: []
+    bones: []
+    spriteID:
+    internalID: 0
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      master_poses_0: -51894485383696943
+      master_poses_1: -6709910868013192123
+      master_poses_10: 5099394018386028141
+      master_poses_11: 7093195033905190627
+      master_poses_12: 3922454469842123155
+      master_poses_13: -6759717819748028806
+      master_poses_14: -1764133852805638795
+      master_poses_15: 910764635539163291
+      master_poses_2: -5833305006909917621
+      master_poses_3: -2266006166964624958
+      master_poses_4: 2248188772583737085
+      master_poses_5: 6174707324465174197
+      master_poses_6: 4697365444663013796
+      master_poses_7: -783409635003680465
+      master_poses_8: -8257626349201862140
+      master_poses_9: 6651744927001824655
+  mipmapLimitGroupName:
+  pSDRemoveMatte: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:
