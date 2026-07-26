@@ -7,9 +7,9 @@
   <Project Path="Febucci.TextAnimator.Editor.csproj" />
   <Project Path="Febucci.Attributes.Editor.csproj" />
   <Project Path="StatusSystem.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="DOTween.Modules.csproj" />
   <Project Path="Data.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Febucci.TextAnimator.TMP.Runtime.csproj" />
   <Project Path="Elringus.Naninovel.E2E.csproj" />
   <Project Path="DOTweenPro.EditorScripts.csproj" />
