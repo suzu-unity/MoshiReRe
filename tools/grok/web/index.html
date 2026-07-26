@@ -42,6 +42,8 @@
     .pending-file button { border:0; background:transparent; padding:0 0 0 6px; color:var(--danger); }
     form { display:flex; gap:9px; align-items:flex-end; } textarea { flex:1; resize:vertical; min-height:70px; max-height:260px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 12px; outline:none; } textarea:focus { border-color:var(--accent); }
     #send { min-width:76px; min-height:48px; background:var(--accent); color:#102321; border-color:transparent; font-weight:700; }
+    .drop-zone { border:1px dashed var(--line); border-radius:10px; padding:8px 10px; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:9px; color:var(--muted); font-size:12px; transition:background .15s,border-color .15s; }
+    .drop-zone.dragover { border-color:var(--accent); background:rgba(139,213,202,.12); color:var(--text); }
     .composer-tools { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:7px; color:var(--muted); font-size:11px; } #attach { padding:5px 8px; } .warning { color:#d7bd85; }
     @media (max-width:720px) { .app { grid-template-columns:1fr; } aside { max-height:230px; border-right:0; border-bottom:1px solid var(--line); } #conversation-list { max-height:100px; } header { align-items:flex-start; flex-direction:column; } .message { max-width:95%; } }
   </style>
@@ -67,7 +69,8 @@
       <section id="composer">
         <div id="attachments" class="attachments"></div>
         <form id="chat-form"><textarea id="input" placeholder="相談内容を入力… (Ctrl+Enterで送信)" required></textarea><button id="send" type="submit">送信</button></form>
-        <div class="composer-tools"><span id="file-summary">ファイル未選択</span><span class="warning">添付内容はxAIへ送信されます。生成URLは一時的な場合があります。</span><button id="attach" type="button">📎 ファイル</button><input id="file-input" type="file" multiple hidden accept="image/*,.txt,.md,.cs,.nani,.json,.yaml,.yml,.xml,.js,.ts,.py,.ps1,.shader,.uxml,.uss,.meta,.prefab,.asset,.asmdef,.html,.css,.csproj,.sln"></div>
+        <div id="drop-zone" class="drop-zone"><span>ここにファイルをドラッグ＆ドロップ</span><span>または</span><button id="attach" type="button">📎 ファイルを選択</button><input id="file-input" type="file" multiple hidden accept="image/*,.txt,.md,.cs,.nani,.json,.yaml,.yml,.xml,.js,.ts,.py,.ps1,.shader,.uxml,.uss,.meta,.prefab,.asset,.asmdef,.html,.css,.csproj,.sln"></div>
+        <div class="composer-tools"><span id="file-summary">ファイル未選択</span><span class="warning">添付内容はxAIへ送信されます。生成URLは一時的な場合があります。</span></div>
       </section>
     </main>
   </div>
@@ -101,7 +104,14 @@
     async function renameConversation(id){ const current=state.conversations.find(item=>item.id===id); const title=window.prompt('会話名',current?.title||''); if(!title?.trim())return; const updated=await api(`/api/conversations/${encodeURIComponent(id)}`,jsonOptions('PATCH',{title})); const item=state.conversations.find(entry=>entry.id===id); if(item)item.title=updated.title; if(state.current?.id===id)$('#conversation-title').textContent=updated.title; renderConversationList(); }
     async function deleteConversation(){ if(!state.current||!window.confirm(`「${state.current.title}」を削除しますか？`))return; const id=state.current.id; await api(`/api/conversations/${encodeURIComponent(id)}`,{method:'DELETE'}); state.conversations=state.conversations.filter(item=>item.id!==id); if(!state.conversations.length)await createConversation(); else{renderConversationList();await openConversation(state.conversations[0].id);} }
     $('#new-chat').onclick=()=>createConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`); $('#rename').onclick=()=>state.current&&renameConversation(state.current.id).catch(error=>statusEl.textContent=`エラー: ${error.message}`); $('#delete').onclick=()=>deleteConversation().catch(error=>statusEl.textContent=`エラー: ${error.message}`); $('#attach').onclick=()=>$('#file-input').click();
-    $('#file-input').onchange=async(event)=>{ try{ for(const file of event.target.files){ if(file.size>MAX_CLIENT_FILE_BYTES)throw new Error(`${file.name} は25MBを超えています`); if(state.pendingFiles.some(item=>item.name===file.name))continue; if(isImageFile(file))state.pendingFiles.push({name:file.name,mime:imageMime(file),kind:'image',content:await readAsDataUrl(file)}); else state.pendingFiles.push({name:file.name,mime:file.type||'text/plain',kind:'text',content:await file.text()}); } renderAttachments(); }catch(error){statusEl.textContent=`添付エラー: ${error.message}`;}finally{event.target.value='';} };
+    async function addFiles(fileList){ try{ for(const file of Array.from(fileList||[])){ if(file.size>MAX_CLIENT_FILE_BYTES)throw new Error(`${file.name} は25MBを超えています`); if(state.pendingFiles.some(item=>item.name===file.name))continue; if(isImageFile(file))state.pendingFiles.push({name:file.name,mime:imageMime(file),kind:'image',content:await readAsDataUrl(file)}); else state.pendingFiles.push({name:file.name,mime:file.type||'text/plain',kind:'text',content:await file.text()}); } renderAttachments(); }catch(error){statusEl.textContent=`添付エラー: ${error.message}`;} }
+    $('#file-input').onchange=async(event)=>{ await addFiles(event.target.files); event.target.value=''; };
+    const dropZone=$('#drop-zone');
+    ['dragenter','dragover'].forEach(type=>dropZone.addEventListener(type,event=>{event.preventDefault();event.stopPropagation();dropZone.classList.add('dragover');}));
+    ['dragleave','drop'].forEach(type=>dropZone.addEventListener(type,event=>{event.preventDefault();event.stopPropagation();dropZone.classList.remove('dragover');}));
+    dropZone.addEventListener('drop',async(event)=>{await addFiles(event.dataTransfer?.files);});
+    window.addEventListener('dragover',event=>event.preventDefault());
+    window.addEventListener('drop',event=>event.preventDefault());
     $('#chat-form').onsubmit=async(event)=>{ event.preventDefault(); const content=input.value.trim(); if(!content||!state.current||send.disabled)return; send.disabled=true; statusEl.textContent=$('#mode').value==='agent'?'Agentが処理中（動画生成は数分かかる場合があります）…':'Grok 4.5に問い合わせ中…'; try{ const data=await api('/api/chat',jsonOptions('POST',{conversation_id:state.current.id,content,mode:$('#mode').value,reasoning_effort:$('#effort').value||null,files:state.pendingFiles})); input.value='';state.pendingFiles=[];await refreshConversationList();await openConversation(state.current.id);statusEl.textContent=`接続中 / ${data.model||'grok-4.5'}`; }catch(error){statusEl.textContent=`エラー: ${error.message}`;}finally{send.disabled=false;input.focus();} };
     async function refreshConversationList(){const data=await api('/api/conversations');state.conversations=data.conversations||[];renderConversationList();}
     input.onkeydown=(event)=>{if(event.ctrlKey&&event.key==='Enter')$('#chat-form').requestSubmit();};
