@@ -208,7 +208,7 @@ public class ItemMenuController : MonoBehaviour
             if (!item)
                 continue;
 
-            var displayName = string.IsNullOrWhiteSpace(item.name) ? item.id : item.name;
+            var displayName = item.GetDisplayName();
             var id = string.IsNullOrWhiteSpace(item.id) ? item.name : item.id;
             loadedItems.Add(new ItemDraft
             {
@@ -729,7 +729,7 @@ public class ItemMenuController : MonoBehaviour
     private void ConfirmBagLegacy()
     {
         if (bagStatusText)
-            bagStatusText.text = carryCount == 0 ? "No items packed yet." : "BAG ready. ReRe will zip it up later.";
+            bagStatusText.text = carryCount == 0 ? "アイテムが入っていません。" : "バッグの準備ができました。";
     }
 
     private void ClearBag()
@@ -755,7 +755,9 @@ public class ItemMenuController : MonoBehaviour
                 }
                 else
                 {
+                    bagSlotImages[i].sprite = null;
                     bagSlotImages[i].color = new Color(1f, 1f, 1f, 0.18f);
+                    bagSlotImages[i].preserveAspect = false;
                 }
             }
 

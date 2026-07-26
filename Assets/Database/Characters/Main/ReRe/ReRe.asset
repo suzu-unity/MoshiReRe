@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebea75ddba79e4a8c90a0dd848de3379, type: 3}
   m_Name: ReRe
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
+  id: rere
+  displayName: ReRe
   category: 2
   icon: {fileID: -5822698878311081497, guid: 9a6350f0382c040feb10a61e1354e45c, type: 3}
   portrait: {fileID: 1708836366053527102, guid: 016c2f5f1ccf764449f7627c3bd3a90e, type: 3}

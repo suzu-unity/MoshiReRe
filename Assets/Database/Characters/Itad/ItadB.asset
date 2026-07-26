@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebea75ddba79e4a8c90a0dd848de3379, type: 3}
   m_Name: ItadB
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
+  id: peer_b
+  displayName: "\u4EEE\uFF1A\u60C5\u5831\u5C4BB"
   category: 1
   icon: {fileID: 0}
   portrait: {fileID: 0}
-  summary: 
-  description: 
+  summary: "\u8ABF\u67FB\u5148\u3084\u4EBA\u8108\u3092\u63D0\u793A\u3059\u308B\u60C5\u5831\u5C4B\u5019\u88DC\u3002"
+  description: "\u30AF\u30A8\u30B9\u30C8\u5C0E\u7DDA\u3068\u4F1A\u793E\u63A5\u70B9\u30CE\u30FC\u30C9\u306E\u78BA\u8A8D\u306B\u4F7F\u3046\u4EEE\u30C7\u30FC\u30BF\u3067\u3059\u3002"
   nodes:
   - id: basic
     title: "\u57FA\u672C\u60C5\u5831"

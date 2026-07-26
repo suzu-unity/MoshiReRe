@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b3dff2118054af4b1386a678e69f2f, type: 3}
   m_Name: Kaisuken
   m_EditorClassIdentifier: 
-  id: 
-  icon: {fileID: 0}
-  summary: 
-  description: 
-  detailImage: {fileID: 0}
+  id: cafe_ticket
+  displayName: "\u30AB\u30D5\u30A7\u56DE\u6570\u5238"
+  icon: {fileID: 21300000, guid: 82bbf46d3c3895c449a0b4dc116790e3, type: 3}
+  summary: "\u7D04\u675F\u306E\u53E3\u5B9F\u3092\u4F5C\u308C\u308B\u4EEE\u30A2\u30A4\u30C6\u30E0\u3002"
+  description: "\u30AB\u30D5\u30A7\u3067\u4F7F\u3048\u308B\u56DE\u6570\u5238\u3002\u4F1A\u8A71\u3084\u8ABF\u67FB\u306E\u5C0E\u5165\u306B\u4F7F\u3046\u60F3\u5B9A\u306E\u4EEE\u30C7\u30FC\u30BF\u3067\u3059\u3002"
+  detailImage: {fileID: 21300000, guid: 82bbf46d3c3895c449a0b4dc116790e3, type: 3}

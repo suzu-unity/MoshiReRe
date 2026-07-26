@@ -200,7 +200,7 @@ public static class MenuRootV2Builder
         bubble.preserveAspect = true;
         SetRect(bubble.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 1f), new Vector2(246f, -88f), new Vector2(390f, 150f));
         bubble.raycastTarget = false;
-        var bubbleText = Text("ReRe dummy hint.", bubble.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+        var bubbleText = Text("今夜の準備をしよう。迷ったら、期限と情報ノードを確認してね。", bubble.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(40f, 24f), new Vector2(-62f, -38f));
         bubbleText.font = FindPixelFontAsset();
 
@@ -791,7 +791,7 @@ public static class MenuRootV2Builder
         statusText.name = "BagStatusText";
         for (var i = 0; i < 4; i++)
             BagSlot(bagPanel.rectTransform, i, new Vector2(260f + i * 222f, -28f), new Vector2(184f, 72f));
-        TextBox("Zip animation placeholder", bagPanel.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.42f, 0.34f, 0.52f, 1f),
+        TextBox("選んだアイテムをバッグへ", bagPanel.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.42f, 0.34f, 0.52f, 1f),
             new Vector2(1160f, -42f), new Vector2(198f, 42f));
 
         BuildBagZipOverlay(page, artworkWidth, artworkHeight);

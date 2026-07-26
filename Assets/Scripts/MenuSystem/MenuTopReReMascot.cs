@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MenuTopReReMascot : MonoBehaviour
 {
+    private const string DefaultHint = "今夜の準備をしよう。迷ったら、期限と情報ノードを確認してね。";
+
     [Serializable]
     private class MotionSet
     {
@@ -45,7 +47,7 @@ public class MenuTopReReMascot : MonoBehaviour
     private void Awake()
     {
         if (bubbleText)
-            bubbleText.text = "ReRe\u306e\u30c0\u30df\u30fc\u30d2\u30f3\u30c8\u3060\u3088\u3002";
+            bubbleText.text = DefaultHint;
 
         if (bubble)
             bubble.gameObject.SetActive(false);
@@ -233,7 +235,7 @@ public class MenuTopReReMascot : MonoBehaviour
     private void ShowClickedBubble()
     {
         if (bubbleText)
-            bubbleText.text = "ReRe\u306e\u30c0\u30df\u30fc\u30d2\u30f3\u30c8\u3060\u3088\u3002";
+            bubbleText.text = DefaultHint;
 
         var clickMotion = PickClickMotion();
         if (clickMotion != null)

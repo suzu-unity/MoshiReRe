@@ -76,7 +76,7 @@ public class MenuRootV2InteractionController : MonoBehaviour
 
     private void HandleYes()
     {
-        ShowMessage("OK。まだ試作中だから実移動は後でつなぐね。導線としてはこのまま使えるよ。", false);
+        ShowMessage("OK。選んだ内容で進めるね。必要な情報も一緒に確認しておこう。", false);
     }
 
     private void HandleNo()

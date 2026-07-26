@@ -78,7 +78,7 @@ public class MenuReReAdvisor : MonoBehaviour
             return;
         }
 
-        var label = string.IsNullOrWhiteSpace(item.id) ? "Item" : item.id;
+        var label = item.GetDisplayName();
         if (!string.IsNullOrWhiteSpace(item.summary))
             ShowMessage($"{label}\n{item.summary}", false);
         else

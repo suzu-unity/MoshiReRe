@@ -60776,6 +60776,7 @@ MonoBehaviour:
   zipperPathCenter: {x: -10, y: 24}
   zipperPathHalfSize: {x: 232, y: 160}
   maxCarryItems: 4
+  inventoryDatabase: {fileID: 11400000, guid: 538b9346db7894ae8a0dd7406f64b3ef, type: 2}
   items: []
 --- !u!1 &3146576268657037910
 GameObject:
@@ -68836,7 +68837,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ReRe dummy hint.
+  m_text: "\u4ECA\u591C\u306E\u6E96\u5099\u3092\u3057\u3088\u3046\u3002\u8FF7\u3063\u305F\u3089\u3001\u671F\u9650\u3068\u60C5\u5831\u30CE\u30FC\u30C9\u3092\u78BA\u8A8D\u3057\u3066\u306D\u3002"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 76e9d6b1f1f805b4fb4987d3822639bf, type: 2}
   m_sharedMaterial: {fileID: -964634128524453309, guid: 76e9d6b1f1f805b4fb4987d3822639bf, type: 2}
@@ -147489,7 +147490,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Zip animation placeholder
+  m_text: "\u9078\u3093\u3060\u30A2\u30A4\u30C6\u30E0\u3092\u30D0\u30C3\u30B0\u3078"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 76e9d6b1f1f805b4fb4987d3822639bf, type: 2}
   m_sharedMaterial: {fileID: -964634128524453309, guid: 76e9d6b1f1f805b4fb4987d3822639bf, type: 2}

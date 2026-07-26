@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebea75ddba79e4a8c90a0dd848de3379, type: 3}
   m_Name: OjC
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
+  id: target_c
+  displayName: "\u4EEE\uFF1A\u30D5\u30EA\u30FC\u306E\u5BFE\u8C61"
   category: 0
   icon: {fileID: 0}
   portrait: {fileID: 0}
-  summary: 
-  description: 
+  summary: "\u8FD4\u6E08\u91D1\u3092\u512A\u5148\u3059\u308B\u591C\u306B\u8868\u793A\u3059\u308B\u81EA\u7531\u5BFE\u8C61\u5019\u88DC\u3002"
+  description: "\u5831\u916C\u30FB\u5371\u967A\u6027\u30FB\u95A2\u4FC2\u5909\u5316\u306E\u6BD4\u8F03UI\u7528\u306E\u4EEE\u30C7\u30FC\u30BF\u3067\u3059\u3002"
   nodes:
   - id: basic
     title: "\u57FA\u672C\u60C5\u5831"

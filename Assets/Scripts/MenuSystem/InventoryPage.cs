@@ -91,7 +91,7 @@ public class InventoryPage : MonoBehaviour
         if (!itemDetailPanel) return;
 
         if (itemDetailImage) itemDetailImage.sprite = item.detailImage ? item.detailImage : item.icon;
-        if (itemDetailTitle) itemDetailTitle.text = string.IsNullOrEmpty(item.id) ? "Item" : item.id;
+        if (itemDetailTitle) itemDetailTitle.text = item.GetDisplayName();
         if (itemDetailDescription) itemDetailDescription.text = item.description;
 
         itemDetailPanel.SetActive(true);
