@@ -145,16 +145,20 @@ public static class MenuRootV2Builder
             out var charactersMapButton);
         var pageQuest = BuildQuestPage(content);
         var pageMap = BuildMapPage(content);
+        var pageSave = BuildSavePage(content);
+        var pageSettings = BuildSettingsPage(content);
 
         pageStatus.gameObject.SetActive(false);
         pageItems.gameObject.SetActive(false);
         pageCharacters.gameObject.SetActive(false);
         pageQuest.gameObject.SetActive(false);
         pageMap.gameObject.SetActive(false);
+        pageSave.gameObject.SetActive(false);
+        pageSettings.gameObject.SetActive(false);
         phone.gameObject.SetActive(false);
 
         ConfigureRoot(root.GetComponent<MenuRootV2UI>(), phone.gameObject, pageTop.gameObject, pageStatus.gameObject, pageItems.gameObject,
-            pageCharacters.gameObject, pageQuest.gameObject, pageMap.gameObject, topButton, statusButton, itemsButton,
+            pageCharacters.gameObject, pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject, topButton, statusButton, itemsButton,
             charactersButton, questButton, mapButton, saveButton, settingsButton, topMascot, dressTileButton, statusTileButton, itemsTileButton,
             charactersTileButton, questTileButton, mapTileButton, dressHomeButton, dressDressButton, dressStatusButton,
             dressItemsButton, dressMapButton, charactersHomeButton, charactersDressButton, charactersItemsButton,
@@ -1174,6 +1178,80 @@ public static class MenuRootV2Builder
         Text("GO?", go.GetComponent<RectTransform>(), 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
     }
 
+    private static RectTransform BuildSavePage(RectTransform parent)
+    {
+        var page = RectRoot("PageSave", parent);
+        Stretch(page, Vector2.zero, Vector2.zero);
+        var frame = PixelPanel(page, "SaveFrame", new Vector2(20f, -20f), new Vector2(1320f, 770f), new Color(0.96f, 0.92f, 0.84f, 1f));
+        TextBox("SAVE DATA", frame.rectTransform, 38f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(30f, -28f), new Vector2(360f, 54f));
+        var saveMode = ButtonRoot("SaveModeButton", frame.rectTransform, Coral);
+        SetRect(saveMode.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(570f, -25f), new Vector2(140f, 48f));
+        Text("SAVE", saveMode.GetComponent<RectTransform>(), 24f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        var loadMode = ButtonRoot("LoadModeButton", frame.rectTransform, Lavender);
+        SetRect(loadMode.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(720f, -25f), new Vector2(140f, 48f));
+        Text("LOAD", loadMode.GetComponent<RectTransform>(), 24f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        var mode = TextBox("SAVE", frame.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Right, Ink, new Vector2(1010f, -38f), new Vector2(250f, 36f));
+        var views = new MenuSaveLoadController.SlotView[8];
+        for (var i = 0; i < views.Length; i++)
+        {
+            var col = i % 2;
+            var row = i / 2;
+            var slot = ButtonRoot("SaveSlot" + (i + 1), frame.rectTransform, new Color(1f, 0.98f, 0.91f, 1f));
+            SetRect(slot.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(30f + col * 635f, -105f - row * 145f), new Vector2(605f, 124f));
+            PixelBorder(slot.GetComponent<RectTransform>(), "Frame", new Color(0.38f, 0.30f, 0.48f, 1f), 3f);
+            var detail = Text("SLOT " + (i + 1).ToString("00") + "\nEMPTY", slot.GetComponent<RectTransform>(), 22f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(22f, 10f), new Vector2(-72f, -10f));
+            var delete = ButtonRoot("DeleteButton", slot.GetComponent<RectTransform>(), new Color(0.78f, 0.34f, 0.38f, 1f));
+            SetRect(delete.GetComponent<RectTransform>(), new Vector2(1f, .5f), new Vector2(1f, .5f), new Vector2(1f, .5f), new Vector2(-14f, 0f), new Vector2(50f, 50f));
+            Text("X", delete.GetComponent<RectTransform>(), 25f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+            views[i] = new MenuSaveLoadController.SlotView(slot, delete, detail);
+        }
+        var back = ButtonRoot("BackButton", frame.rectTransform, Mint);
+        SetRect(back.GetComponent<RectTransform>(), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(30f, 28f), new Vector2(160f, 54f));
+        Text("BACK", back.GetComponent<RectTransform>(), 23f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        var confirmPanel = PixelPanel(frame.rectTransform, "Confirmation", new Vector2(390f, -290f), new Vector2(520f, 190f), new Color(0.20f, 0.15f, 0.29f, .98f));
+        var confirmText = TextBox("OVERWRITE THIS SAVE?", confirmPanel.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Center, Cream, new Vector2(20f, -28f), new Vector2(480f, 50f));
+        var yes = ButtonRoot("ConfirmButton", confirmPanel.rectTransform, Mint);
+        SetRect(yes.GetComponent<RectTransform>(), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(64f, 25f), new Vector2(170f, 50f));
+        Text("YES", yes.GetComponent<RectTransform>(), 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        var no = ButtonRoot("CancelButton", confirmPanel.rectTransform, Coral);
+        SetRect(no.GetComponent<RectTransform>(), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-64f, 25f), new Vector2(170f, 50f));
+        Text("NO", no.GetComponent<RectTransform>(), 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        page.gameObject.AddComponent<MenuSaveLoadController>().Configure(views, saveMode, loadMode, back, yes, no, confirmPanel.gameObject, confirmText, mode);
+        return page;
+    }
+
+    private static RectTransform BuildSettingsPage(RectTransform parent)
+    {
+        var page = RectRoot("PageSettings", parent);
+        Stretch(page, Vector2.zero, Vector2.zero);
+        var frame = PixelPanel(page, "SettingsFrame", new Vector2(20f, -20f), new Vector2(1320f, 770f), new Color(0.96f, 0.92f, 0.84f, 1f));
+        TextBox("CONFIG", frame.rectTransform, 38f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(30f, -28f), new Vector2(360f, 54f));
+        var labels = new[] { "BGM", "SE", "VOICE", "TEXT SPEED", "AUTO SPEED" };
+        var sliders = new Slider[labels.Length];
+        for (var i = 0; i < labels.Length; i++)
+        {
+            TextBox(labels[i], frame.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(60f, -125f - i * 92f), new Vector2(250f, 38f));
+            sliders[i] = SliderRoot("Config" + labels[i].Replace(" ", string.Empty) + "Slider", frame.rectTransform, new Vector2(330f, -130f - i * 92f), new Vector2(680f, 30f));
+            sliders[i].interactable = true;
+            sliders[i].value = i < 3 ? 1f : .5f;
+        }
+        var toggleRoot = ButtonRoot("FullscreenToggle", frame.rectTransform, new Color(0.30f, 0.25f, 0.42f, 1f));
+        SetRect(toggleRoot.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(330f, -600f), new Vector2(52f, 52f));
+        var toggle = toggleRoot.gameObject.AddComponent<Toggle>();
+        toggle.targetGraphic = toggleRoot.GetComponent<Image>();
+        toggle.graphic = ImageRoot("Check", toggleRoot.GetComponent<RectTransform>(), Mint);
+        Stretch(toggle.graphic.rectTransform, new Vector2(8f, 8f), new Vector2(-8f, -8f));
+        TextBox("FULLSCREEN", frame.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(60f, -607f), new Vector2(250f, 38f));
+        var reset = ButtonRoot("ResetButton", frame.rectTransform, Coral);
+        SetRect(reset.GetComponent<RectTransform>(), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(30f, 28f), new Vector2(240f, 54f));
+        Text("RESET", reset.GetComponent<RectTransform>(), 23f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        var back = ButtonRoot("BackButton", frame.rectTransform, Mint);
+        SetRect(back.GetComponent<RectTransform>(), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(1090f, 28f), new Vector2(160f, 54f));
+        Text("BACK", back.GetComponent<RectTransform>(), 23f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        page.gameObject.AddComponent<MenuSettingsController>().Configure(sliders[0], sliders[1], sliders[2], sliders[3], sliders[4], toggle, reset, back);
+        return page;
+    }
+
     private static RectTransform BuildMapPage(RectTransform parent)
     {
         var page = RectRoot("PageMap", parent);
@@ -1191,8 +1269,7 @@ public static class MenuRootV2Builder
         var mapFrame = PixelPanel(page, "IsometricMapFrame", new Vector2(32f, -120f), new Vector2(756f, 568f), new Color(0.80f, 0.90f, 0.92f, 1f));
         var viewport = ImageRoot("MapViewport", mapFrame.rectTransform, new Color(1f, 1f, 1f, 0.02f));
         SetRect(viewport.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(-8f, -8f));
-        var mapMask = viewport.gameObject.AddComponent<Mask>();
-        mapMask.showMaskGraphic = true;
+        viewport.gameObject.AddComponent<RectMask2D>();
         var mapContent = RectRoot("MapContent", viewport.rectTransform);
         SetRect(mapContent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1260f, 840f));
         var mapScroll = viewport.gameObject.AddComponent<ScrollRect>();
@@ -2278,7 +2355,7 @@ public static class MenuRootV2Builder
     }
 
     private static void ConfigureRoot(MenuRootV2UI ui, GameObject standardPhoneLayer, GameObject topPage, GameObject statusPage, GameObject itemsPage,
-        GameObject charactersPage, GameObject questPage, GameObject mapPage, Button top, Button status, Button items,
+        GameObject charactersPage, GameObject questPage, GameObject mapPage, GameObject savePage, GameObject settingsPage, Button top, Button status, Button items,
         Button characters, Button quest, Button map, Button save, Button settings, MenuTopReReMascot topMascot, Button dressTile,
         Button statusTile, Button itemsTile, Button charactersTile, Button questTile, Button mapTile, Button dressHome,
         Button dressDress, Button dressStatus, Button dressItems, Button dressMap, Button charactersHome, Button charactersDress,
@@ -2294,6 +2371,8 @@ public static class MenuRootV2Builder
         SetObject(so, "pageCharacters", charactersPage);
         SetObject(so, "pageQuest", questPage);
         SetObject(so, "pageMap", mapPage);
+        SetObject(so, "pageSave", savePage);
+        SetObject(so, "pageSettings", settingsPage);
         SetObject(so, "topButton", top);
         SetObject(so, "statusButton", status);
         SetObject(so, "itemsButton", items);

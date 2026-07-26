@@ -12,6 +12,8 @@ public class MenuRootV2UI : CustomUI
     [SerializeField] private GameObject pageCharacters;
     [SerializeField] private GameObject pageQuest;
     [SerializeField] private GameObject pageMap;
+    [SerializeField] private GameObject pageSave;
+    [SerializeField] private GameObject pageSettings;
 
     [Header("Navigation")]
     [SerializeField] private Button topButton;
@@ -83,6 +85,8 @@ public class MenuRootV2UI : CustomUI
     public void ShowCharacters() => ShowPage(pageCharacters);
     public void ShowQuest() => ShowPage(pageQuest);
     public void ShowMap() => ShowPage(pageMap);
+    public void ShowSave() => ShowPage(pageSave);
+    public void ShowSettings() => ShowPage(pageSettings);
 
     private void ShowPage(GameObject target)
     {
@@ -95,6 +99,8 @@ public class MenuRootV2UI : CustomUI
         SetActive(pageCharacters, target);
         SetActive(pageQuest, target);
         SetActive(pageMap, target);
+        SetActive(pageSave, target);
+        SetActive(pageSettings, target);
     }
 
     private static void SetActive(GameObject page, GameObject target)
@@ -112,6 +118,8 @@ public class MenuRootV2UI : CustomUI
         if (charactersButton) charactersButton.onClick.AddListener(ShowCharacters);
         if (questButton) questButton.onClick.AddListener(ShowQuest);
         if (mapButton) mapButton.onClick.AddListener(ShowMap);
+        if (saveButton) saveButton.onClick.AddListener(ShowSave);
+        if (settingsButton) settingsButton.onClick.AddListener(ShowSettings);
         if (dressHomeButton) dressHomeButton.onClick.AddListener(ShowTop);
         if (dressDressButton) dressDressButton.onClick.AddListener(ShowStatus);
         if (dressStatusButton) dressStatusButton.onClick.AddListener(ShowStatus);
@@ -145,6 +153,8 @@ public class MenuRootV2UI : CustomUI
         if (charactersButton) charactersButton.onClick.RemoveListener(ShowCharacters);
         if (questButton) questButton.onClick.RemoveListener(ShowQuest);
         if (mapButton) mapButton.onClick.RemoveListener(ShowMap);
+        if (saveButton) saveButton.onClick.RemoveListener(ShowSave);
+        if (settingsButton) settingsButton.onClick.RemoveListener(ShowSettings);
         if (dressHomeButton) dressHomeButton.onClick.RemoveListener(ShowTop);
         if (dressDressButton) dressDressButton.onClick.RemoveListener(ShowStatus);
         if (dressStatusButton) dressStatusButton.onClick.RemoveListener(ShowStatus);

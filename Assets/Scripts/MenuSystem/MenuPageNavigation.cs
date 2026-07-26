@@ -1,5 +1,3 @@
-using Naninovel;
-using Naninovel.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -85,19 +83,11 @@ public class MenuPageNavigation : MonoBehaviour
 
     private void ShowSave()
     {
-        if (!Engine.Initialized || !Engine.TryGetService<IUIManager>(out var uiManager)) return;
-
-        var saveLoadUI = uiManager.GetUI<ISaveLoadUI>();
-        if (saveLoadUI == null) return;
-
-        saveLoadUI.PresentationMode = SaveLoadUIPresentationMode.Save;
-        saveLoadUI.Show();
+        menuRoot?.ShowSave();
     }
 
     private void ShowSettings()
     {
-        if (!Engine.Initialized || !Engine.TryGetService<IUIManager>(out var uiManager)) return;
-
-        uiManager.GetUI<ISettingsUI>()?.Show();
+        menuRoot?.ShowSettings();
     }
 }
