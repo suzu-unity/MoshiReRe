@@ -58,12 +58,8 @@ public static class MenuRootV2Builder
     [MenuItem("Tools/MoshiReRe/Build MenuRoot V2 Preview")]
     public static void BuildPreview()
     {
-        EnsureFolder("Assets/NaninovelData/Resources/UI");
+        BuildPrefab();
         EnsureFolder("Assets/Scenes");
-
-        var root = BuildMenuRoot();
-        PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-        SetPrefabVisibleOnAwake(PrefabPath, false);
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         var instance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath));
@@ -73,10 +69,22 @@ public static class MenuRootV2Builder
         ActivatePreviewPage(instance, "PageMap");
         EditorSceneManager.SaveScene(scene, PreviewScenePath);
 
-        Object.DestroyImmediate(root);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("[MenuRootV2Builder] Built MenuRootV2 prefab and preview scene.");
+    }
+
+    [MenuItem("Tools/MoshiReRe/Build MenuRoot V2 Prefab")]
+    public static void BuildPrefab()
+    {
+        EnsureFolder("Assets/NaninovelData/Resources/UI");
+
+        var root = BuildMenuRoot();
+        PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+        SetPrefabVisibleOnAwake(PrefabPath, false);
+        Object.DestroyImmediate(root);
+        AssetDatabase.SaveAssets();
+        Debug.Log("[MenuRootV2Builder] Built MenuRootV2 prefab.");
     }
 
     private static void ActivatePreviewPage(GameObject root, string pageName)
@@ -1186,7 +1194,7 @@ public static class MenuRootV2Builder
         var mapMask = viewport.gameObject.AddComponent<Mask>();
         mapMask.showMaskGraphic = true;
         var mapContent = RectRoot("MapContent", viewport.rectTransform);
-        SetRect(mapContent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1160f, 840f));
+        SetRect(mapContent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1260f, 840f));
         var mapScroll = viewport.gameObject.AddComponent<ScrollRect>();
         mapScroll.viewport = viewport.rectTransform;
         mapScroll.content = mapContent;
@@ -1235,25 +1243,25 @@ public static class MenuRootV2Builder
         }
 
         var detail = PixelPanel(page, "MapLocationDetail", new Vector2(808f, -120f), new Vector2(290f, 568f), new Color(0.98f, 0.94f, 0.88f, 1f));
-        var detailTitle = TextBox("STATION", detail.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+        var detailTitle = TextBox("駅前", detail.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(16f, -16f), new Vector2(258f, 38f));
         var rere = PixelPanel(detail.rectTransform, "ReReHint", new Vector2(16f, -72f), new Vector2(258f, 92f), new Color(0.90f, 0.84f, 0.98f, 1f));
         TextBox("ReRe HINT", rere.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(12f, -10f), new Vector2(234f, 20f));
-        var hintText = TextBox("The trains are calm right now.", rere.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
+        var hintText = TextBox("乗り換え前なら、少しだけ話を聞けそう。", rere.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
             new Vector2(12f, -34f), new Vector2(234f, 48f));
         var mapReRe = ImageRoot("MapReReGuide", rere.rectTransform, Color.white);
         mapReRe.sprite = LoadSprite(CommonUiCropFolder + "/rere_worried.png");
         mapReRe.preserveAspect = true;
         mapReRe.raycastTarget = false;
         SetRect(mapReRe.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-8f, 2f), new Vector2(62f, 62f));
-        var descriptionText = TextBox("A bright gateway to the city.", detail.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
+        var descriptionText = TextBox("待ち合わせと移動の起点。夕方は帰宅客で混み合う。", detail.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
             new Vector2(18f, -180f), new Vector2(254f, 42f));
 
         TextBox("RELATED ITEM", detail.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(18f, -236f), new Vector2(254f, 20f));
         var itemCard = PixelPanel(detail.rectTransform, "RelatedItemCard", new Vector2(18f, -264f), new Vector2(254f, 54f), new Color(1f, 0.91f, 0.69f, 1f));
-        var itemText = Text("City Pass", itemCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        var itemText = Text("交通ICカード", itemCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
 
         TextBox("HERE NOW", detail.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(18f, -332f), new Vector2(254f, 20f));
@@ -1263,7 +1271,7 @@ public static class MenuRootV2Builder
             characterButtons[i] = LocalPixelButton(detail.rectTransform, "MapCharacter" + i, i == 0 ? "R" : i == 1 ? "Y" : "O",
                 new Vector2(20f + i * 82f, -364f), new Vector2(66f, 58f), i == 0 ? Lavender : i == 1 ? Coral : Yellow);
         }
-        var characterText = TextBox("ReRe / Yui / OJI", detail.rectTransform, 12f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+        var characterText = TextBox("ReRe / 対象A", detail.rectTransform, 12f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
             new Vector2(18f, -430f), new Vector2(254f, 20f));
         var goButton = LocalPixelButton(detail.rectTransform, "MapGoButton", "GO?  YES", new Vector2(18f, -470f), new Vector2(254f, 72f), Mint);
 
@@ -2079,20 +2087,28 @@ public static class MenuRootV2Builder
 
     private static void ConfigureMapLocations(SerializedObject so)
     {
-        var names = new[] { "STATION", "LIBRARY", "OFFICE", "ENTERTAINMENT", "PARK", "HOTEL" };
+        var names = new[] { "駅前", "市立図書館", "オフィス街", "繁華街", "中央公園", "シティホテル" };
         var descriptions = new[]
         {
-            "A bright gateway to the city.", "A quiet place full of useful clues.", "Busy towers where OJI gather.",
-            "Neon fun and unexpected meetings.", "A calm green break in the route.", "A polished district that wakes at night."
+            "待ち合わせと移動の起点。夕方は帰宅客で混み合う。",
+            "新聞・業界誌・過去資料を静かに調べられる公共施設。",
+            "昼は会社パートの中心。退勤前後には対象と接触しやすい。",
+            "飲食店や遊技施設が集まる夜の情報交換エリア。",
+            "人目を避けて話せる場所が多い、街の中央にある公園。",
+            "夜になると人の流れが変わる、格式の高い宿泊施設。"
         };
         var hints = new[]
         {
-            "The trains are calm right now.", "Check the return desk for a new note.", "Lunch time is the safest window.",
-            "Bring something small for the arcade.", "Someone is waiting near the fountain.", "The lobby changes after sunset."
+            "乗り換え前なら、少しだけ話を聞けそう。",
+            "過去の記事を調べるなら、ここがいちばん確実。",
+            "昼休みか退勤直後を狙うのが安全そう。",
+            "夜は出会いが増えるけど、出費にも注意してね。",
+            "噴水の近くなら、落ち着いて話せるかも。",
+            "ロビーの顔ぶれは日没後に変わるみたい。"
         };
         var safety = new[] { 0.86f, 0.94f, 0.68f, 0.56f, 0.91f, 0.74f };
-        var items = new[] { "City Pass", "Library Card", "Office Key", "Arcade Coin", "Picnic Set", "Room Key" };
-        var characters = new[] { "ReRe / Yui / OJI", "Yui / Librarian", "OJI / ReRe", "Mina / ReRe", "Yui / Cat", "ReRe / Concierge" };
+        var items = new[] { "交通ICカード", "図書館利用証", "社員証", "ゲームコイン", "テイクアウトコーヒー", "ルームキー" };
+        var characters = new[] { "ReRe / 対象A", "情報屋B / 司書", "取引先の元担当 / ReRe", "同業者A / ReRe", "対象A / ReRe", "ReRe / ホテルスタッフ" };
         var dayColors = new[] { Cyan, Lavender, new Color(0.62f, 0.82f, 0.94f, 1f), Coral, Mint, Yellow };
         var nightColors = new[]
         {
