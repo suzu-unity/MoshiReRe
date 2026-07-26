@@ -18,6 +18,7 @@ public static class ExplorationPrototypeBuilder
 {
     private const string ArtRoot = "Assets/Art/ExplorationPrototype";
     private const string GeneratedRoot = ArtRoot + "/Generated";
+    private const string FrameAnimationRoot = ArtRoot + "/FrameAnimation";
     private const string RigRoot = ArtRoot + "/Rig";
     private const string CasualRigPartsRoot = RigRoot + "/CasualParts";
     private const string SuitRigPartsRoot = RigRoot + "/SuitParts";
@@ -30,14 +31,18 @@ public static class ExplorationPrototypeBuilder
 
     private static readonly Slice[] CasualSlices =
     {
-        new("PlayerCasualWalk_01", 0, 0, 222, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_02", 222, 0, 222, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_03", 444, 0, 221, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_04", 665, 0, 222, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_05", 887, 0, 222, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_06", 1109, 0, 221, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_07", 1330, 0, 222, 887, 0.5f, 0.206f),
-        new("PlayerCasualWalk_08", 1552, 0, 222, 887, 0.5f, 0.206f)
+        new("PlayerCasualVideoWalk_01", 0, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_02", 480, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_03", 960, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_04", 1440, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_05", 1920, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_06", 2400, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_07", 2880, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_08", 3360, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_09", 3840, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_10", 4320, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_11", 4800, 0, 480, 624, 0.5f, 0f),
+        new("PlayerCasualVideoWalk_12", 5280, 0, 480, 624, 0.5f, 0f)
     };
 
     private static readonly Slice[] SuitSlices =
@@ -67,27 +72,23 @@ public static class ExplorationPrototypeBuilder
         EnsureFolder(GeneratedRoot);
 
         var background = ConfigureSingleSprite(ArtRoot + "/exploration_room_background.png", 100f);
-        var casualPath = ArtRoot + "/player_casual_walk_v2.png";
+        var casualPath = FrameAnimationRoot + "/player_casual_walk_video_12.png";
         var suitPath = ArtRoot + "/player_suit_walk_v2.png";
         var npcPath = GenerateTransparentCopy(
             ArtRoot + "/npc_strip.png", GeneratedRoot + "/npc_transparent.png");
-        var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 110f);
+        var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 150f, 8192);
         var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
         var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
-        var casualSkinnedSprite = ExplorationSkinnedSpriteConfigurator.Configure(
-            CasualSkinnedSpritePath, ExplorationSkinnedSpriteConfigurator.RigProfile.Default, 300f);
-        var suitSkinnedSprite = ExplorationSkinnedSpriteConfigurator.Configure(
-            SuitSkinnedSpritePath, ExplorationSkinnedSpriteConfigurator.RigProfile.Suit, 300f);
 
-        if (background == null || casualFrames.Length != 8 || suitFrames.Length != 8 ||
-            npcFrames.Length != 5 || casualSkinnedSprite == null || suitSkinnedSprite == null)
+        if (background == null || casualFrames.Length != 12 || suitFrames.Length != 8 ||
+            npcFrames.Length != 5)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "ExplorationPrototype";
 
         CreateBackground(background);
-        var player = CreatePlayer(casualFrames, suitFrames, casualSkinnedSprite, suitSkinnedSprite);
+        var player = CreatePlayer(casualFrames, suitFrames);
         var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
         CreateNpc(npcFrames[0], dialogueOverlay);
         CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
@@ -151,27 +152,22 @@ public static class ExplorationPrototypeBuilder
 
     private static GameObject CreatePlayer(
         Sprite[] casualFrames,
-        Sprite[] suitFrames,
-        Sprite casualSkinnedSprite,
-        Sprite suitSkinnedSprite)
+        Sprite[] suitFrames)
     {
         var player = new GameObject("Player");
         player.transform.position = new Vector3(-5.7f, -2.82f, 0f);
 
         var renderer = player.AddComponent<SpriteRenderer>();
+        renderer.sprite = casualFrames[2];
         renderer.sortingOrder = 10;
-        renderer.enabled = false;
-
-        var cutoutRig = CreateSkinnedRig(player.transform, casualSkinnedSprite, suitSkinnedSprite);
 
         var animator = player.AddComponent<ExplorationSpriteAnimator>();
         SetObject(animator, "spriteRenderer", renderer);
-        SetFloat(animator, "framesPerSecond", 9f);
+        SetFloat(animator, "framesPerSecond", 10f);
         SetObjectArray(animator, "defaultWalkFrames", casualFrames);
         SetObjectArray(animator, "wardrobeWalkFrames", suitFrames);
-        SetObject(animator, "defaultIdleSprite", casualFrames[0]);
+        SetObject(animator, "defaultIdleSprite", casualFrames[2]);
         SetObject(animator, "wardrobeIdleSprite", suitFrames[0]);
-        SetObject(animator, "cutoutRig", cutoutRig);
 
         var controller = player.AddComponent<ExplorationPlayerController>();
         SetFloat(controller, "movementSpeed", 3.4f);
@@ -576,7 +572,11 @@ public static class ExplorationPrototypeBuilder
         return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
-    private static Sprite[] ConfigureSpriteStrip(string path, IReadOnlyList<Slice> slices, float pixelsPerUnit)
+    private static Sprite[] ConfigureSpriteStrip(
+        string path,
+        IReadOnlyList<Slice> slices,
+        float pixelsPerUnit,
+        int maxTextureSize = 2048)
     {
         var importer = GetTextureImporter(path);
         importer.textureType = TextureImporterType.Sprite;
@@ -585,7 +585,7 @@ public static class ExplorationPrototypeBuilder
         importer.mipmapEnabled = false;
         importer.filterMode = FilterMode.Bilinear;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
-        importer.maxTextureSize = 2048;
+        importer.maxTextureSize = maxTextureSize;
         importer.SaveAndReimport();
 
         var factories = new SpriteDataProviderFactories();
