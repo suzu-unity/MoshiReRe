@@ -1,5 +1,4 @@
 using System;
-using Cysharp.Threading.Tasks;
 using Naninovel;
 using TMPro;
 using UnityEngine;
@@ -64,7 +63,11 @@ public sealed class MenuSaveLoadController : MonoBehaviour
         HideConfirmation();
     }
 
-    private void OnEnable() => Refresh().Forget();
+    private void OnEnable()
+    {
+        HideConfirmation();
+        Refresh().Forget();
+    }
     private void OnDestroy() => UnbindButtons();
 
     private void BindButtons()
@@ -141,12 +144,14 @@ public sealed class MenuSaveLoadController : MonoBehaviour
         pendingDelete = delete;
         if (confirmationLabel) confirmationLabel.text = message;
         if (confirmationPanel) confirmationPanel.SetActive(true);
+        SetBackgroundInteractable(false);
     }
 
     private void HideConfirmation()
     {
         pendingSlot = -1;
         if (confirmationPanel) confirmationPanel.SetActive(false);
+        SetBackgroundInteractable(true);
     }
 
     private void Confirm()
@@ -163,9 +168,32 @@ public sealed class MenuSaveLoadController : MonoBehaviour
         if (!TryGetStateManager()) return;
         var slotId = stateManager.Configuration.IndexToSaveSlotId(index + 1);
         if (delete) stateManager.GameSlotManager.DeleteSaveSlot(slotId);
-        else if (saveMode) await stateManager.SaveGame(slotId);
-        else await stateManager.LoadGame(slotId);
+        else if (saveMode)
+        {
+            using (new InteractionBlocker())
+                await stateManager.SaveGame(slotId);
+        }
+        else
+        {
+            menuRoot?.Hide();
+            using (await LoadingScreen.Show())
+                await stateManager.LoadGame(slotId);
+            menuRoot?.Hide();
+            return;
+        }
         await Refresh();
+    }
+
+    private void SetBackgroundInteractable(bool interactable)
+    {
+        if (saveModeButton) saveModeButton.interactable = interactable;
+        if (loadModeButton) loadModeButton.interactable = interactable;
+        if (backButton) backButton.interactable = interactable;
+        for (var i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].SelectButton) slots[i].SelectButton.interactable = interactable;
+            if (slots[i].DeleteButton) slots[i].DeleteButton.interactable = interactable;
+        }
     }
 
     private bool TryGetStateManager()

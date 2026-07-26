@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using Naninovel;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +18,7 @@ public sealed class MenuSettingsController : MonoBehaviour
 
     private MenuRootV2UI menuRoot;
     private bool syncing;
+    private bool settingsDirty;
 
     public void Configure(Slider bgm, Slider se, Slider voice, Slider textSpeed, Slider autoSpeed,
         Toggle fullscreen, Button reset, Button back)
@@ -47,6 +47,12 @@ public sealed class MenuSettingsController : MonoBehaviour
     }
 
     private void OnEnable() => SyncFromServices();
+    private void OnDisable()
+    {
+        if (settingsDirty)
+            Persist().Forget();
+    }
+
     private void OnDestroy()
     {
         if (bgmSlider) bgmSlider.onValueChanged.RemoveListener(SetBgm);
@@ -77,11 +83,11 @@ public sealed class MenuSettingsController : MonoBehaviour
         syncing = false;
     }
 
-    private void SetBgm(float value) { if (!syncing && Engine.TryGetService<IAudioManager>(out var audio)) { audio.BgmVolume = value; Persist().Forget(); } }
-    private void SetSe(float value) { if (!syncing && Engine.TryGetService<IAudioManager>(out var audio)) { audio.SfxVolume = value; Persist().Forget(); } }
-    private void SetVoice(float value) { if (!syncing && Engine.TryGetService<IAudioManager>(out var audio)) { audio.VoiceVolume = value; Persist().Forget(); } }
-    private void SetTextSpeed(float value) { if (!syncing && Engine.TryGetService<ITextPrinterManager>(out var printer)) { printer.BaseRevealSpeed = value; Persist().Forget(); } }
-    private void SetAutoSpeed(float value) { if (!syncing && Engine.TryGetService<ITextPrinterManager>(out var printer)) { printer.BaseAutoDelay = value; Persist().Forget(); } }
+    private void SetBgm(float value) { if (!syncing && Engine.TryGetService<IAudioManager>(out var audio)) { audio.BgmVolume = value; settingsDirty = true; } }
+    private void SetSe(float value) { if (!syncing && Engine.TryGetService<IAudioManager>(out var audio)) { audio.SfxVolume = value; settingsDirty = true; } }
+    private void SetVoice(float value) { if (!syncing && Engine.TryGetService<IAudioManager>(out var audio)) { audio.VoiceVolume = value; settingsDirty = true; } }
+    private void SetTextSpeed(float value) { if (!syncing && Engine.TryGetService<ITextPrinterManager>(out var printer)) { printer.BaseRevealSpeed = value; settingsDirty = true; } }
+    private void SetAutoSpeed(float value) { if (!syncing && Engine.TryGetService<ITextPrinterManager>(out var printer)) { printer.BaseAutoDelay = value; settingsDirty = true; } }
     private void SetFullscreen(bool value) { if (!syncing) { Screen.fullScreen = value; PlayerPrefs.SetInt(FullscreenKey, value ? 1 : 0); PlayerPrefs.Save(); } }
 
     private void ResetSettings()
@@ -94,6 +100,20 @@ public sealed class MenuSettingsController : MonoBehaviour
         if (fullscreenToggle) fullscreenToggle.isOn = true;
     }
 
-    private void Back() => menuRoot?.ShowTop();
-    private async UniTask Persist() { if (Engine.Initialized && Engine.TryGetService<IStateManager>(out var state)) await state.SaveSettings(); }
+    private void Back() => PersistAndBack().Forget();
+
+    private async UniTask PersistAndBack()
+    {
+        await Persist();
+        menuRoot?.ShowTop();
+    }
+
+    private async UniTask Persist()
+    {
+        if (!settingsDirty)
+            return;
+        if (Engine.Initialized && Engine.TryGetService<IStateManager>(out var state))
+            await state.SaveSettings();
+        settingsDirty = false;
+    }
 }

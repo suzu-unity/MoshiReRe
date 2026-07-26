@@ -81,7 +81,6 @@ public static class MenuRootV2Builder
 
         var root = BuildMenuRoot();
         PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-        SetPrefabVisibleOnAwake(PrefabPath, false);
         Object.DestroyImmediate(root);
         AssetDatabase.SaveAssets();
         Debug.Log("[MenuRootV2Builder] Built MenuRootV2 prefab.");
@@ -1235,11 +1234,11 @@ public static class MenuRootV2Builder
             sliders[i].interactable = true;
             sliders[i].value = i < 3 ? 1f : .5f;
         }
-        var toggleRoot = ButtonRoot("FullscreenToggle", frame.rectTransform, new Color(0.30f, 0.25f, 0.42f, 1f));
-        SetRect(toggleRoot.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(330f, -600f), new Vector2(52f, 52f));
+        var toggleRoot = ImageRoot("FullscreenToggle", frame.rectTransform, new Color(0.30f, 0.25f, 0.42f, 1f));
+        SetRect(toggleRoot.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(330f, -600f), new Vector2(52f, 52f));
         var toggle = toggleRoot.gameObject.AddComponent<Toggle>();
-        toggle.targetGraphic = toggleRoot.GetComponent<Image>();
-        toggle.graphic = ImageRoot("Check", toggleRoot.GetComponent<RectTransform>(), Mint);
+        toggle.targetGraphic = toggleRoot;
+        toggle.graphic = ImageRoot("Check", toggleRoot.rectTransform, Mint);
         Stretch(toggle.graphic.rectTransform, new Vector2(8f, 8f), new Vector2(-8f, -8f));
         TextBox("FULLSCREEN", frame.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(60f, -607f), new Vector2(250f, 38f));
         var reset = ButtonRoot("ResetButton", frame.rectTransform, Coral);

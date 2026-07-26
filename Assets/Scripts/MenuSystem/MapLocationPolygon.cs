@@ -4,7 +4,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Draws and raycasts a polygonal map hot spot using normalized map coordinates.
 /// </summary>
-public class MapLocationPolygon : Graphic, ICanvasRaycastFilter
+public class MapLocationPolygon : MaskableGraphic, ICanvasRaycastFilter
 {
     [SerializeField] private Vector2[] normalizedPoints;
     [SerializeField] private Color fillColor = new Color(1f, 1f, 1f, 0.12f);
