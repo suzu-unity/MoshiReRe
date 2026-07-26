@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace MoshiReRe.Exploration
 {
-    /// <summary>Small standalone dialogue fallback used when the Naninovel engine is not ready.</summary>
+    /// <summary>Novel-style local dialogue presentation used while the Naninovel engine is not ready.</summary>
     [DisallowMultipleComponent]
     public sealed class ExplorationDialogueOverlay : MonoBehaviour
     {

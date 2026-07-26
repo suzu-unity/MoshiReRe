@@ -39,6 +39,26 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase(10, 10, true, false, false)]
+        [TestCase(10, 11, true, false, true)]
+        [TestCase(10, 11, false, true, true)]
+        [TestCase(10, 11, false, false, false)]
+        public void ShouldForwardContinueInput_IgnoresTheOpeningPressAndAcceptsEOrSpace(
+            int openedFrame,
+            int currentFrame,
+            bool ePressed,
+            bool spacePressed,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldForwardContinueInput(
+                    openedFrame,
+                    currentFrame,
+                    ePressed,
+                    spacePressed),
+                Is.EqualTo(expected));
+        }
+
         [Test]
         public void FindNearestIndex_ChoosesClosestCandidateWithinRadius()
         {

@@ -460,6 +460,7 @@ public static class ExplorationPrototypeBuilder
             new Vector2(0f, 48f), new Vector2(620f, 82f), new Vector2(0.5f, 0f));
         var panelImage = panelObject.GetComponent<Image>();
         panelImage.color = new Color32(8, 18, 36, 225);
+        panelImage.raycastTarget = false;
 
         var promptText = CreateText("PromptText", panelObject.transform, font, 32f);
         promptText.alignment = TextAlignmentOptions.Center;
@@ -481,11 +482,14 @@ public static class ExplorationPrototypeBuilder
         var dialogueRect = dialoguePanel.GetComponent<RectTransform>();
         SetRect(dialogueRect, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
             new Vector2(0f, 26f), new Vector2(1510f, 245f), new Vector2(0.5f, 0f));
-        dialoguePanel.GetComponent<Image>().color = new Color32(8, 18, 36, 242);
+        dialoguePanel.GetComponent<Image>().color = new Color(0.024f, 0.067f, 0.145f, 0.91f);
+        var dialogueOutline = dialoguePanel.AddComponent<Outline>();
+        dialogueOutline.effectColor = new Color(0f, 0f, 0f, 0.65f);
+        dialogueOutline.effectDistance = new Vector2(2f, -2f);
 
         var speakerText = CreateText("Speaker", dialoguePanel.transform, font, 29f);
         speakerText.alignment = TextAlignmentOptions.Left;
-        speakerText.color = new Color32(116, 211, 224, 255);
+        speakerText.color = Color.white;
         SetRect(speakerText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f),
             new Vector2(34f, -24f), new Vector2(900f, 44f), new Vector2(0f, 1f));
 

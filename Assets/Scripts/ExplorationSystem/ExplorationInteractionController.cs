@@ -41,6 +41,12 @@ namespace MoshiReRe.Exploration
 
         private void Update()
         {
+            if (player != null && !player.MovementEnabled)
+            {
+                SetNearest(null);
+                return;
+            }
+
             RefreshNearest();
             if (nearest != null && WasInteractionPressed())
                 nearest.Interact(player);

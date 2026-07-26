@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using MoshiReRe.Exploration;
 using NUnit.Framework;
@@ -5,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 namespace MoshiReRe.EditorTests.ExplorationSystem
@@ -80,6 +82,67 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             finally
             {
                 EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        [Test]
+        public void PrototypeDialogue_UsesSharedNaninovelPrinterWithoutBlockingExplorationHud()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var npc = roots.Single(root => root.name == "PrototypeNPC");
+                var dialogue = npc.GetComponent<NaninovelDialogueInteractable>();
+                var serializedDialogue = new SerializedObject(dialogue);
+                var prompt = roots.Single(root => root.name == "ExplorationHUD")
+                    .transform.Find("InteractionPrompt")
+                    .GetComponent<Image>();
+
+                Assert.That(dialogue, Is.Not.Null);
+                Assert.That(
+                    serializedDialogue.FindProperty("textPrinterId").stringValue,
+                    Is.EqualTo("Dialogue"));
+                Assert.That(
+                    serializedDialogue.FindProperty("textPrinterSortingOrder").intValue,
+                    Is.GreaterThan(200));
+                Assert.That(prompt.raycastTarget, Is.False);
+
+                var script = File.ReadAllText("Assets/Scenario/ExplorationPrototypeNpc.nani");
+                StringAssert.Contains("@printer Dialogue", script);
+                StringAssert.Contains("@hidePrinter Dialogue wait!", script);
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        [Test]
+        public void CompanyExplorationBackgrounds_AreFiveNamedSingleSprites()
+        {
+            var backgrounds = new[]
+            {
+                (Name: "morning", Width: 1916, Height: 821),
+                (Name: "daytime", Width: 2172, Height: 724),
+                (Name: "evening", Width: 2172, Height: 724),
+                (Name: "night_lighton", Width: 2172, Height: 724),
+                (Name: "night_lightoff", Width: 2172, Height: 724)
+            };
+
+            foreach (var background in backgrounds)
+            {
+                var path = $"Assets/Art/CompanyExploration/Backgrounds/{background.Name}.png";
+                var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+
+                Assert.That(importer, Is.Not.Null, path);
+                Assert.That(importer.textureType, Is.EqualTo(TextureImporterType.Sprite), path);
+                Assert.That(importer.spriteImportMode, Is.EqualTo(SpriteImportMode.Single), path);
+                Assert.That(importer.mipmapEnabled, Is.False, path);
+                Assert.That(sprite, Is.Not.Null, path);
+                Assert.That(sprite.texture.width, Is.EqualTo(background.Width), path);
+                Assert.That(sprite.texture.height, Is.EqualTo(background.Height), path);
             }
         }
     }
