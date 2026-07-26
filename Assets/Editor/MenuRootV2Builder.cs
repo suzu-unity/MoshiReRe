@@ -43,8 +43,8 @@ public static class MenuRootV2Builder
     private const string ItemBagStatesSheetPath = "Assets/Art/UIConcepts/ItemBag/moshire_bag_states_sheet.png";
     private const string ItemBagHookSpritePath = "Assets/Art/UIConcepts/ItemBag/moshire_bag_zipper_hook.png";
     private const string ItemBagReReZipFolder = "Assets/Art/UIConcepts/ItemBag/ZipReReAction/frames";
-    private const string MapDayConceptPath = "Assets/Art/UIConcepts/MapConcepts/map_concept_02_map_first.png";
-    private const string MapNightConceptPath = "Assets/Art/UIConcepts/MapConcepts/map_concept_04_evening_story.png";
+    private const string MapWideArtworkPath = "Assets/Art/UI/Map/menu_city_wide.png";
+    private const string MapHoverAudioPath = "Assets/Audio/SFX/Title/title_cursor_move.mp3";
 
     private static readonly Color Cream = new Color(0.98f, 0.94f, 0.84f, 1f);
     private static readonly Color Ink = new Color(0.18f, 0.12f, 0.20f, 1f);
@@ -1181,10 +1181,25 @@ public static class MenuRootV2Builder
         }
 
         var mapFrame = PixelPanel(page, "IsometricMapFrame", new Vector2(32f, -120f), new Vector2(756f, 568f), new Color(0.80f, 0.90f, 0.92f, 1f));
-        var dayMap = RawImageRoot("DayMapArtwork", mapFrame.rectTransform, MapDayConceptPath, new Rect(0.122f, 0.174f, 0.59f, 0.65f));
-        Stretch(dayMap.rectTransform, new Vector2(5f, 5f), new Vector2(-5f, -5f));
-        var nightMap = RawImageRoot("NightMapArtwork", mapFrame.rectTransform, MapNightConceptPath, new Rect(0.129f, 0.188f, 0.55f, 0.628f));
-        Stretch(nightMap.rectTransform, new Vector2(5f, 5f), new Vector2(-5f, -5f));
+        var viewport = ImageRoot("MapViewport", mapFrame.rectTransform, new Color(1f, 1f, 1f, 0.02f));
+        SetRect(viewport.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(-8f, -8f));
+        var mapMask = viewport.gameObject.AddComponent<Mask>();
+        mapMask.showMaskGraphic = true;
+        var mapContent = RectRoot("MapContent", viewport.rectTransform);
+        SetRect(mapContent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), Vector2.zero, new Vector2(1160f, 840f));
+        var mapScroll = viewport.gameObject.AddComponent<ScrollRect>();
+        mapScroll.viewport = viewport.rectTransform;
+        mapScroll.content = mapContent;
+        mapScroll.horizontal = true;
+        mapScroll.vertical = true;
+        mapScroll.movementType = ScrollRect.MovementType.Clamped;
+        mapScroll.inertia = true;
+        mapScroll.scrollSensitivity = 24f;
+        var dayMap = RawImageRoot("DayMapArtwork", mapContent, MapWideArtworkPath, new Rect(0f, 0f, 1f, 1f));
+        Stretch(dayMap.rectTransform, Vector2.zero, Vector2.zero);
+        var nightMap = RawImageRoot("NightMapArtwork", mapContent, MapWideArtworkPath, new Rect(0f, 0f, 1f, 1f));
+        Stretch(nightMap.rectTransform, Vector2.zero, Vector2.zero);
+        nightMap.color = new Color(0.42f, 0.48f, 0.76f, 1f);
         nightMap.gameObject.SetActive(false);
 
         var timeBadge = PixelPanel(mapFrame.rectTransform, "TimeBadge", new Vector2(14f, -14f), new Vector2(116f, 36f), new Color(0.16f, 0.15f, 0.34f, 0.92f));
@@ -1196,26 +1211,27 @@ public static class MenuRootV2Builder
         var safety = SliderRoot("MapSafetySlider", mapFrame.rectTransform, new Vector2(574f, -18f), new Vector2(164f, 24f));
 
         var zoneNames = new[] { "STATION", "LIBRARY", "OFFICE", "ENTERTAINMENT", "PARK", "HOTEL" };
-        var zonePositions = new[]
-        {
-            new Vector2(42f, -86f), new Vector2(272f, -72f), new Vector2(510f, -86f),
-            new Vector2(56f, -322f), new Vector2(326f, -286f), new Vector2(520f, -360f)
-        };
-        var zoneSizes = new[]
-        {
-            new Vector2(180f, 116f), new Vector2(176f, 108f), new Vector2(190f, 126f),
-            new Vector2(214f, 142f), new Vector2(170f, 116f), new Vector2(204f, 150f)
-        };
         var locationButtons = new Button[zoneNames.Length];
         var locationImages = new Image[zoneNames.Length];
+        var locationPolygons = new MapLocationPolygon[zoneNames.Length];
+        var zonePolygons = new[]
+        {
+            new[] { new Vector2(.08f,.72f), new Vector2(.23f,.86f), new Vector2(.39f,.80f), new Vector2(.43f,.62f), new Vector2(.30f,.51f), new Vector2(.12f,.57f) },
+            new[] { new Vector2(.46f,.78f), new Vector2(.60f,.89f), new Vector2(.72f,.78f), new Vector2(.68f,.60f), new Vector2(.52f,.58f), new Vector2(.43f,.67f) },
+            new[] { new Vector2(.75f,.81f), new Vector2(.91f,.86f), new Vector2(.98f,.69f), new Vector2(.89f,.55f), new Vector2(.73f,.61f), new Vector2(.69f,.73f) },
+            new[] { new Vector2(.06f,.46f), new Vector2(.22f,.52f), new Vector2(.39f,.41f), new Vector2(.35f,.22f), new Vector2(.16f,.16f), new Vector2(.05f,.29f) },
+            new[] { new Vector2(.43f,.49f), new Vector2(.60f,.56f), new Vector2(.70f,.42f), new Vector2(.62f,.25f), new Vector2(.47f,.22f), new Vector2(.38f,.34f) },
+            new[] { new Vector2(.76f,.46f), new Vector2(.94f,.50f), new Vector2(.99f,.34f), new Vector2(.90f,.14f), new Vector2(.74f,.20f), new Vector2(.69f,.34f) }
+        };
         for (var i = 0; i < zoneNames.Length; i++)
         {
-            var zone = Panel(mapFrame.rectTransform, "MapLocation" + i, zonePositions[i], zoneSizes[i], new Color(1f, 1f, 1f, i == 0 ? 0.34f : 0.08f));
+            var zoneGo = new GameObject("MapLocation" + i + "_" + zoneNames[i], typeof(RectTransform), typeof(CanvasRenderer), typeof(MapLocationPolygon));
+            zoneGo.transform.SetParent(mapContent, false);
+            var zone = zoneGo.GetComponent<MapLocationPolygon>();
+            Stretch(zone.rectTransform, Vector2.zero, Vector2.zero);
+            zone.Initialize(zonePolygons[i]);
             locationButtons[i] = EnsureButton(zone);
-            locationImages[i] = zone;
-            PixelBorder(zone.rectTransform, "LocationFrame", i == 0 ? Coral : new Color(1f, 1f, 1f, 0.28f), i == 0 ? 4f : 2f);
-            var label = PixelPanel(zone.rectTransform, "Label", new Vector2(10f, -zoneSizes[i].y + 38f), new Vector2(zoneSizes[i].x - 20f, 30f), new Color(0.98f, 0.96f, 0.88f, 0.96f));
-            Text(zoneNames[i], label.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+            locationPolygons[i] = zone;
         }
 
         var detail = PixelPanel(page, "MapLocationDetail", new Vector2(808f, -120f), new Vector2(290f, 568f), new Color(0.98f, 0.94f, 0.88f, 1f));
@@ -1256,6 +1272,7 @@ public static class MenuRootV2Builder
         ConfigureMapLocations(so);
         SetQuestObjectArray(so, "locationButtons", locationButtons);
         SetQuestObjectArray(so, "locationImages", locationImages);
+        SetQuestObjectArray(so, "locationPolygons", locationPolygons);
         SetQuestObjectArray(so, "goButtons", new Object[] { goButton });
         SetObject(so, "detailNameText", detailTitle);
         SetObject(so, "detailDescriptionText", descriptionText);
@@ -1267,6 +1284,11 @@ public static class MenuRootV2Builder
         SetObject(so, "dayNightLabelText", timeText);
         SetObject(so, "dayMapRoot", dayMap.gameObject);
         SetObject(so, "nightMapRoot", nightMap.gameObject);
+        var hoverAudio = page.gameObject.AddComponent<AudioSource>();
+        hoverAudio.playOnAwake = false;
+        hoverAudio.spatialBlend = 0f;
+        SetObject(so, "hoverAudioSource", hoverAudio);
+        SetObject(so, "hoverAudioClip", AssetDatabase.LoadAssetAtPath<AudioClip>(MapHoverAudioPath));
         SetQuestObjectArray(so, "relatedCharacterButtons", characterButtons);
         SetIntArray(so, "relatedCharacterLocationIndexes", new[] { 0, 0, 0 });
         SetIntArray(so, "goButtonLocationIndexes", new[] { 0 });
@@ -1450,7 +1472,7 @@ public static class MenuRootV2Builder
         SetRect(image.rectTransform, anchorMin, anchorMax, pivot, pos, size);
     }
 
-    private static Button EnsureButton(Image target)
+    private static Button EnsureButton(Graphic target)
     {
         var button = target.GetComponent<Button>();
         if (!button)
