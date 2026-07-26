@@ -1035,16 +1035,16 @@ public static class MenuRootV2Builder
         out TextMeshProUGUI titleText, out TextMeshProUGUI objectiveText, out TextMeshProUGUI progressText,
         out TextMeshProUGUI hintText, out TextMeshProUGUI rewardText)
     {
-        var cards = new Button[4];
+        var cards = new Button[1];
         cardImages = new Image[cards.Length];
         var list = PixelPanel(parent, "QuestInboxList", new Vector2(32f, -132f), new Vector2(294f, 554f), Cream);
         TextBox("ReRe INBOX", list.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(18f, -16f), new Vector2(258f, 34f));
         AddNotificationBadge(list.rectTransform, "!");
 
-        var names = new[] { "Lost Potion", "Library Book", "Stray Kitten", "Island Delivery" };
+        var names = new[] { "メインクエスト" };
         var marks = new[] { "!", "?", "♥", "→" };
-        var colors = new[] { Coral, Yellow, Lavender, Mint };
+        var colors = new[] { Coral };
         for (var i = 0; i < cards.Length; i++)
         {
             cards[i] = QuestInboxCard(list.rectTransform, i, names[i], marks[i], colors[i]);
@@ -1061,19 +1061,19 @@ public static class MenuRootV2Builder
         Circle(activeCard.rectTransform, "QuestIcon", new Vector2(18f, -26f), 74f, Coral);
         Text("!", activeCard.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white,
             new Vector2(18f, -26f), new Vector2(92f, 48f));
-        titleText = TextBox("Lost Potion", activeCard.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+        titleText = TextBox("メインクエストはありません", activeCard.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(112f, -22f), new Vector2(326f, 34f));
         TextBox("OBJECTIVE", activeCard.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.38f, 0.28f, 0.42f, 1f),
             new Vector2(112f, -60f), new Vector2(326f, 22f));
-        objectiveText = TextBox("Find the lost potion.", activeCard.rectTransform, 17f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+        objectiveText = TextBox("シナリオ中にクエストが設定されます", activeCard.rectTransform, 17f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
             new Vector2(112f, -86f), new Vector2(326f, 28f));
-        progressText = TextBox("0 / 1", activeCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Right, Coral,
+        progressText = TextBox("期限: --", activeCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Right, Coral,
             new Vector2(112f, -116f), new Vector2(326f, 24f));
 
         var hint = PixelPanel(detail.rectTransform, "QuestHintPanel", new Vector2(18f, -224f), new Vector2(456f, 74f), new Color(0.70f, 0.92f, 0.89f, 1f));
         TextBox("HINT", hint.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(16f, -14f), new Vector2(94f, 26f));
-        hintText = TextBox("ReRe knows a shortcut.", hint.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+        hintText = TextBox("現在のクエストを確認しよう", hint.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
             new Vector2(90f, -14f), new Vector2(348f, 26f));
         var questReRe = ImageRoot("QuestReReIdea", hint.rectTransform, Color.white);
         questReRe.sprite = LoadSprite(CommonUiCropFolder + "/rere_idea.png");

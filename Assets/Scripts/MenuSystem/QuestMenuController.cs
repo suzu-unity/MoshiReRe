@@ -25,13 +25,8 @@ public class QuestMenuController : MonoBehaviour
     [SerializeField] private TMP_Text activeQuestProgressText;
     [SerializeField] private TMP_Text activeQuestHintText;
     [SerializeField] private TMP_Text activeQuestRewardText;
-    [SerializeField] private QuestDraft[] quests =
-    {
-        new QuestDraft { title = "Lost Potion", objective = "Find the lost potion.", progress = "0 / 1", hint = "ReRe knows a shortcut.", reward = "★ 200" },
-        new QuestDraft { title = "Library Book", objective = "Return the library book.", progress = "1 / 3", hint = "Ask Yui about the reading room.", reward = "★ 150" },
-        new QuestDraft { title = "Stray Kitten", objective = "Find a safe home for the kitten.", progress = "0 / 2", hint = "The kitten likes quiet places.", reward = "★ 250" },
-        new QuestDraft { title = "Island Delivery", objective = "Deliver the package to the island.", progress = "2 / 6", hint = "Check the next ferry route.", reward = "★ 300" }
-    };
+    // 旧prefabとの互換性のためフィールドは残す。表示はMainQuestStateのみを使用する。
+    [SerializeField] private QuestDraft[] quests = new QuestDraft[0];
 
     private int selectedQuestIndex;
 
@@ -39,8 +34,20 @@ public class QuestMenuController : MonoBehaviour
     {
         BindButtons();
         BindQuestButtons();
-        SelectQuest(0);
+        Refresh(MainQuestState.Current);
         ShowInbox();
+    }
+
+    private void OnEnable()
+    {
+        MainQuestState.OnChanged += Refresh;
+        MainQuestState.SyncFromNaninovel();
+        Refresh(MainQuestState.Current);
+    }
+
+    private void OnDisable()
+    {
+        MainQuestState.OnChanged -= Refresh;
     }
 
     private void OnDestroy()
@@ -83,21 +90,24 @@ public class QuestMenuController : MonoBehaviour
 
     private void SelectQuest(int index)
     {
-        if (quests == null || quests.Length == 0) return;
-        selectedQuestIndex = Mathf.Clamp(index, 0, quests.Length - 1);
-        var quest = quests[selectedQuestIndex];
-
-        SetText(activeQuestTitleText, quest.title);
-        SetText(activeQuestObjectiveText, quest.objective);
-        SetText(activeQuestProgressText, quest.progress);
-        SetText(activeQuestHintText, quest.hint);
-        SetText(activeQuestRewardText, quest.reward);
+        selectedQuestIndex = Mathf.Max(0, index);
+        Refresh(MainQuestState.Current);
 
         if (inboxCardImages == null) return;
         for (var i = 0; i < inboxCardImages.Length; i++)
             if (inboxCardImages[i]) inboxCardImages[i].color = i == selectedQuestIndex
                 ? new Color(1f, 0.78f, 0.78f, 1f)
                 : new Color(1f, 0.96f, 0.84f, 1f);
+    }
+
+    private void Refresh(MainQuestState.Data quest)
+    {
+        var assigned = quest.IsAssigned;
+        SetText(activeQuestTitleText, assigned ? quest.Title : "メインクエストはありません");
+        SetText(activeQuestObjectiveText, assigned ? quest.Objective : "シナリオ中にクエストが設定されます");
+        SetText(activeQuestProgressText, assigned ? MainQuestState.FormatDeadline(quest.DeadlineDays) : "期限: --");
+        SetText(activeQuestHintText, assigned ? "期限までに進めよう" : "現在のクエストを確認しよう");
+        SetText(activeQuestRewardText, assigned ? "メインクエスト" : string.Empty);
     }
 
     private static void SetText(TMP_Text text, string value)
