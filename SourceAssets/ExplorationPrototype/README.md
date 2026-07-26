@@ -12,8 +12,12 @@
   This preserves the source alignment and prevents per-frame position jitter.
 - The derived frames are mirrored once so the unflipped SpriteRenderer faces screen-right,
   matching `ExplorationSpriteAnimator.SetFacingRight`.
-- Runtime playback is 12 frames per second; frame 3 is used while idle.
-- A separate `PlayerGroundShadow` sprite follows the player below the character layer.
+- Runtime playback is 12 frames per second; frames 3 and 9 are the two default-outfit
+  contact poses used when coming to rest.
+- On input release, playback advances to the nearer of the two contact poses before
+  entering a subtle procedural breathing motion. This avoids snapping directly from
+  an arbitrary stride frame to a fixed idle sprite.
+- A separate, high-contrast `PlayerGroundShadow` sprite follows the player below the character layer.
   It is shared by both outfits and is not baked into the walk frames.
 
 The wardrobe suit currently continues to use its existing eight-frame sprite sequence.

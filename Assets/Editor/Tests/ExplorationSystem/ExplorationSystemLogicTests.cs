@@ -18,6 +18,27 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             Assert.That(ExplorationSpriteAnimator.CalculateFrameIndex(frameCount, elapsed, framesPerSecond), Is.EqualTo(expected));
         }
 
+        [TestCase(12, 2, 2, 2)]
+        [TestCase(12, 3, 2, 8)]
+        [TestCase(12, 7, 2, 8)]
+        [TestCase(12, 9, 2, 2)]
+        [TestCase(12, 11, 2, 2)]
+        [TestCase(8, 1, 0, 4)]
+        [TestCase(8, 5, 0, 0)]
+        public void CalculateStopFrameIndex_SelectsTheNextNearbyContactPose(
+            int frameCount,
+            int currentFrame,
+            int primaryIdleFrame,
+            int expected)
+        {
+            Assert.That(
+                ExplorationSpriteAnimator.CalculateStopFrameIndex(
+                    frameCount,
+                    currentFrame,
+                    primaryIdleFrame),
+                Is.EqualTo(expected));
+        }
+
         [Test]
         public void FindNearestIndex_ChoosesClosestCandidateWithinRadius()
         {

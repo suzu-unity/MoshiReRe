@@ -57,15 +57,6 @@ public static class ExplorationPrototypeBuilder
         new("PlayerSuitWalk_08", 1552, 0, 222, 887, 0.5f, 0.206f)
     };
 
-    private static readonly Slice[] NpcSlices =
-    {
-        new("Npc_01", 77, 159, 185, 694),
-        new("Npc_02", 392, 150, 235, 692),
-        new("Npc_03", 684, 139, 271, 697),
-        new("Npc_04", 1019, 142, 242, 691),
-        new("Npc_05", 1341, 137, 276, 687)
-    };
-
     [MenuItem("Tools/MoshiReRe/Build Exploration Prototype")]
     public static void Build()
     {
@@ -75,15 +66,13 @@ public static class ExplorationPrototypeBuilder
         var casualPath = FrameAnimationRoot + "/player_casual_walk_video_12.png";
         var groundShadow = ConfigureSingleSprite(FrameAnimationRoot + "/player_ground_shadow.png", 100f);
         var suitPath = ArtRoot + "/player_suit_walk_v2.png";
-        var npcPath = GenerateTransparentCopy(
-            ArtRoot + "/npc_strip.png", GeneratedRoot + "/npc_transparent.png");
+        var npc = ConfigureSingleSprite(
+            ArtRoot + "/npc_idle_source.png", 235f, new Vector2(0.5f, 0f));
         var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 150f, 8192);
         var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
-        var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
 
-        if (background == null || groundShadow == null ||
-            casualFrames.Length != 12 || suitFrames.Length != 8 ||
-            npcFrames.Length != 5)
+        if (background == null || groundShadow == null || npc == null ||
+            casualFrames.Length != 12 || suitFrames.Length != 8)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -92,7 +81,7 @@ public static class ExplorationPrototypeBuilder
         CreateBackground(background);
         var player = CreatePlayer(casualFrames, suitFrames, groundShadow);
         var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
-        CreateNpc(npcFrames[0], dialogueOverlay);
+        CreateNpc(npc, dialogueOverlay);
         CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
         CreateCamera(player.transform);
         CreateLight();
@@ -160,14 +149,16 @@ public static class ExplorationPrototypeBuilder
         var player = new GameObject("Player");
         player.transform.position = new Vector3(-5.7f, -2.82f, 0f);
 
-        var renderer = player.AddComponent<SpriteRenderer>();
+        var visual = new GameObject("PlayerVisual");
+        visual.transform.SetParent(player.transform, false);
+        var renderer = visual.AddComponent<SpriteRenderer>();
         renderer.sprite = casualFrames[2];
         renderer.sortingOrder = 10;
 
         var shadowObject = new GameObject("PlayerGroundShadow");
         shadowObject.transform.SetParent(player.transform, false);
-        shadowObject.transform.localPosition = new Vector3(0f, 0.04f, 0f);
-        shadowObject.transform.localScale = new Vector3(1.15f, 0.65f, 1f);
+        shadowObject.transform.localPosition = new Vector3(0f, 0.07f, 0f);
+        shadowObject.transform.localScale = new Vector3(1f, 0.36f, 1f);
         var shadowRenderer = shadowObject.AddComponent<SpriteRenderer>();
         shadowRenderer.sprite = groundShadow;
         shadowRenderer.sortingOrder = 8;
@@ -363,7 +354,7 @@ public static class ExplorationPrototypeBuilder
 
         var renderer = npc.AddComponent<SpriteRenderer>();
         renderer.sprite = idleSprite;
-        renderer.flipX = true;
+        renderer.flipX = false;
         renderer.sortingOrder = 9;
 
         var collider = npc.AddComponent<CapsuleCollider2D>();
@@ -535,16 +526,27 @@ public static class ExplorationPrototypeBuilder
         return text;
     }
 
-    private static Sprite ConfigureSingleSprite(string path, float pixelsPerUnit)
+    private static Sprite ConfigureSingleSprite(
+        string path,
+        float pixelsPerUnit,
+        Vector2? customPivot = null)
     {
         var importer = GetTextureImporter(path);
         importer.textureType = TextureImporterType.Sprite;
         importer.spriteImportMode = SpriteImportMode.Single;
         importer.spritePixelsPerUnit = pixelsPerUnit;
+        importer.alphaIsTransparency = true;
         importer.mipmapEnabled = false;
         importer.filterMode = FilterMode.Bilinear;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.maxTextureSize = 2048;
+        var settings = new TextureImporterSettings();
+        importer.ReadTextureSettings(settings);
+        settings.spriteAlignment = customPivot.HasValue
+            ? (int)SpriteAlignment.Custom
+            : (int)SpriteAlignment.Center;
+        settings.spritePivot = customPivot ?? new Vector2(0.5f, 0.5f);
+        importer.SetTextureSettings(settings);
         importer.SaveAndReimport();
         return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }

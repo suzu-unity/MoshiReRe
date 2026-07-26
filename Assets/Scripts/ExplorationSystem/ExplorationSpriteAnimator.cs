@@ -20,12 +20,26 @@ namespace MoshiReRe.Exploration
         private Sprite[] wardrobeWalkFrames;
         [SerializeField] private Sprite defaultIdleSprite;
         [SerializeField] private Sprite wardrobeIdleSprite;
+        [SerializeField, Tooltip("Primary contact-pose frame used when the default outfit comes to rest.")]
+        private int defaultIdleFrameIndex = 2;
+        [SerializeField, Tooltip("Primary contact-pose frame used when the wardrobe outfit comes to rest.")]
+        private int wardrobeIdleFrameIndex;
+        [SerializeField, Range(0f, 0.03f)] private float idleBreathScale = 0.006f;
+        [SerializeField, Min(0.01f)] private float idleBreathCyclesPerSecond = 0.22f;
         [SerializeField, Tooltip("Optional cutout rig. When assigned, it replaces frame sprites while preserving this component's public API.")]
         private ExplorationCutoutRigController cutoutRig;
 
         private ExplorationOutfit outfit;
         private bool walking;
         private float walkElapsed;
+        private bool settling;
+        private int settleStartFrame;
+        private int settleTargetFrame;
+        private int settleFrameCount;
+        private float settleElapsed;
+        private float idleElapsed;
+        private Sprite activeIdleSprite;
+        private Vector3 visualBaseScale = Vector3.one;
 
         public ExplorationOutfit Outfit => outfit;
 
@@ -39,6 +53,9 @@ namespace MoshiReRe.Exploration
             if (spriteRenderer == null)
                 spriteRenderer = GetComponent<SpriteRenderer>();
 
+            if (spriteRenderer != null)
+                visualBaseScale = spriteRenderer.transform.localScale;
+
             if (cutoutRig != null)
             {
                 if (spriteRenderer != null)
@@ -46,16 +63,31 @@ namespace MoshiReRe.Exploration
                 cutoutRig.SetOutfit(outfit);
             }
 
+            walkElapsed = GetPrimaryIdleFrameIndex() / framesPerSecond;
             RefreshSprite();
         }
 
         private void Update()
         {
-            if (!walking || cutoutRig != null)
+            if (cutoutRig != null)
                 return;
 
-            walkElapsed += Time.deltaTime;
-            RefreshSprite();
+            if (walking)
+            {
+                walkElapsed += Time.deltaTime;
+                RestoreVisualScale();
+                RefreshSprite();
+                return;
+            }
+
+            if (settling)
+            {
+                UpdateSettling(Time.deltaTime);
+                return;
+            }
+
+            idleElapsed += Time.deltaTime;
+            ApplyIdleBreath();
         }
 
         public void SetWalking(bool value)
@@ -65,7 +97,18 @@ namespace MoshiReRe.Exploration
                 return;
 
             walking = value;
-            walkElapsed = 0f;
+            idleElapsed = 0f;
+            RestoreVisualScale();
+
+            if (walking)
+            {
+                settling = false;
+                activeIdleSprite = null;
+                RefreshSprite();
+                return;
+            }
+
+            BeginSettling();
             RefreshSprite();
         }
 
@@ -83,7 +126,11 @@ namespace MoshiReRe.Exploration
                 return;
 
             outfit = value;
-            walkElapsed = 0f;
+            settling = false;
+            activeIdleSprite = null;
+            idleElapsed = 0f;
+            walkElapsed = GetPrimaryIdleFrameIndex() / framesPerSecond;
+            RestoreVisualScale();
             RefreshSprite();
         }
 
@@ -96,6 +143,107 @@ namespace MoshiReRe.Exploration
             return frame % frameCount;
         }
 
+        public static int CalculateStopFrameIndex(int frameCount, int currentFrameIndex, int primaryIdleFrameIndex)
+        {
+            if (frameCount <= 0)
+                return 0;
+
+            var current = PositiveModulo(currentFrameIndex, frameCount);
+            var primary = PositiveModulo(primaryIdleFrameIndex, frameCount);
+            var opposite = PositiveModulo(primary + frameCount / 2, frameCount);
+            var primaryDistance = PositiveModulo(primary - current, frameCount);
+            var oppositeDistance = PositiveModulo(opposite - current, frameCount);
+            return oppositeDistance < primaryDistance ? opposite : primary;
+        }
+
+        private void BeginSettling()
+        {
+            var frames = GetCurrentWalkFrames();
+            if (frames == null || frames.Length == 0)
+            {
+                settling = false;
+                return;
+            }
+
+            settleStartFrame = CalculateFrameIndex(frames.Length, walkElapsed, framesPerSecond);
+            settleTargetFrame = CalculateStopFrameIndex(
+                frames.Length,
+                settleStartFrame,
+                GetPrimaryIdleFrameIndex());
+            settleFrameCount = PositiveModulo(settleTargetFrame - settleStartFrame, frames.Length);
+            settleElapsed = 0f;
+
+            if (settleFrameCount == 0)
+            {
+                CompleteSettling(frames);
+                return;
+            }
+
+            settling = true;
+            spriteRenderer.sprite = frames[settleStartFrame];
+        }
+
+        private void UpdateSettling(float deltaTime)
+        {
+            var frames = GetCurrentWalkFrames();
+            if (frames == null || frames.Length == 0)
+            {
+                settling = false;
+                return;
+            }
+
+            settleElapsed += Mathf.Max(0f, deltaTime);
+            var advancedFrames = Mathf.Min(
+                settleFrameCount,
+                Mathf.FloorToInt(settleElapsed * framesPerSecond));
+            var frameIndex = (settleStartFrame + advancedFrames) % frames.Length;
+            walkElapsed = frameIndex / framesPerSecond;
+            spriteRenderer.sprite = frames[frameIndex];
+
+            if (advancedFrames >= settleFrameCount)
+                CompleteSettling(frames);
+        }
+
+        private void CompleteSettling(Sprite[] frames)
+        {
+            settling = false;
+            activeIdleSprite = frames[settleTargetFrame];
+            walkElapsed = settleTargetFrame / framesPerSecond;
+            idleElapsed = 0f;
+            spriteRenderer.sprite = activeIdleSprite;
+        }
+
+        private void ApplyIdleBreath()
+        {
+            if (spriteRenderer == null)
+                return;
+
+            var phase = idleElapsed * idleBreathCyclesPerSecond * Mathf.PI * 2f;
+            var breath = (0.5f - 0.5f * Mathf.Cos(phase)) * idleBreathScale;
+            spriteRenderer.transform.localScale = new Vector3(
+                visualBaseScale.x * (1f - breath * 0.25f),
+                visualBaseScale.y * (1f + breath),
+                visualBaseScale.z);
+        }
+
+        private void RestoreVisualScale()
+        {
+            if (spriteRenderer != null)
+                spriteRenderer.transform.localScale = visualBaseScale;
+        }
+
+        private Sprite[] GetCurrentWalkFrames() =>
+            outfit == ExplorationOutfit.Wardrobe ? wardrobeWalkFrames : defaultWalkFrames;
+
+        private int GetPrimaryIdleFrameIndex() =>
+            outfit == ExplorationOutfit.Wardrobe ? wardrobeIdleFrameIndex : defaultIdleFrameIndex;
+
+        private static int PositiveModulo(int value, int modulus)
+        {
+            var result = value % modulus;
+            return result < 0 ? result + modulus : result;
+        }
+
         private void RefreshSprite()
         {
             if (cutoutRig != null)
@@ -104,10 +252,19 @@ namespace MoshiReRe.Exploration
             if (spriteRenderer == null)
                 return;
 
-            var frames = outfit == ExplorationOutfit.Wardrobe ? wardrobeWalkFrames : defaultWalkFrames;
+            var frames = GetCurrentWalkFrames();
             if (walking && frames != null && frames.Length > 0)
             {
                 spriteRenderer.sprite = frames[CalculateFrameIndex(frames.Length, walkElapsed, framesPerSecond)];
+                return;
+            }
+
+            if (settling)
+                return;
+
+            if (activeIdleSprite != null)
+            {
+                spriteRenderer.sprite = activeIdleSprite;
                 return;
             }
 
