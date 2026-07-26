@@ -27,9 +27,13 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
 
                 Assert.That(renderer.enabled, Is.True);
                 Assert.That(defaultFrames.arraySize, Is.EqualTo(12));
-                Assert.That(serializedAnimator.FindProperty("framesPerSecond").floatValue, Is.EqualTo(10f));
+                Assert.That(serializedAnimator.FindProperty("framesPerSecond").floatValue, Is.EqualTo(12f));
                 Assert.That(serializedAnimator.FindProperty("cutoutRig").objectReferenceValue, Is.Null);
                 Assert.That(player.GetComponentsInChildren<SpriteSkin>(true), Is.Empty);
+
+                var shadow = player.transform.Find("PlayerGroundShadow");
+                Assert.That(shadow, Is.Not.Null);
+                Assert.That(shadow.GetComponent<SpriteRenderer>().sortingOrder, Is.EqualTo(8));
 
                 for (var index = 0; index < defaultFrames.arraySize; index++)
                 {

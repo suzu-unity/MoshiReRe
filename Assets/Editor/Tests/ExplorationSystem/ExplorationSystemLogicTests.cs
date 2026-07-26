@@ -11,8 +11,8 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         [TestCase(5, 0.13f, 8f, 1)]
         [TestCase(5, 0.75f, 8f, 1)]
         [TestCase(5, 1.25f, 8f, 0)]
-        [TestCase(12, 1.19f, 10f, 11)]
-        [TestCase(12, 1.2f, 10f, 0)]
+        [TestCase(12, 0.99f, 12f, 11)]
+        [TestCase(12, 1f, 12f, 0)]
         public void CalculateFrameIndex_CyclesAcrossWalkFrames(int frameCount, float elapsed, float framesPerSecond, int expected)
         {
             Assert.That(ExplorationSpriteAnimator.CalculateFrameIndex(frameCount, elapsed, framesPerSecond), Is.EqualTo(expected));

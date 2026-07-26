@@ -73,6 +73,7 @@ public static class ExplorationPrototypeBuilder
 
         var background = ConfigureSingleSprite(ArtRoot + "/exploration_room_background.png", 100f);
         var casualPath = FrameAnimationRoot + "/player_casual_walk_video_12.png";
+        var groundShadow = ConfigureSingleSprite(FrameAnimationRoot + "/player_ground_shadow.png", 100f);
         var suitPath = ArtRoot + "/player_suit_walk_v2.png";
         var npcPath = GenerateTransparentCopy(
             ArtRoot + "/npc_strip.png", GeneratedRoot + "/npc_transparent.png");
@@ -80,7 +81,8 @@ public static class ExplorationPrototypeBuilder
         var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
         var npcFrames = ConfigureSpriteStrip(npcPath, NpcSlices, 150f);
 
-        if (background == null || casualFrames.Length != 12 || suitFrames.Length != 8 ||
+        if (background == null || groundShadow == null ||
+            casualFrames.Length != 12 || suitFrames.Length != 8 ||
             npcFrames.Length != 5)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
 
@@ -88,7 +90,7 @@ public static class ExplorationPrototypeBuilder
         scene.name = "ExplorationPrototype";
 
         CreateBackground(background);
-        var player = CreatePlayer(casualFrames, suitFrames);
+        var player = CreatePlayer(casualFrames, suitFrames, groundShadow);
         var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
         CreateNpc(npcFrames[0], dialogueOverlay);
         CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
@@ -152,7 +154,8 @@ public static class ExplorationPrototypeBuilder
 
     private static GameObject CreatePlayer(
         Sprite[] casualFrames,
-        Sprite[] suitFrames)
+        Sprite[] suitFrames,
+        Sprite groundShadow)
     {
         var player = new GameObject("Player");
         player.transform.position = new Vector3(-5.7f, -2.82f, 0f);
@@ -161,9 +164,17 @@ public static class ExplorationPrototypeBuilder
         renderer.sprite = casualFrames[2];
         renderer.sortingOrder = 10;
 
+        var shadowObject = new GameObject("PlayerGroundShadow");
+        shadowObject.transform.SetParent(player.transform, false);
+        shadowObject.transform.localPosition = new Vector3(0f, 0.04f, 0f);
+        shadowObject.transform.localScale = new Vector3(1.15f, 0.65f, 1f);
+        var shadowRenderer = shadowObject.AddComponent<SpriteRenderer>();
+        shadowRenderer.sprite = groundShadow;
+        shadowRenderer.sortingOrder = 8;
+
         var animator = player.AddComponent<ExplorationSpriteAnimator>();
         SetObject(animator, "spriteRenderer", renderer);
-        SetFloat(animator, "framesPerSecond", 10f);
+        SetFloat(animator, "framesPerSecond", 12f);
         SetObjectArray(animator, "defaultWalkFrames", casualFrames);
         SetObjectArray(animator, "wardrobeWalkFrames", suitFrames);
         SetObject(animator, "defaultIdleSprite", casualFrames[2]);
