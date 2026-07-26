@@ -798,6 +798,7 @@ public static class MenuRootV2Builder
 
         var controller = page.gameObject.AddComponent<ItemMenuController>();
         var so = new SerializedObject(controller);
+        SetObject(so, "inventoryDatabase", FindFirstAssetOfType<InventoryDatabase>());
         SetObject(so, "bagDropArea", bagPanel.rectTransform);
         SetObject(so, "addToBagButton", addButton);
         SetObject(so, "confirmBagButton", confirmButton);

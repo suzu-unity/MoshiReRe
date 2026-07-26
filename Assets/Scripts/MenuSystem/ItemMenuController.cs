@@ -13,6 +13,9 @@ public class ItemMenuController : MonoBehaviour
         public string id;
         public string displayName;
         [TextArea] public string description;
+        [TextArea] public string summary;
+        public Sprite icon;
+        public Sprite detailImage;
         public Color color;
     }
 
@@ -51,6 +54,7 @@ public class ItemMenuController : MonoBehaviour
     [SerializeField] private Vector2 zipperPathCenter = new Vector2(-10f, 24f);
     [SerializeField] private Vector2 zipperPathHalfSize = new Vector2(232f, 160f);
     [SerializeField] private int maxCarryItems = 4;
+    [SerializeField] private InventoryDatabase inventoryDatabase;
     [SerializeField] private ItemDraft[] items;
 
     private readonly int[] carryIndexes = new int[8];
@@ -65,6 +69,7 @@ public class ItemMenuController : MonoBehaviour
     private void Awake()
     {
         AutoWire();
+        LoadInventoryDatabase();
         EnsureDefaultItems();
         BindButtons();
         ConfigureDragSources();
@@ -190,9 +195,52 @@ public class ItemMenuController : MonoBehaviour
         };
     }
 
+    private void LoadInventoryDatabase()
+    {
+        if (!inventoryDatabase || inventoryDatabase.GetAll() == null || inventoryDatabase.GetAll().Count == 0)
+            return;
+
+        var databaseItems = inventoryDatabase.GetAll();
+        var loadedItems = new System.Collections.Generic.List<ItemDraft>(databaseItems.Count);
+        for (var i = 0; i < databaseItems.Count; i++)
+        {
+            var item = databaseItems[i];
+            if (!item)
+                continue;
+
+            var displayName = string.IsNullOrWhiteSpace(item.name) ? item.id : item.name;
+            var id = string.IsNullOrWhiteSpace(item.id) ? item.name : item.id;
+            loadedItems.Add(new ItemDraft
+            {
+                id = id,
+                displayName = displayName,
+                summary = item.summary,
+                description = item.description,
+                icon = item.icon,
+                detailImage = item.detailImage,
+                color = DefaultItemColor(loadedItems.Count)
+            });
+        }
+
+        if (loadedItems.Count > 0)
+            items = loadedItems.ToArray();
+    }
+
     private static ItemDraft Draft(string id, string name, string description, Color color)
     {
         return new ItemDraft { id = id, displayName = name, description = description, color = color };
+    }
+
+    private static Color DefaultItemColor(int index)
+    {
+        var colors = new[]
+        {
+            new Color(0.96f, 0.45f, 0.49f, 1f), new Color(0.98f, 0.81f, 0.31f, 1f),
+            new Color(0.43f, 0.86f, 0.74f, 1f), new Color(0.67f, 0.58f, 0.91f, 1f),
+            new Color(0.45f, 0.78f, 0.92f, 1f), new Color(0.98f, 0.68f, 0.52f, 1f),
+            new Color(0.72f, 0.68f, 0.88f, 1f), new Color(1f, 0.72f, 0.82f, 1f)
+        };
+        return colors[index % colors.Length];
     }
 
     private void BindButtons()
@@ -291,7 +339,7 @@ public class ItemMenuController : MonoBehaviour
                 continue;
 
             if (itemIconImages != null && i < itemIconImages.Length && itemIconImages[i])
-                itemIconImages[i].color = items[i].color;
+                ApplyItemImage(itemIconImages[i], items[i].icon ? items[i].icon : items[i].detailImage, items[i].color);
 
             if (itemNameTexts != null && i < itemNameTexts.Length && itemNameTexts[i])
                 itemNameTexts[i].text = items[i].displayName;
@@ -305,11 +353,14 @@ public class ItemMenuController : MonoBehaviour
     {
         var item = items[selectedIndex];
 
-        if (detailIconImage) detailIconImage.color = item.color;
+        if (detailIconImage) ApplyItemImage(detailIconImage, item.detailImage ? item.detailImage : item.icon, item.color);
         if (detailTitleText) detailTitleText.text = item.displayName;
-        if (detailDescriptionText) detailDescriptionText.text = item.description;
+        if (detailDescriptionText)
+            detailDescriptionText.text = string.IsNullOrWhiteSpace(item.description) ? item.summary : item.description;
         if (rereCommentText)
-            rereCommentText.text = "Drag this item into the bag if you want to carry it.";
+            rereCommentText.text = string.IsNullOrWhiteSpace(item.summary)
+                ? "Drag this item into the bag if you want to carry it."
+                : item.summary;
     }
 
     private void AddSelectedToBag()
@@ -328,7 +379,7 @@ public class ItemMenuController : MonoBehaviour
         if (!dragGhostImage)
             return;
 
-        dragGhostImage.color = items[index].color;
+        ApplyItemImage(dragGhostImage, items[index].icon ? items[index].icon : items[index].detailImage, items[index].color);
         dragGhostImage.gameObject.SetActive(true);
         MoveDragGhost(eventData);
     }
@@ -363,7 +414,7 @@ public class ItemMenuController : MonoBehaviour
         if (!dragGhostImage)
             return;
 
-        dragGhostImage.color = items[itemIndex].color;
+        ApplyItemImage(dragGhostImage, items[itemIndex].icon ? items[itemIndex].icon : items[itemIndex].detailImage, items[itemIndex].color);
         dragGhostImage.gameObject.SetActive(true);
         MoveDragGhost(eventData);
     }
@@ -550,7 +601,10 @@ public class ItemMenuController : MonoBehaviour
             var filled = visible && i < carryCount && carryIndexes[i] >= 0 && carryIndexes[i] < items.Length;
             packedOverlayItemImages[i].gameObject.SetActive(filled);
             if (filled)
-                packedOverlayItemImages[i].color = items[carryIndexes[i]].color;
+            {
+                var item = items[carryIndexes[i]];
+                ApplyItemImage(packedOverlayItemImages[i], item.icon ? item.icon : item.detailImage, item.color);
+            }
         }
     }
 
@@ -693,7 +747,17 @@ public class ItemMenuController : MonoBehaviour
         {
             var filled = i < carryCount && carryIndexes[i] >= 0 && carryIndexes[i] < items.Length;
             if (bagSlotImages[i])
-                bagSlotImages[i].color = filled ? items[carryIndexes[i]].color : new Color(1f, 1f, 1f, 0.18f);
+            {
+                if (filled)
+                {
+                    var item = items[carryIndexes[i]];
+                    ApplyItemImage(bagSlotImages[i], item.icon ? item.icon : item.detailImage, item.color);
+                }
+                else
+                {
+                    bagSlotImages[i].color = new Color(1f, 1f, 1f, 0.18f);
+                }
+            }
 
             if (bagSlotTexts != null && i < bagSlotTexts.Length && bagSlotTexts[i])
                 bagSlotTexts[i].text = filled ? items[carryIndexes[i]].displayName : "EMPTY";
@@ -701,6 +765,23 @@ public class ItemMenuController : MonoBehaviour
 
         if (bagStatusText)
             bagStatusText.text = carryCount + "/" + maxCarryItems + " packed";
+    }
+
+    private static void ApplyItemImage(Image image, Sprite sprite, Color placeholderColor)
+    {
+        if (!image)
+            return;
+
+        if (sprite)
+        {
+            image.sprite = sprite;
+            image.color = Color.white;
+            image.preserveAspect = true;
+            return;
+        }
+
+        image.color = placeholderColor;
+        image.preserveAspect = false;
     }
 
     private T FindByName<T>(string childName) where T : Component
