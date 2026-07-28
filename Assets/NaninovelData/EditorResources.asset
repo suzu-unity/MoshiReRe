@@ -245,6 +245,9 @@ MonoBehaviour:
     - name: scene01/1-1
       pathPrefix: Backgrounds/scene01
       guid: 963084b248efeb54783f144470dfd838
+    - name: scene01/1-1-1
+      pathPrefix: Backgrounds/scene01
+      guid: efc03e732e06553459e27ba54ede7755
     - name: scene01/1-2
       pathPrefix: Backgrounds/scene01
       guid: e88c2b86113d36a4d9b83e6c9b025efa
@@ -269,6 +272,15 @@ MonoBehaviour:
     - name: scene01/1-9
       pathPrefix: Backgrounds/scene01
       guid: 4f48ba8c02bf07a45a1575cd64f731c3
+    - name: scene01/1-10
+      pathPrefix: Backgrounds/scene01
+      guid: 0e3301534da38a74581a8b7f0f6f6c6d
+    - name: scene01/1-11
+      pathPrefix: Backgrounds/scene01
+      guid: 47af20d9e26fcb64892a08e7a445d59a
+    - name: scene01/1-12
+      pathPrefix: Backgrounds/scene01
+      guid: 0095a4e7a4fea8c42b7a6f7a3df1ab79
     - name: scene01/sushi
       pathPrefix: Backgrounds/scene01
       guid: c674398f5425ead409026a31f530c877
