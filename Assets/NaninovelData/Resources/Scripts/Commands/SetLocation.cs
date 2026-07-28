@@ -10,21 +10,9 @@ public class SetLocation : Command
 
     public override Naninovel.UniTask Execute(AsyncToken token = default)
     {
-#if UNITY_2023_1_OR_NEWER
-        var hud = Object.FindFirstObjectByType<LocationHUD>();
-#else
-        var hud = Object.FindObjectOfType<LocationHUD>();
-#endif
-
-        if (hud != null)
-        {
-            hud.SetText(Text);
-            Debug.Log($"[SetLocation] LocationHUD found. Text set to: {Text}");
-        }
-        else
-        {
-            Debug.LogWarning("[SetLocation] LocationHUD not found in scene.");
-        }
+        var location = Assigned(Text) ? Text.Value : string.Empty;
+        LocationHUDState.SetCurrent(location);
+        Debug.Log($"[SetLocation] Location set to: {location}");
 
         return Naninovel.UniTask.CompletedTask;
     }

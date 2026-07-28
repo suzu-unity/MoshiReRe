@@ -8,9 +8,9 @@ public static class MainQuestPopupBuilder
 {
     private const string PrefabPath = "Assets/NaninovelData/Resources/UI/MainQuestPopup.prefab";
     private const string FontPath = "Assets/Font/PixelMplus12-Regular SDF.asset";
-    private static readonly Color Ink = new Color(0.14f, 0.09f, 0.20f, 1f);
-    private static readonly Color Lavender = new Color(0.45f, 0.32f, 0.65f, 1f);
-    private static readonly Color Cream = new Color(1f, 0.96f, 0.82f, 1f);
+    private static readonly Color Ink = new Color(0.14f, 0.09f, 0.20f, 0.94f);
+    private static readonly Color Lavender = new Color(0.45f, 0.32f, 0.65f, 0.92f);
+    private static readonly Color Window = new Color(0.08f, 0.06f, 0.14f, 0.84f);
 
     [MenuItem("Tools/MoshiReRe/Build Main Quest Popup Prefab")]
     public static void BuildPrefab()
@@ -32,19 +32,19 @@ public static class MainQuestPopupBuilder
         scaler.referenceResolution = new Vector2(1920f, 1080f);
 
         var frame = Image("PixelFrame", root.transform, Ink);
-        SetTopLeft(frame.rectTransform, new Vector2(-650f, -30f), new Vector2(590f, 230f));
-        var panel = Image("Panel", frame.transform, Cream);
-        Stretch(panel.rectTransform, new Vector2(6f, 6f), new Vector2(-6f, -6f));
+        SetTopLeft(frame.rectTransform, new Vector2(-650f, -120f), new Vector2(590f, 210f));
+        var panel = Image("Panel", frame.transform, Window);
+        Stretch(panel.rectTransform, new Vector2(5f, 5f), new Vector2(-5f, -5f));
         var accent = Image("Accent", panel.transform, Lavender);
-        SetTopLeft(accent.rectTransform, new Vector2(14f, -14f), new Vector2(10f, 188f));
-        var label = Text("NEW MAIN QUEST", panel.transform, font, 16f, FontStyles.Bold, Lavender, TextAlignmentOptions.Left);
+        SetTopLeft(accent.rectTransform, new Vector2(14f, -14f), new Vector2(8f, 168f));
+        var label = Text("NEW MAIN QUEST", panel.transform, font, 14f, FontStyles.Bold, Lavender, TextAlignmentOptions.Left);
         SetTopLeft(label.rectTransform, new Vector2(42f, -14f), new Vector2(510f, 24f));
-        var title = Text("", panel.transform, font, 36f, FontStyles.Bold, Ink, TextAlignmentOptions.Left);
-        SetTopLeft(title.rectTransform, new Vector2(42f, -42f), new Vector2(510f, 52f));
-        var objective = Text("", panel.transform, font, 24f, FontStyles.Normal, Ink, TextAlignmentOptions.Left);
-        SetTopLeft(objective.rectTransform, new Vector2(42f, -98f), new Vector2(510f, 40f));
-        var deadline = Text("", panel.transform, font, 28f, FontStyles.Bold, Ink, TextAlignmentOptions.Left);
-        SetTopLeft(deadline.rectTransform, new Vector2(42f, -146f), new Vector2(510f, 38f));
+        var title = Text("", panel.transform, font, 30f, FontStyles.Bold, Color.white, TextAlignmentOptions.Left);
+        SetTopLeft(title.rectTransform, new Vector2(42f, -46f), new Vector2(510f, 44f));
+        var objective = Text("", panel.transform, font, 20f, FontStyles.Normal, new Color(0.9f, 0.86f, 0.98f, 1f), TextAlignmentOptions.Left);
+        SetTopLeft(objective.rectTransform, new Vector2(42f, -94f), new Vector2(510f, 34f));
+        var deadline = Text("", panel.transform, font, 24f, FontStyles.Bold, Color.white, TextAlignmentOptions.Left);
+        SetTopLeft(deadline.rectTransform, new Vector2(42f, -136f), new Vector2(510f, 32f));
 
         var serialized = new SerializedObject(root.GetComponent<MainQuestPopup>());
         SetObject(serialized, "canvasGroup", root.GetComponent<CanvasGroup>());

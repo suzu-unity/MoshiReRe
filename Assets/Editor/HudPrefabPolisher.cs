@@ -24,12 +24,28 @@ public static class HudPrefabPolisher
         Debug.Log("[HudPrefabPolisher] HUD prefabs rebuilt.");
     }
 
+    [MenuItem("Tools/MoshiReRe/Build Location HUD Prefab")]
+    public static void RebuildLocationPrefab()
+    {
+        RebuildLocation();
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("[HudPrefabPolisher] Location HUD prefab rebuilt.");
+    }
+
     private static void RebuildLocation()
     {
         var root = PrefabUtility.LoadPrefabContents(LocationPath);
         try
         {
-            var label = root.GetComponentInChildren<TextMeshProUGUI>(true);
+            var hud = root.GetComponent<LocationHUD>();
+            var serialized = new SerializedObject(hud);
+            var label = serialized.FindProperty("label").objectReferenceValue as TextMeshProUGUI;
+            if (!label)
+            {
+                var existing = FindDeep(root.transform, "LocationText");
+                label = existing ? existing.GetComponent<TextMeshProUGUI>() : null;
+            }
             if (label) label.transform.SetParent(root.transform, false);
             Clear(root.transform, "HudDecor");
             var panel = Panel(root.transform, "HudDecor", new Vector2(24, -24), new Vector2(376, 78), TextAnchor.UpperLeft, Navy);
@@ -37,6 +53,11 @@ public static class HudPrefabPolisher
             Text(tab.transform, "LOC", 14, new Color32(8, 20, 44, 255), TextAlignmentOptions.Center);
             var icon = Text(panel.transform, "\u25A6", 28, Cyan, TextAlignmentOptions.Center);
             Place(icon.rectTransform, new Vector2(86, -13), new Vector2(28, 34), TextAnchor.UpperLeft);
+            if (!label)
+            {
+                label = Text(root.transform, string.Empty, 28, Color.white, TextAlignmentOptions.Left);
+                label.name = "LocationText";
+            }
             if (label)
             {
                 label.transform.SetParent(panel.transform, false);
@@ -45,6 +66,8 @@ public static class HudPrefabPolisher
                 label.alignment = TextAlignmentOptions.Left;
                 Place(label.rectTransform, new Vector2(122, -17), new Vector2(240, 44), TextAnchor.UpperLeft);
             }
+            serialized.FindProperty("label").objectReferenceValue = label;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
             Save(root, LocationPath);
         }
         finally { PrefabUtility.UnloadPrefabContents(root); }

@@ -12,8 +12,8 @@ public class MainQuestPopup : MonoBehaviour
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text objectiveText;
     [SerializeField] private TMP_Text deadlineText;
-    [SerializeField] private Vector2 shownPosition = new Vector2(30f, -30f);
-    [SerializeField] private Vector2 hiddenPosition = new Vector2(-650f, -30f);
+    [SerializeField] private Vector2 shownPosition = new Vector2(30f, -120f);
+    [SerializeField] private Vector2 hiddenPosition = new Vector2(-650f, -120f);
     [SerializeField, Min(0.05f)] private float slideSeconds = 0.22f;
     [SerializeField, Min(0f)] private float holdSeconds = 3f;
 

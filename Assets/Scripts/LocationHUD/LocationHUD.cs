@@ -5,13 +5,37 @@ public class LocationHUD : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI label;
 
-    private void Awake ()
+    private void Awake()
     {
-        if (label) label.text = ""; // 初期は空
+        ResolveLabel();
+        ApplyText(LocationHUDState.Current);
     }
 
-    public void SetText (string text)
+    private void OnEnable()
     {
-        if (label) label.text = text;
+        LocationHUDState.OnChanged += ApplyText;
+        ApplyText(LocationHUDState.Current);
+    }
+
+    private void OnDisable() => LocationHUDState.OnChanged -= ApplyText;
+
+    /// <summary>Updates the shared location value used by the HUD.</summary>
+    public void SetText(string text) => LocationHUDState.SetCurrent(text);
+
+    private void ApplyText(string text)
+    {
+        if (label) label.text = text ?? string.Empty;
+    }
+
+    private void ResolveLabel()
+    {
+        if (label) return;
+
+        foreach (var candidate in GetComponentsInChildren<TextMeshProUGUI>(true))
+            if (candidate.name == "LocationText")
+            {
+                label = candidate;
+                return;
+            }
     }
 }
