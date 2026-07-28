@@ -53,7 +53,7 @@ public class MoneyUI : MonoBehaviour
     private void UpdateMoneyText(int newAmount, bool playSound)
     {
         if (moneyText != null)
-            moneyText.text = $"<mspace=0.62em>¥ {FormatMoney(newAmount)}</mspace>";
+            moneyText.text = BuildMoneyText(newAmount);
 
         int diff = newAmount - lastAmount;
         if (diff != 0 && floatingText != null && floatingGroup != null)
@@ -109,7 +109,8 @@ public class MoneyUI : MonoBehaviour
 
     private static string FormatMoney(int amount)
     {
-        string digits = Mathf.Max(0, amount).ToString().PadLeft(6, '0');
+        long absoluteAmount = amount < 0 ? -(long)amount : amount;
+        string digits = absoluteAmount.ToString().PadLeft(6, '0');
         var formatted = new StringBuilder(digits.Length + digits.Length / 3);
         for (int i = 0; i < digits.Length; i++)
         {
@@ -118,7 +119,16 @@ public class MoneyUI : MonoBehaviour
             formatted.Append(digits[i]);
         }
 
-        return formatted.ToString();
+        return amount < 0 ? $"-{formatted}" : formatted.ToString();
+    }
+
+    private static string BuildMoneyText(int amount)
+    {
+        string text = $"¥ {FormatMoney(amount)}";
+        if (amount < 0)
+            text = $"<color=#FF5B5B>{text}</color>";
+
+        return $"<mspace=0.62em>{text}</mspace>";
     }
 
     private void OnDestroy()
