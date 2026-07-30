@@ -139,6 +139,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             var panel = new GameObject("DialoguePanel", typeof(RectTransform), typeof(CanvasGroup));
             canvasRoot.transform.SetParent(uiRoot.transform, false);
             panel.transform.SetParent(canvasRoot.transform, false);
+            canvasRoot.transform.localScale = Vector3.zero;
             uiRoot.SetActive(false);
 
             try
@@ -153,6 +154,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
                 Assert.That(canvas.worldCamera, Is.Null);
                 Assert.That(canvas.sortingOrder, Is.EqualTo(300));
+                Assert.That(canvas.transform.localScale, Is.EqualTo(Vector3.one));
             }
             finally
             {

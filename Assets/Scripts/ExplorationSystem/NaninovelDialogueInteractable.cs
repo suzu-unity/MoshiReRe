@@ -236,6 +236,7 @@ namespace MoshiReRe.Exploration
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.worldCamera = null;
             canvas.sortingOrder = sortingOrder;
+            canvas.transform.localScale = Vector3.one;
             return canvas;
         }
 
