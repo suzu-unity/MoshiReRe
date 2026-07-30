@@ -164,9 +164,14 @@ namespace MoshiReRe.Exploration
             if (printerManager == null)
                 throw new InvalidOperationException("Naninovel text printer manager is unavailable.");
 
+            if (printerManager.ActorExists(textPrinterId) &&
+                printerManager.GetActor(textPrinterId) is UITextPrinter existingPrinter &&
+                existingPrinter.PrinterPanel == null)
+                printerManager.RemoveActor(textPrinterId);
+
             var printer = await printerManager.GetOrAddActor(textPrinterId);
             if (printer is not UITextPrinter uiPrinter || uiPrinter.PrinterPanel == null)
-                return;
+                throw new InvalidOperationException($"Naninovel text printer '{textPrinterId}' could not create its UI panel.");
 
             var canvas = uiPrinter.PrinterPanel.GetComponent<Canvas>();
             if (canvas == null)

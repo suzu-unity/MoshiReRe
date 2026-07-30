@@ -67,7 +67,7 @@ MonoBehaviour:
     Swipes: []
   - Name: Continue
     AlwaysProcess: 0
-    Keys: 0d0000000f0100004a010000
+    Keys: 0d0000000f0100004a01000020000000
     Axes:
     - AxisName: Mouse ScrollWheel
       TriggerMode: 2

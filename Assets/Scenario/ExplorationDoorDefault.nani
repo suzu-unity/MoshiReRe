@@ -1,4 +1,5 @@
 @printer Dialogue
+@showPrinter Dialogue
 Wanabi: 「出社する前に着替える必要があるな」
 @hidePrinter Dialogue wait!
 @stop

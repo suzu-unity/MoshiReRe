@@ -176,6 +176,15 @@ MonoBehaviour:
     - name: Scenario/ExplorationPrototypeNpc
       pathPrefix: Scripts
       guid: 2690a1465baa09243ad4bdc78cb614db
+    - name: Scenario/ExplorationDoorDefault
+      pathPrefix: Scripts
+      guid: eb9ea8bed34a8494081bc1dd1f447f52
+    - name: Scenario/ExplorationDoorWardrobe
+      pathPrefix: Scripts
+      guid: 3266515d88534614086df258ea6835a4
+    - name: Scenario/ExplorationDummyItem
+      pathPrefix: Scripts
+      guid: 50217987625456f48aeeb40608971335
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default

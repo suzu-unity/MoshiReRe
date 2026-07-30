@@ -110,6 +110,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
 
                 var script = File.ReadAllText("Assets/Scenario/ExplorationPrototypeNpc.nani");
                 StringAssert.Contains("@printer Dialogue", script);
+                StringAssert.Contains("@showPrinter Dialogue", script);
                 StringAssert.Contains("@hidePrinter Dialogue wait!", script);
             }
             finally
@@ -131,6 +132,39 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Assert.That(pickupObject.GetComponent<SpriteRenderer>().sprite, Is.Not.Null);
                 Assert.That(serializedPickup.FindProperty("inventoryDatabase").objectReferenceValue, Is.Not.Null);
                 Assert.That(serializedPickup.FindProperty("item").objectReferenceValue, Is.Not.Null);
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        [Test]
+        public void PrototypeScene_WiresEscapeMenuAndExplicitDialoguePrinters()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var guard = scene.GetRootGameObjects().Single(root => root.name == "ExplorationNaninovelUiGuard");
+                var menuEsc = guard.GetComponent<MenuEsc>();
+                var menuSerialized = new SerializedObject(menuEsc);
+
+                Assert.That(menuEsc, Is.Not.Null);
+                Assert.That(guard.GetComponent<ExplorationMenuInputBridge>(), Is.Not.Null);
+                Assert.That(menuSerialized.FindProperty("externalInputBridge").boolValue, Is.True);
+                Assert.That(menuSerialized.FindProperty("explorationPlayer").objectReferenceValue, Is.Not.Null);
+
+                foreach (var scriptPath in new[]
+                {
+                    "Assets/Scenario/ExplorationPrototypeNpc.nani",
+                    "Assets/Scenario/ExplorationDummyItem.nani",
+                    "Assets/Scenario/ExplorationDoorDefault.nani",
+                    "Assets/Scenario/ExplorationDoorWardrobe.nani"
+                })
+                    StringAssert.Contains("@showPrinter Dialogue", File.ReadAllText(scriptPath), scriptPath);
+
+                var inputConfig = File.ReadAllText("Assets/NaninovelData/Resources/Naninovel/Configuration/InputConfiguration.asset");
+                StringAssert.Contains("Keys: 0d0000000f0100004a01000020000000", inputConfig);
             }
             finally
             {

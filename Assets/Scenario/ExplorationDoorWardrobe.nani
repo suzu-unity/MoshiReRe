@@ -1,4 +1,5 @@
 @printer Dialogue
+@showPrinter Dialogue
 Wanabi: 「行くか…」
 @hidePrinter Dialogue wait!
 @stop

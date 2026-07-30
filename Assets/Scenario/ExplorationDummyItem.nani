@@ -1,6 +1,7 @@
 ; Exploration prototype: one reusable inventory pickup.
 
 @printer Dialogue
+@showPrinter Dialogue
 
 Wanabi: 「古びた鍵が落ちている」
 Wanabi: 「入手しますか？」

@@ -100,7 +100,7 @@ public static class ExplorationPrototypeBuilder
         CreateLeftDoor(playerAnimator, dialogueOverlay);
         CreateCamera(player.transform);
         CreateLight();
-        CreateNaninovelUiGuard();
+        CreateNaninovelUiGuard(player.GetComponent<ExplorationPlayerController>());
 
         EditorSceneManager.MarkSceneDirty(scene);
         if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -493,10 +493,15 @@ public static class ExplorationPrototypeBuilder
         light.intensity = 1f;
     }
 
-    private static void CreateNaninovelUiGuard()
+    private static void CreateNaninovelUiGuard(ExplorationPlayerController player)
     {
         var guardObject = new GameObject("ExplorationNaninovelUiGuard");
         guardObject.AddComponent<ExplorationNaninovelUiGuard>();
+        var menuEsc = guardObject.AddComponent<MenuEsc>();
+        SetObject(menuEsc, "explorationPlayer", player);
+        SetBool(menuEsc, "externalInputBridge", true);
+        var inputBridge = guardObject.AddComponent<ExplorationMenuInputBridge>();
+        SetObject(inputBridge, "menuEsc", menuEsc);
     }
 
     private static ExplorationDialogueOverlay CreateHud(ExplorationInteractionController interactionController)

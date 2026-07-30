@@ -33,6 +33,7 @@ namespace MoshiReRe.Exploration
             if (hideFramesRemaining > 0)
             {
                 Engine.GetService<IUIManager>()?.GetUI<ITitleUI>()?.Hide();
+                HideNaninovelBackgrounds();
                 hideFramesRemaining--;
             }
         }
@@ -41,6 +42,16 @@ namespace MoshiReRe.Exploration
         {
             Engine.OnInitializationFinished -= ScheduleTitleHide;
             hideFramesRemaining = InitializationRaceGuardFrames;
+        }
+
+        private static void HideNaninovelBackgrounds()
+        {
+            var backgroundManager = Engine.GetService<IBackgroundManager>();
+            if (backgroundManager == null)
+                return;
+
+            foreach (var background in backgroundManager.Actors)
+                background.Visible = false;
         }
     }
 }

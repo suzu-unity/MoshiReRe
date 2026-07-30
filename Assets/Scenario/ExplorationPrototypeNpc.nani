@@ -1,6 +1,7 @@
 ; Exploration prototype: temporary NPC conversation.
 
 @printer Dialogue
+@showPrinter Dialogue
 
 仮置きのNPC「こんばんは。部屋の中を歩いて、私に話しかけられたみたいね」
 
