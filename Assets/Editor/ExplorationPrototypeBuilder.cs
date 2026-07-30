@@ -70,10 +70,22 @@ public static class ExplorationPrototypeBuilder
             ArtRoot + "/npc_idle_source.png", 235f, new Vector2(0.5f, 0f));
         var casualFrames = ConfigureSpriteStrip(casualPath, CasualSlices, 150f, 8192);
         var suitFrames = ConfigureSpriteStrip(suitPath, SuitSlices, 110f);
+        var inventoryDatabase = AssetDatabase.LoadAssetAtPath<InventoryDatabase>("Assets/Database/Items/InventoryDatabase.asset");
+        var dummyItem = AssetDatabase.LoadAssetAtPath<InventoryItem>("Assets/Database/Items/ItemData/Key.asset");
+        var dummyItemSprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Art/UI/MenuItems/item_key_placeholder.png")
+            .OfType<Sprite>().FirstOrDefault();
 
         if (background == null || groundShadow == null || npc == null ||
-            casualFrames.Length != 12 || suitFrames.Length != 8)
+            casualFrames.Length != 12 || suitFrames.Length != 8 || inventoryDatabase == null ||
+            dummyItem == null || dummyItemSprite == null)
             throw new InvalidOperationException("Exploration prototype sprites were not imported as expected.");
+
+        if (dummyItem.icon != dummyItemSprite || dummyItem.detailImage != dummyItemSprite)
+        {
+            dummyItem.icon = dummyItemSprite;
+            dummyItem.detailImage = dummyItemSprite;
+            EditorUtility.SetDirty(dummyItem);
+        }
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "ExplorationPrototype";
@@ -82,7 +94,10 @@ public static class ExplorationPrototypeBuilder
         var player = CreatePlayer(casualFrames, suitFrames, groundShadow);
         var dialogueOverlay = CreateHud(player.GetComponent<ExplorationInteractionController>());
         CreateNpc(npc, dialogueOverlay);
-        CreateWardrobe(player.GetComponent<ExplorationSpriteAnimator>());
+        var playerAnimator = player.GetComponent<ExplorationSpriteAnimator>();
+        CreateWardrobe(playerAnimator);
+        CreateDummyItem(dummyItem, dummyItemSprite, inventoryDatabase, dialogueOverlay);
+        CreateLeftDoor(playerAnimator, dialogueOverlay);
         CreateCamera(player.transform);
         CreateLight();
         CreateNaninovelUiGuard();
@@ -391,6 +406,58 @@ public static class ExplorationPrototypeBuilder
         SetString(outfit, "promptText", "調べる：壁のスーツ");
         SetObject(outfit, "targetAnimator", playerAnimator);
         SetEnum(outfit, "outfit", (int)ExplorationOutfit.Wardrobe);
+    }
+
+    private static void CreateDummyItem(
+        InventoryItem item,
+        Sprite itemSprite,
+        InventoryDatabase inventoryDatabase,
+        ExplorationDialogueOverlay fallbackOverlay)
+    {
+        var pickupObject = new GameObject("DummyItemPickup");
+        pickupObject.transform.position = new Vector3(0.8f, -2.47f, 0f);
+
+        var renderer = pickupObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = itemSprite;
+        renderer.sortingOrder = 10;
+        renderer.transform.localScale = Vector3.one * 0.58f;
+
+        var collider = pickupObject.AddComponent<CircleCollider2D>();
+        collider.isTrigger = true;
+        collider.radius = 0.55f;
+
+        var pickup = pickupObject.AddComponent<ExplorationItemPickup>();
+        SetString(pickup, "promptText", "調べる：古びた鍵");
+        SetString(pickup, "naninovelScriptPath", "Scenario/ExplorationDummyItem");
+        SetFloat(pickup, "initializationTimeout", 2f);
+        SetObject(pickup, "fallbackOverlay", fallbackOverlay);
+        SetString(pickup, "fallbackSpeaker", "Wanabi");
+        SetStringArray(pickup, "fallbackLines", new[] { "古びた鍵が落ちている。", "Naninovelの起動後にもう一度調べよう。" });
+        pickup.Configure(inventoryDatabase, item);
+    }
+
+    private static void CreateLeftDoor(ExplorationSpriteAnimator playerAnimator, ExplorationDialogueOverlay fallbackOverlay)
+    {
+        var door = new GameObject("LeftDoorInteraction");
+        door.transform.position = new Vector3(-6.4f, -2.82f, 0f);
+
+        var collider = door.AddComponent<BoxCollider2D>();
+        collider.isTrigger = true;
+        collider.size = new Vector2(1.5f, 3.8f);
+        collider.offset = new Vector2(0f, 1.85f);
+
+        var dialogue = door.AddComponent<NaninovelDialogueInteractable>();
+        SetString(dialogue, "promptText", "出社する");
+        SetString(dialogue, "naninovelScriptPath", "Scenario/ExplorationDoorWardrobe");
+        SetString(dialogue, "unavailableNaninovelScriptPath", "Scenario/ExplorationDoorDefault");
+        SetString(dialogue, "nextNaninovelScriptPath", "Scenario/scene02");
+        SetBool(dialogue, "requireOutfit", true);
+        SetEnum(dialogue, "requiredOutfit", (int)ExplorationOutfit.Wardrobe);
+        SetObject(dialogue, "outfitAnimator", playerAnimator);
+        SetFloat(dialogue, "initializationTimeout", 2f);
+        SetObject(dialogue, "fallbackOverlay", fallbackOverlay);
+        SetString(dialogue, "fallbackSpeaker", "Wanabi");
+        SetStringArray(dialogue, "fallbackLines", new[] { "出社する前に着替える必要があるな" });
     }
 
     private static void CreateCamera(Transform target)

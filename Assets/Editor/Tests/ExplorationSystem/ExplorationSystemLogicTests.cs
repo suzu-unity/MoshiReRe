@@ -104,6 +104,44 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
+        public void InventoryDatabase_GetAcquired_ReturnsOnlyPickedUpItems()
+        {
+            var database = ScriptableObject.CreateInstance<InventoryDatabase>();
+            var acquired = ScriptableObject.CreateInstance<InventoryItem>();
+            var unacquired = ScriptableObject.CreateInstance<InventoryItem>();
+            database.items.Add(acquired);
+            database.items.Add(unacquired);
+
+            try
+            {
+                InventoryDatabase.ClearAcquired();
+                Assert.That(database.Acquire(acquired), Is.True);
+                Assert.That(database.GetAcquired(), Is.EquivalentTo(new[] { acquired }));
+            }
+            finally
+            {
+                InventoryDatabase.ClearAcquired();
+                Object.DestroyImmediate(database);
+                Object.DestroyImmediate(acquired);
+                Object.DestroyImmediate(unacquired);
+            }
+        }
+
+        [TestCase(ExplorationOutfit.Default, true, ExplorationOutfit.Wardrobe, false)]
+        [TestCase(ExplorationOutfit.Wardrobe, true, ExplorationOutfit.Wardrobe, true)]
+        [TestCase(ExplorationOutfit.Default, false, ExplorationOutfit.Wardrobe, true)]
+        public void ShouldUseRequiredOutfit_BranchesForDoorAccess(
+            ExplorationOutfit current,
+            bool required,
+            ExplorationOutfit target,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldUseRequiredOutfit(current, required, target),
+                Is.EqualTo(expected));
+        }
+
+        [Test]
         public void GetWalkPose_AllTwelvePosesContainFiniteValues()
         {
             for (var poseIndex = 0; poseIndex < ExplorationCutoutRigController.WalkPoseCount; poseIndex++)

@@ -79,9 +79,21 @@ public class ItemMenuController : MonoBehaviour
         SelectItem(0);
     }
 
+    private void OnEnable()
+    {
+        InventoryDatabase.ItemAcquired += HandleItemAcquired;
+        RefreshFromInventoryDatabase();
+    }
+
     private void OnDestroy()
     {
+        InventoryDatabase.ItemAcquired -= HandleItemAcquired;
         UnbindButtons();
+    }
+
+    private void OnDisable()
+    {
+        InventoryDatabase.ItemAcquired -= HandleItemAcquired;
     }
 
     private void AutoWire()
@@ -179,6 +191,9 @@ public class ItemMenuController : MonoBehaviour
 
     private void EnsureDefaultItems()
     {
+        if (inventoryDatabase)
+            return;
+
         if (items != null && items.Length > 0)
             return;
 
@@ -197,10 +212,10 @@ public class ItemMenuController : MonoBehaviour
 
     private void LoadInventoryDatabase()
     {
-        if (!inventoryDatabase || inventoryDatabase.GetAll() == null || inventoryDatabase.GetAll().Count == 0)
+        if (!inventoryDatabase)
             return;
 
-        var databaseItems = inventoryDatabase.GetAll();
+        var databaseItems = inventoryDatabase.GetAcquired();
         var loadedItems = new System.Collections.Generic.List<ItemDraft>(databaseItems.Count);
         for (var i = 0; i < databaseItems.Count; i++)
         {
@@ -222,9 +237,19 @@ public class ItemMenuController : MonoBehaviour
             });
         }
 
-        if (loadedItems.Count > 0)
-            items = loadedItems.ToArray();
+        items = loadedItems.ToArray();
     }
+
+    private void RefreshFromInventoryDatabase()
+    {
+        if (!inventoryDatabase) return;
+        LoadInventoryDatabase();
+        selectedIndex = Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, items.Length - 1));
+        RefreshItems();
+        if (items.Length > 0) RefreshDetail();
+    }
+
+    private void HandleItemAcquired(InventoryItem item) => RefreshFromInventoryDatabase();
 
     private static ItemDraft Draft(string id, string name, string description, Color color)
     {

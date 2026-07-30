@@ -31,6 +31,17 @@ public class InventoryPage : MonoBehaviour
             itemDetailPanel.SetActive(false);
     }
 
+    private void OnEnable()
+    {
+        InventoryDatabase.ItemAcquired += HandleItemAcquired;
+        if (gameObject.activeInHierarchy) PopulateItems();
+    }
+
+    private void OnDisable()
+    {
+        InventoryDatabase.ItemAcquired -= HandleItemAcquired;
+    }
+
     private void Start()
     {
         if (!gridItemsRoot) Debug.LogError("[InventoryPage] Grid Items Root is not assigned!");
@@ -56,7 +67,7 @@ public class InventoryPage : MonoBehaviour
 
         ClearChildren(gridItemsRoot);
 
-        var items = inventoryDB ? inventoryDB.GetAll() : null;
+        var items = inventoryDB ? inventoryDB.GetAcquired() : null;
         if (items == null || items.Count == 0) return;
 
         foreach (var item in items)
@@ -107,5 +118,10 @@ public class InventoryPage : MonoBehaviour
     public void SetAdviceTrigger(AdviceClickTrigger trigger)
     {
         sharedAdviceTrigger = trigger;
+    }
+
+    private void HandleItemAcquired(InventoryItem item)
+    {
+        if (isActiveAndEnabled) PopulateItems();
     }
 }

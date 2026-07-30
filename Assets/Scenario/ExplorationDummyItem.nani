@@ -1,0 +1,21 @@
+; Exploration prototype: one reusable inventory pickup.
+
+@printer Dialogue
+
+Wanabi: 「古びた鍵が落ちている」
+Wanabi: 「入手しますか？」
+
+@choice "はい" goto:.Take
+@choice "いいえ" goto:.Leave
+
+# Take
+@acquireExplorationItem id:old_key
+Wanabi: 「古びた鍵を入手した」
+@goto .End
+
+# Leave
+Wanabi: 「今はやめておこう」
+
+# End
+@hidePrinter Dialogue wait!
+@stop

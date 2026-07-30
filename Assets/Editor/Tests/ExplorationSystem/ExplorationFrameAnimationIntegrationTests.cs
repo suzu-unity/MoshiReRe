@@ -119,6 +119,26 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
+        public void PrototypePickup_HasPersistentInventoryAndSpriteReferences()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var pickupObject = scene.GetRootGameObjects().Single(root => root.name == "DummyItemPickup");
+                var pickup = pickupObject.GetComponent<ExplorationItemPickup>();
+                var serializedPickup = new SerializedObject(pickup);
+
+                Assert.That(pickupObject.GetComponent<SpriteRenderer>().sprite, Is.Not.Null);
+                Assert.That(serializedPickup.FindProperty("inventoryDatabase").objectReferenceValue, Is.Not.Null);
+                Assert.That(serializedPickup.FindProperty("item").objectReferenceValue, Is.Not.Null);
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        [Test]
         public void CompanyExplorationBackgrounds_AreFiveNamedSingleSprites()
         {
             var backgrounds = new[]

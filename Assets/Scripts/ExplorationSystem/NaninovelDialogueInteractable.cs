@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 namespace MoshiReRe.Exploration
 {
     /// <summary>Runs a Naninovel script and pauses the interacting player's movement until it completes.</summary>
-    public sealed class NaninovelDialogueInteractable : ExplorationInteractable
+    public class NaninovelDialogueInteractable : ExplorationInteractable
     {
         [SerializeField, Tooltip("Naninovel script path, for example Scenario/Exploration/Shopkeeper.")]
         private string naninovelScriptPath;
@@ -16,6 +16,11 @@ namespace MoshiReRe.Exploration
         [SerializeField] private ExplorationDialogueOverlay fallbackOverlay;
         [SerializeField] private string fallbackSpeaker = "仮置きのNPC";
         [SerializeField, TextArea] private string[] fallbackLines;
+        [SerializeField] private ExplorationSpriteAnimator outfitAnimator;
+        [SerializeField] private bool requireOutfit;
+        [SerializeField] private ExplorationOutfit requiredOutfit = ExplorationOutfit.Wardrobe;
+        [SerializeField] private string unavailableNaninovelScriptPath;
+        [SerializeField] private string nextNaninovelScriptPath;
 
         private bool dialoguePlaying;
         private bool continuePulseActive;
@@ -43,11 +48,19 @@ namespace MoshiReRe.Exploration
 
         protected override void OnInteract(ExplorationPlayerController player)
         {
-            if (!dialoguePlaying && !string.IsNullOrWhiteSpace(naninovelScriptPath))
-                PlayDialogueAsync(player);
+            if (dialoguePlaying) return;
+
+            var animator = outfitAnimator != null ? outfitAnimator : player?.SpriteAnimator;
+            var meetsRequirement = ShouldUseRequiredOutfit(
+                animator != null ? animator.Outfit : ExplorationOutfit.Default,
+                requireOutfit, requiredOutfit);
+            var scriptPath = meetsRequirement || string.IsNullOrWhiteSpace(unavailableNaninovelScriptPath)
+                ? naninovelScriptPath : unavailableNaninovelScriptPath;
+            var nextPath = meetsRequirement ? nextNaninovelScriptPath : string.Empty;
+            if (!string.IsNullOrWhiteSpace(scriptPath)) PlayDialogueAsync(player, scriptPath, nextPath);
         }
 
-        private async void PlayDialogueAsync(ExplorationPlayerController player)
+        private async void PlayDialogueAsync(ExplorationPlayerController player, string scriptPath, string nextScriptPath)
         {
             dialoguePlaying = true;
             dialogueOpenedFrame = Time.frameCount;
@@ -78,9 +91,12 @@ namespace MoshiReRe.Exploration
                     if (scriptPlayer == null)
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
 
-                    await scriptPlayer.LoadAndPlay(naninovelScriptPath);
+                    await scriptPlayer.LoadAndPlay(scriptPath);
                     while (scriptPlayer.Playing)
                         await AsyncUtils.WaitEndOfFrame();
+
+                    if (!string.IsNullOrWhiteSpace(nextScriptPath))
+                        await scriptPlayer.LoadAndPlay(nextScriptPath);
                 }
                 else if (fallbackOverlay != null)
                 {
@@ -113,6 +129,14 @@ namespace MoshiReRe.Exploration
             bool spacePressed)
         {
             return currentFrame > openedFrame && (ePressed || spacePressed);
+        }
+
+        public static bool ShouldUseRequiredOutfit(
+            ExplorationOutfit currentOutfit,
+            bool requiresOutfit,
+            ExplorationOutfit requiredOutfit)
+        {
+            return !requiresOutfit || currentOutfit == requiredOutfit;
         }
 
         private async void PulseContinueInputAsync()
