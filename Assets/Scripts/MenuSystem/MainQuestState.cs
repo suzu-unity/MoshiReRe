@@ -45,17 +45,24 @@ public static class MainQuestState
         var variables = Engine.GetService<ICustomVariableManager>();
         if (variables == null || !variables.VariableExists(TitleVariableName)) return;
 
-        var title = variables.GetVariableValue(TitleVariableName).ToString();
+        var title = variables.GetVariableValue(TitleVariableName);
         var objective = variables.VariableExists(ObjectiveVariableName)
-            ? variables.GetVariableValue(ObjectiveVariableName).ToString()
-            : string.Empty;
-        var daysText = variables.VariableExists(DeadlineDaysVariableName)
-            ? variables.GetVariableValue(DeadlineDaysVariableName).ToString()
-            : "0";
-        int.TryParse(daysText, out var days);
+            ? variables.GetVariableValue(ObjectiveVariableName)
+            : new CustomVariableValue(string.Empty);
+        var days = variables.VariableExists(DeadlineDaysVariableName)
+            ? variables.GetVariableValue(DeadlineDaysVariableName)
+            : new CustomVariableValue(0);
 
-        Current = new Data(title, objective, days);
+        Current = CreateDataFromVariables(title, objective, days);
         OnChanged?.Invoke(Current);
+    }
+
+    public static Data CreateDataFromVariables(
+        CustomVariableValue title,
+        CustomVariableValue objective,
+        CustomVariableValue deadlineDays)
+    {
+        return new Data(title.String, objective.String, Mathf.RoundToInt(deadlineDays.Number));
     }
 
     public static string FormatDeadline(int days)

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Naninovel;
 
 public class MainQuestStateTests
 {
@@ -30,5 +31,19 @@ public class MainQuestStateTests
         Assert.That(published.Title, Is.EqualTo("借金5,000,000円を返そう！"));
         Assert.That(published.Objective, Is.EqualTo("①利子100,000円を期限までに払おう"));
         Assert.That(published.DeadlineDays, Is.EqualTo(7));
+    }
+
+    [Test]
+    public void CreateDataFromVariables_ReadsTheUnderlyingNaninovelValues()
+    {
+        var quest = MainQuestState.CreateDataFromVariables(
+            new CustomVariableValue("借金5,000,000円を返そう！"),
+            new CustomVariableValue("①利子100,000円を期限までに払おう"),
+            new CustomVariableValue(7));
+
+        Assert.That(quest.Title, Is.EqualTo("借金5,000,000円を返そう！"));
+        Assert.That(quest.Objective, Is.EqualTo("①利子100,000円を期限までに払おう"));
+        Assert.That(quest.DeadlineDays, Is.EqualTo(7));
+        Assert.That(quest.Title, Does.Not.Contain(nameof(CustomVariableValue)));
     }
 }
