@@ -132,7 +132,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
-        public void ConfigurePrinterCanvas_ActivatesInactiveParentsAndBringsDialogueAboveExplorationUi()
+        public void ConfigurePrinterCanvas_DoesNotReactivatePersistentUiAndSetsDialogueSorting()
         {
             var uiRoot = new GameObject("PersistentNaninovelUI");
             var canvasRoot = new GameObject("DialogueCanvas", typeof(RectTransform), typeof(Canvas));
@@ -146,9 +146,9 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 var canvas = NaninovelDialogueInteractable.ConfigurePrinterCanvas(
                     panel.GetComponent<CanvasGroup>(), 300);
 
-                Assert.That(uiRoot.activeSelf, Is.True, "persistent UI root");
+                Assert.That(uiRoot.activeSelf, Is.False, "persistent UI root");
                 Assert.That(canvasRoot.activeSelf, Is.True, "printer canvas root");
-                Assert.That(panel.activeInHierarchy, Is.True, "printer panel hierarchy");
+                Assert.That(panel.activeInHierarchy, Is.False, "printer panel hierarchy");
                 Assert.That(canvas, Is.SameAs(canvasRoot.GetComponent<Canvas>()));
                 Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
                 Assert.That(canvas.worldCamera, Is.Null);

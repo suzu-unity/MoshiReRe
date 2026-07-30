@@ -208,9 +208,11 @@ namespace MoshiReRe.Exploration
                 throw new InvalidOperationException($"Naninovel text printer '{textPrinterId}' could not create its UI panel.");
 
             ConfigurePrinterCanvas(uiPrinter.PrinterPanel, textPrinterSortingOrder);
+            if (!uiPrinter.PrinterPanel.gameObject.activeInHierarchy)
+                throw new InvalidOperationException(
+                    $"Naninovel text printer '{textPrinterId}' is under an inactive UI hierarchy.");
 
-            // UITextPrinter initializes hidden. Show it on the same frame as script playback
-            // so an inactive UI hierarchy can't leave the player without a dialogue window.
+            // UITextPrinter initializes hidden. Show it on the same frame as script playback.
             uiPrinter.Visible = true;
         }
 
@@ -220,7 +222,7 @@ namespace MoshiReRe.Exploration
                 await fallbackOverlay.PlayAsync(fallbackSpeaker, fallbackLines);
         }
 
-        /// <summary>Restores a printer's UI hierarchy and makes its root canvas render above exploration UI.</summary>
+        /// <summary>Configures a printer canvas without reactivating unrelated persistent Naninovel UI.</summary>
         public static Canvas ConfigurePrinterCanvas(Component printerPanel, int sortingOrder)
         {
             if (printerPanel == null)
@@ -230,11 +232,6 @@ namespace MoshiReRe.Exploration
             var canvas = printerPanel.GetComponentInParent<Canvas>(true);
             if (canvas == null)
                 throw new InvalidOperationException("Naninovel text printer has no parent Canvas.");
-
-            // The persistent Naninovel UI can retain an inactive parent after a scene transition.
-            // Restore every parent required for the printer to enter the active hierarchy.
-            for (var current = canvas.transform; current != null; current = current.parent)
-                current.gameObject.SetActive(true);
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.worldCamera = null;

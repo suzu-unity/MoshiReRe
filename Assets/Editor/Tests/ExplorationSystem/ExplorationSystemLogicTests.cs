@@ -156,6 +156,21 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase(false, false, false, false)]
+        [TestCase(true, false, false, true)]
+        [TestCase(false, true, false, true)]
+        [TestCase(false, false, true, true)]
+        public void ShouldInteract_UsesKeyboardFallbackEvenWhenAnActionIsConfigured(
+            bool actionPressed,
+            bool ePressed,
+            bool spacePressed,
+            bool expected)
+        {
+            Assert.That(
+                ExplorationInteractionController.ShouldInteract(actionPressed, ePressed, spacePressed),
+                Is.EqualTo(expected));
+        }
+
         [Test]
         public void GetWalkPose_AllTwelvePosesContainFiniteValues()
         {

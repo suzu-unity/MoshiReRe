@@ -19,6 +19,8 @@ namespace MoshiReRe.Exploration
 
         private readonly Collider2D[] overlapResults = new Collider2D[MaxOverlapResults];
         private ExplorationInteractable nearest;
+        private bool eWasHeld;
+        private bool spaceWasHeld;
 
         public ExplorationInteractable Nearest => nearest;
         public event Action<ExplorationInteractable> NearestChanged;
@@ -36,6 +38,8 @@ namespace MoshiReRe.Exploration
         private void OnDisable()
         {
             interactAction?.action?.Disable();
+            eWasHeld = false;
+            spaceWasHeld = false;
             SetNearest(null);
         }
 
@@ -100,11 +104,24 @@ namespace MoshiReRe.Exploration
         private bool WasInteractionPressed()
         {
             var action = interactAction?.action;
-            if (action != null && action.enabled)
-                return action.WasPressedThisFrame();
-
             var keyboard = Keyboard.current;
-            return keyboard != null && (keyboard.eKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame);
+            var eHeld = keyboard != null && keyboard.eKey.isPressed;
+            var spaceHeld = keyboard != null && keyboard.spaceKey.isPressed;
+            var ePressed = keyboard != null && (keyboard.eKey.wasPressedThisFrame || (eHeld && !eWasHeld));
+            var spacePressed = keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || (spaceHeld && !spaceWasHeld));
+            eWasHeld = eHeld;
+            spaceWasHeld = spaceHeld;
+
+            return ShouldInteract(
+                action != null && action.enabled && action.WasPressedThisFrame(),
+                ePressed,
+                spacePressed);
+        }
+
+        /// <summary>Combines optional action input with the always-available keyboard interaction keys.</summary>
+        public static bool ShouldInteract(bool actionPressed, bool ePressed, bool spacePressed)
+        {
+            return actionPressed || ePressed || spacePressed;
         }
 
         private void SetNearest(ExplorationInteractable value)
