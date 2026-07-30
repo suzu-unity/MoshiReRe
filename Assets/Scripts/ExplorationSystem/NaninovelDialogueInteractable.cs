@@ -164,18 +164,24 @@ namespace MoshiReRe.Exploration
             if (printerManager == null)
                 throw new InvalidOperationException("Naninovel text printer manager is unavailable.");
 
-            if (printerManager.ActorExists(textPrinterId) &&
-                printerManager.GetActor(textPrinterId) is UITextPrinter existingPrinter &&
-                existingPrinter.PrinterPanel == null)
-                printerManager.RemoveActor(textPrinterId);
+            if (printerManager.ActorExists(textPrinterId))
+            {
+                var existingPrinter = printerManager.GetActor(textPrinterId) as UITextPrinter;
+                if (existingPrinter?.PrinterPanel == null ||
+                    existingPrinter.PrinterPanel.GetComponentInParent<Canvas>(true) == null)
+                    printerManager.RemoveActor(textPrinterId);
+            }
 
             var printer = await printerManager.GetOrAddActor(textPrinterId);
             if (printer is not UITextPrinter uiPrinter || uiPrinter.PrinterPanel == null)
                 throw new InvalidOperationException($"Naninovel text printer '{textPrinterId}' could not create its UI panel.");
 
-            var canvas = uiPrinter.PrinterPanel.GetComponent<Canvas>();
+            // The Dialogue printer panel is nested under the prefab's root Canvas.
+            // It survives the scene transition, so use the existing parent Canvas instead
+            // of silently falling back to its previous Screen Space Camera configuration.
+            var canvas = uiPrinter.PrinterPanel.GetComponentInParent<Canvas>(true);
             if (canvas == null)
-                return;
+                throw new InvalidOperationException($"Naninovel text printer '{textPrinterId}' has no parent Canvas.");
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.worldCamera = null;

@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.U2D.Animation;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Naninovel.UI;
 
 namespace MoshiReRe.EditorTests.ExplorationSystem
 {
@@ -117,6 +118,17 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             {
                 EditorSceneManager.CloseScene(scene, true);
             }
+        }
+
+        [Test]
+        public void DialoguePrinterPanel_ResolvesThePrefabRootCanvas()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/NaninovelData/Resources/TextPrinters/Dialogue.prefab");
+            var panel = prefab.GetComponentInChildren<UITextPrinterPanel>(true);
+
+            Assert.That(prefab, Is.Not.Null);
+            Assert.That(panel, Is.Not.Null);
+            Assert.That(panel.GetComponentInParent<Canvas>(true), Is.Not.Null);
         }
 
         [Test]
