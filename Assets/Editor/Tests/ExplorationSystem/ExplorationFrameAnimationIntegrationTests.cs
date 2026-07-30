@@ -132,7 +132,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
-        public void ConfigurePrinterCanvas_DoesNotReactivatePersistentUiAndSetsDialogueSorting()
+        public void ConfigurePrinterCanvas_UsesOverlayCoordinatesAndSetsDialogueSorting()
         {
             var uiRoot = new GameObject("PersistentNaninovelUI");
             var canvasRoot = new GameObject("DialogueCanvas", typeof(RectTransform), typeof(Canvas));
@@ -140,6 +140,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             canvasRoot.transform.SetParent(uiRoot.transform, false);
             panel.transform.SetParent(canvasRoot.transform, false);
             canvasRoot.transform.localScale = Vector3.zero;
+            canvasRoot.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
             uiRoot.SetActive(false);
 
             try
@@ -159,6 +160,24 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             finally
             {
                 Object.DestroyImmediate(uiRoot);
+            }
+        }
+
+        [Test]
+        public void NormalizePrinterContentDepth_RemovesStaleCameraSpaceDepth()
+        {
+            var content = new GameObject("PrinterContent", typeof(RectTransform)).transform;
+            content.localPosition = new Vector3(120f, -32f, -9720f);
+
+            try
+            {
+                NaninovelDialogueInteractable.NormalizePrinterContentDepth(content);
+
+                Assert.That(content.localPosition, Is.EqualTo(new Vector3(120f, -32f, 0f)));
+            }
+            finally
+            {
+                Object.DestroyImmediate(content.gameObject);
             }
         }
 

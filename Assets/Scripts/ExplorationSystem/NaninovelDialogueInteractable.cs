@@ -98,6 +98,7 @@ namespace MoshiReRe.Exploration
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
 
                     await scriptPlayer.LoadAndPlay(scriptPath);
+                    await ReapplyTextPrinterPresentationAsync(scriptPlayer);
                     while (scriptPlayer.Playing)
                         await AsyncUtils.WaitEndOfFrame();
 
@@ -211,6 +212,7 @@ namespace MoshiReRe.Exploration
             if (!uiPrinter.PrinterPanel.gameObject.activeInHierarchy)
                 throw new InvalidOperationException(
                     $"Naninovel text printer '{textPrinterId}' is under an inactive UI hierarchy.");
+            NormalizePrinterContentDepth(uiPrinter.PrinterPanel.Content);
 
             // UITextPrinter initializes hidden. Show it on the same frame as script playback.
             uiPrinter.Visible = true;
@@ -222,7 +224,16 @@ namespace MoshiReRe.Exploration
                 await fallbackOverlay.PlayAsync(fallbackSpeaker, fallbackLines);
         }
 
-        /// <summary>Configures a printer canvas without reactivating unrelated persistent Naninovel UI.</summary>
+        private async UniTask ReapplyTextPrinterPresentationAsync(IScriptPlayer scriptPlayer)
+        {
+            // @printer/@showPrinter can restore the prefab's original camera mode after the
+            // initial setup. Apply exploration presentation after those commands have started.
+            await AsyncUtils.WaitEndOfFrame();
+            if (scriptPlayer.Playing)
+                await PrepareTextPrinterAsync();
+        }
+
+        /// <summary>Places the printer above exploration UI using screen-space overlay coordinates.</summary>
         public static Canvas ConfigurePrinterCanvas(Component printerPanel, int sortingOrder)
         {
             if (printerPanel == null)
@@ -238,6 +249,17 @@ namespace MoshiReRe.Exploration
             canvas.sortingOrder = sortingOrder;
             canvas.transform.localScale = Vector3.one;
             return canvas;
+        }
+
+        /// <summary>Removes camera-space depth left on printer content when rendering as an overlay.</summary>
+        public static void NormalizePrinterContentDepth(Transform content)
+        {
+            if (content == null)
+                return;
+
+            var position = content.localPosition;
+            position.z = 0f;
+            content.localPosition = position;
         }
 
         private void ReleaseContinueInput()
