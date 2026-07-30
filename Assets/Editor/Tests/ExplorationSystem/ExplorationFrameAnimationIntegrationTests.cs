@@ -132,6 +132,35 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
+        public void ConfigurePrinterCanvas_ActivatesInactiveParentsAndBringsDialogueAboveExplorationUi()
+        {
+            var uiRoot = new GameObject("PersistentNaninovelUI");
+            var canvasRoot = new GameObject("DialogueCanvas", typeof(RectTransform), typeof(Canvas));
+            var panel = new GameObject("DialoguePanel", typeof(RectTransform), typeof(CanvasGroup));
+            canvasRoot.transform.SetParent(uiRoot.transform, false);
+            panel.transform.SetParent(canvasRoot.transform, false);
+            uiRoot.SetActive(false);
+
+            try
+            {
+                var canvas = NaninovelDialogueInteractable.ConfigurePrinterCanvas(
+                    panel.GetComponent<CanvasGroup>(), 300);
+
+                Assert.That(uiRoot.activeSelf, Is.True, "persistent UI root");
+                Assert.That(canvasRoot.activeSelf, Is.True, "printer canvas root");
+                Assert.That(panel.activeInHierarchy, Is.True, "printer panel hierarchy");
+                Assert.That(canvas, Is.SameAs(canvasRoot.GetComponent<Canvas>()));
+                Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
+                Assert.That(canvas.worldCamera, Is.Null);
+                Assert.That(canvas.sortingOrder, Is.EqualTo(300));
+            }
+            finally
+            {
+                Object.DestroyImmediate(uiRoot);
+            }
+        }
+
+        [Test]
         public void PrototypePickup_HasPersistentInventoryAndSpriteReferences()
         {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);

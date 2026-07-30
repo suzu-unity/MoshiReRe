@@ -141,6 +141,21 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase(true, true, false)]
+        [TestCase(true, false, true)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, true)]
+        public void ShouldUseFallbackWhenPrinterUnavailable_CoversEngineAndPrinterFailures(
+            bool engineInitialized,
+            bool printerPrepared,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldUseFallbackWhenPrinterUnavailable(
+                    engineInitialized, printerPrepared),
+                Is.EqualTo(expected));
+        }
+
         [Test]
         public void GetWalkPose_AllTwelvePosesContainFiniteValues()
         {

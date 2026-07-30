@@ -75,7 +75,7 @@ namespace MoshiReRe.Exploration
                 // a locked player with no message window for the whole initialization timeout.
                 if (!Engine.Initialized && fallbackOverlay != null)
                 {
-                    await fallbackOverlay.PlayAsync(fallbackSpeaker, fallbackLines);
+                    await PlayFallbackAsync();
                     return;
                 }
 
@@ -86,7 +86,13 @@ namespace MoshiReRe.Exploration
 
                 if (Engine.Initialized)
                 {
-                    await PrepareTextPrinterAsync();
+                    var printerPrepared = await TryPrepareTextPrinterAsync();
+                    if (ShouldUseFallbackWhenPrinterUnavailable(Engine.Initialized, printerPrepared))
+                    {
+                        await PlayFallbackAsync();
+                        return;
+                    }
+
                     var scriptPlayer = Engine.GetService<IScriptPlayer>();
                     if (scriptPlayer == null)
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
@@ -100,7 +106,7 @@ namespace MoshiReRe.Exploration
                 }
                 else if (fallbackOverlay != null)
                 {
-                    await fallbackOverlay.PlayAsync(fallbackSpeaker, fallbackLines);
+                    await PlayFallbackAsync();
                 }
                 else
                 {
@@ -110,6 +116,7 @@ namespace MoshiReRe.Exploration
             catch (Exception exception)
             {
                 Debug.LogException(exception, this);
+                await PlayFallbackAsync();
             }
             finally
             {
@@ -139,6 +146,12 @@ namespace MoshiReRe.Exploration
             return !requiresOutfit || currentOutfit == requiredOutfit;
         }
 
+        /// <summary>Determines whether exploration must use its local dialogue window instead of a Naninovel printer.</summary>
+        public static bool ShouldUseFallbackWhenPrinterUnavailable(bool engineInitialized, bool printerPrepared)
+        {
+            return !engineInitialized || !printerPrepared;
+        }
+
         private async void PulseContinueInputAsync()
         {
             var continueInput = Engine.GetService<IInputManager>()?.GetContinue();
@@ -158,6 +171,23 @@ namespace MoshiReRe.Exploration
             }
         }
 
+        private async UniTask<bool> TryPrepareTextPrinterAsync()
+        {
+            try
+            {
+                await PrepareTextPrinterAsync();
+                return true;
+            }
+            catch (TimeoutException exception)
+            {
+                Debug.LogWarning(
+                    $"Naninovel dialogue printer '{textPrinterId}' did not initialize within " +
+                    $"{initializationTimeout:0.##} seconds; using the exploration dialogue window instead. " +
+                    exception.Message, this);
+                return false;
+            }
+        }
+
         private async UniTask PrepareTextPrinterAsync()
         {
             var printerManager = Engine.GetService<ITextPrinterManager>();
@@ -172,21 +202,44 @@ namespace MoshiReRe.Exploration
                     printerManager.RemoveActor(textPrinterId);
             }
 
-            var printer = await printerManager.GetOrAddActor(textPrinterId);
+            var printer = await printerManager.GetOrAddActor(textPrinterId)
+                .Timeout(TimeSpan.FromSeconds(Mathf.Max(0.01f, initializationTimeout)));
             if (printer is not UITextPrinter uiPrinter || uiPrinter.PrinterPanel == null)
                 throw new InvalidOperationException($"Naninovel text printer '{textPrinterId}' could not create its UI panel.");
 
-            // The Dialogue printer panel is nested under the prefab's root Canvas.
-            // It survives the scene transition, so use the existing parent Canvas instead
-            // of silently falling back to its previous Screen Space Camera configuration.
-            var canvas = uiPrinter.PrinterPanel.GetComponentInParent<Canvas>(true);
+            ConfigurePrinterCanvas(uiPrinter.PrinterPanel, textPrinterSortingOrder);
+
+            // UITextPrinter initializes hidden. Show it on the same frame as script playback
+            // so an inactive UI hierarchy can't leave the player without a dialogue window.
+            uiPrinter.Visible = true;
+        }
+
+        private async UniTask PlayFallbackAsync()
+        {
+            if (fallbackOverlay != null)
+                await fallbackOverlay.PlayAsync(fallbackSpeaker, fallbackLines);
+        }
+
+        /// <summary>Restores a printer's UI hierarchy and makes its root canvas render above exploration UI.</summary>
+        public static Canvas ConfigurePrinterCanvas(Component printerPanel, int sortingOrder)
+        {
+            if (printerPanel == null)
+                throw new ArgumentNullException(nameof(printerPanel));
+
+            // Dialogue.prefab stores the Canvas on its root while UITextPrinterPanel is nested below it.
+            var canvas = printerPanel.GetComponentInParent<Canvas>(true);
             if (canvas == null)
-                throw new InvalidOperationException($"Naninovel text printer '{textPrinterId}' has no parent Canvas.");
+                throw new InvalidOperationException("Naninovel text printer has no parent Canvas.");
+
+            // The persistent Naninovel UI can retain an inactive parent after a scene transition.
+            // Restore every parent required for the printer to enter the active hierarchy.
+            for (var current = canvas.transform; current != null; current = current.parent)
+                current.gameObject.SetActive(true);
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.worldCamera = null;
-            canvas.overrideSorting = true;
-            canvas.sortingOrder = textPrinterSortingOrder;
+            canvas.sortingOrder = sortingOrder;
+            return canvas;
         }
 
         private void ReleaseContinueInput()
