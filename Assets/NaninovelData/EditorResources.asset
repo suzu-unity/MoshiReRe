@@ -240,6 +240,18 @@ MonoBehaviour:
     - name: scene01/fuji_taka
       pathPrefix: Backgrounds/MainBackground
       guid: 848c0cb6af7034b48b770b8c4b24c0cb
+    - name: scene01/1-1-1
+      pathPrefix: Backgrounds/MainBackground
+      guid: efc03e732e06553459e27ba54ede7755
+    - name: scene01/1-10
+      pathPrefix: Backgrounds/MainBackground
+      guid: 0e3301534da38a74581a8b7f0f6f6c6d
+    - name: scene01/1-11
+      pathPrefix: Backgrounds/MainBackground
+      guid: 47af20d9e26fcb64892a08e7a445d59a
+    - name: scene01/1-12
+      pathPrefix: Backgrounds/MainBackground
+      guid: 0095a4e7a4fea8c42b7a6f7a3df1ab79
   - Id: Backgrounds/a81d8fb7-d083-44c8-99ef-955018a704ab
     Resources:
     - name: scene01/1-1
