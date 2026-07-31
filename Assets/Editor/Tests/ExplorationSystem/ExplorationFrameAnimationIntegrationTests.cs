@@ -164,6 +164,29 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
+        public void ConfigureChoiceHandlerCanvas_UsesOverlayCoordinatesAboveDialogue()
+        {
+            var canvasRoot = new GameObject("ChoiceCanvas", typeof(RectTransform), typeof(Canvas));
+            var panel = new GameObject("ChoicePanel", typeof(RectTransform), typeof(CanvasGroup));
+            panel.transform.SetParent(canvasRoot.transform, false);
+            canvasRoot.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
+
+            try
+            {
+                var canvas = NaninovelDialogueInteractable.ConfigureChoiceHandlerCanvas(
+                    panel.GetComponent<CanvasGroup>(), 310);
+
+                Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
+                Assert.That(canvas.worldCamera, Is.Null);
+                Assert.That(canvas.sortingOrder, Is.EqualTo(310));
+            }
+            finally
+            {
+                Object.DestroyImmediate(canvasRoot);
+            }
+        }
+
+        [Test]
         public void NormalizePrinterContentDepth_RemovesStaleCameraSpaceDepth()
         {
             var content = new GameObject("PrinterContent", typeof(RectTransform)).transform;
@@ -224,6 +247,11 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                     "Assets/Scenario/ExplorationDoorWardrobe.nani"
                 })
                     StringAssert.Contains("@showPrinter Dialogue", File.ReadAllText(scriptPath), scriptPath);
+
+                var itemScript = File.ReadAllText("Assets/Scenario/ExplorationDummyItem.nani");
+                StringAssert.Contains(
+                    "@choice \"いいえ\" goto:.Leave\n@stop",
+                    itemScript.Replace("\r\n", "\n"));
 
                 var inputConfig = File.ReadAllText("Assets/NaninovelData/Resources/Naninovel/Configuration/InputConfiguration.asset");
                 StringAssert.Contains("Keys: 0d0000000f0100004a01000020000000", inputConfig);

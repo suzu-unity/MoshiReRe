@@ -16,6 +16,7 @@ namespace MoshiReRe.Exploration
         [SerializeField, Min(0f)] private float initializationTimeout = 3f;
         [SerializeField] private string textPrinterId = "Dialogue";
         [SerializeField] private int textPrinterSortingOrder = 300;
+        [SerializeField] private int choiceHandlerSortingOrder = 310;
         [SerializeField] private ExplorationDialogueOverlay fallbackOverlay;
         [SerializeField] private string fallbackSpeaker = "仮置きのNPC";
         [SerializeField, TextArea] private string[] fallbackLines;
@@ -97,13 +98,18 @@ namespace MoshiReRe.Exploration
                         return;
                     }
 
+                    if (ShouldTransitionToNovel(nextScriptPath))
+                        ClearChoiceHandlers();
+                    else
+                        await PrepareChoiceHandlerAsync();
                     var scriptPlayer = Engine.GetService<IScriptPlayer>();
                     if (scriptPlayer == null)
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
 
                     await scriptPlayer.LoadAndPlay(scriptPath);
                     await ReapplyTextPrinterPresentationAsync(scriptPlayer);
-                    while (scriptPlayer.Playing)
+                    while (ShouldWaitForDialogueCompletion(
+                               scriptPlayer.Playing, CountPendingChoices()))
                         await AsyncUtils.WaitEndOfFrame();
 
                     if (ShouldTransitionToNovel(nextScriptPath))
@@ -111,6 +117,7 @@ namespace MoshiReRe.Exploration
                         // Exploration forces the Dialogue printer into an overlay canvas and runs
                         // in its own Unity scene. Discard that actor and unload the whole scene so
                         // the novel host recreates the printer and camera at their authored values.
+                        ClearChoiceHandlers();
                         Engine.GetService<ITextPrinterManager>()?.RemoveActor(textPrinterId);
                         transitioningToNovel = true;
                         FinishDialogueBeforeSceneUnload();
@@ -199,6 +206,11 @@ namespace MoshiReRe.Exploration
             return !string.IsNullOrWhiteSpace(nextScriptPath);
         }
 
+        public static bool ShouldWaitForDialogueCompletion(bool scriptPlaying, int pendingChoiceCount)
+        {
+            return scriptPlaying || pendingChoiceCount > 0;
+        }
+
         private async void PulseContinueInputAsync()
         {
             var continueInput = Engine.GetService<IInputManager>()?.GetContinue();
@@ -264,6 +276,36 @@ namespace MoshiReRe.Exploration
             uiPrinter.Visible = true;
         }
 
+        private async UniTask PrepareChoiceHandlerAsync()
+        {
+            var manager = Engine.GetService<IChoiceHandlerManager>();
+            if (manager == null)
+                throw new InvalidOperationException("Naninovel choice handler manager is unavailable.");
+
+            var handler = await manager.GetOrAddActor(manager.Configuration.DefaultHandlerId);
+            if (handler is not UIChoiceHandler uiHandler || uiHandler.GameObject == null)
+                throw new InvalidOperationException("Naninovel default choice handler could not create its UI panel.");
+
+            ConfigureChoiceHandlerCanvas(uiHandler.GameObject.transform, choiceHandlerSortingOrder);
+        }
+
+        private static int CountPendingChoices()
+        {
+            var manager = Engine.GetService<IChoiceHandlerManager>();
+            if (manager == null)
+                return 0;
+
+            var count = 0;
+            foreach (var handler in manager.Actors)
+                count += handler.Choices.Count;
+            return count;
+        }
+
+        private static void ClearChoiceHandlers()
+        {
+            Engine.GetService<IChoiceHandlerManager>()?.RemoveAllActors();
+        }
+
         private async UniTask PlayFallbackAsync()
         {
             if (fallbackOverlay != null)
@@ -294,6 +336,22 @@ namespace MoshiReRe.Exploration
             canvas.worldCamera = null;
             canvas.sortingOrder = sortingOrder;
             canvas.transform.localScale = Vector3.one;
+            return canvas;
+        }
+
+        /// <summary>Places exploration choices above the local dialogue printer.</summary>
+        public static Canvas ConfigureChoiceHandlerCanvas(Component choicePanel, int sortingOrder)
+        {
+            if (choicePanel == null)
+                throw new ArgumentNullException(nameof(choicePanel));
+
+            var canvas = choicePanel.GetComponentInParent<Canvas>(true);
+            if (canvas == null)
+                throw new InvalidOperationException("Naninovel choice handler has no parent Canvas.");
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.worldCamera = null;
+            canvas.sortingOrder = sortingOrder;
             return canvas;
         }
 

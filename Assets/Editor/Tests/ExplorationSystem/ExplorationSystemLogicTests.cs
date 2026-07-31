@@ -167,6 +167,21 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase(false, 0, false)]
+        [TestCase(true, 0, true)]
+        [TestCase(false, 1, true)]
+        [TestCase(true, 2, true)]
+        public void ShouldWaitForDialogueCompletion_IncludesPendingChoices(
+            bool scriptPlaying,
+            int pendingChoiceCount,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldWaitForDialogueCompletion(
+                    scriptPlaying, pendingChoiceCount),
+                Is.EqualTo(expected));
+        }
+
         [TestCase(false, false, false, false)]
         [TestCase(true, false, false, true)]
         [TestCase(false, true, false, true)]

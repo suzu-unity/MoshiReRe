@@ -8,6 +8,7 @@ Wanabi: 「入手しますか？」
 
 @choice "はい" goto:.Take
 @choice "いいえ" goto:.Leave
+@stop
 
 # Take
 @acquireExplorationItem id:old_key
