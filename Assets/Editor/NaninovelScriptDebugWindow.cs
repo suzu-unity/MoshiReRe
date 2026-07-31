@@ -104,6 +104,7 @@ namespace MoshiReRe.Editor
                     throw new InvalidOperationException("Naninovel state manager is unavailable.");
 
                 await stateManager.ResetState();
+                RestoreInputProcessing(Engine.GetService<IInputManager>());
                 await player.LoadAndPlay(scriptPath);
                 Engine.GetService<IUIManager>()?.GetUI<ITitleUI>()?.Hide();
                 Debug.Log($"[NaninovelScriptDebug] Playing '{scriptPath}'.");
@@ -112,6 +113,16 @@ namespace MoshiReRe.Editor
             {
                 Debug.LogException(exception);
             }
+        }
+
+        internal static void RestoreInputProcessing(IInputManager inputManager)
+        {
+            if (inputManager == null)
+                throw new InvalidOperationException("Naninovel input manager is unavailable.");
+
+            // A direct debug launch has no preceding script to restore input state.
+            // Ctrl skip drives the player directly, but Continue requires input sampling.
+            inputManager.ProcessInput = true;
         }
     }
 }
