@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MoshiReRe.Exploration;
+using MoshiReRe.Exploration.State;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -98,6 +99,7 @@ public static class ExplorationPrototypeBuilder
         CreateWardrobe(playerAnimator);
         CreateDummyItem(dummyItem, dummyItemSprite, inventoryDatabase, dialogueOverlay);
         CreateLeftDoor(playerAnimator, dialogueOverlay);
+        CreateExplorationState(player, playerAnimator);
         CreateCamera(player.transform);
         CreateLight();
         CreateNaninovelUiGuard(player.GetComponent<ExplorationPlayerController>());
@@ -451,6 +453,7 @@ public static class ExplorationPrototypeBuilder
         SetString(dialogue, "naninovelScriptPath", "Scenario/ExplorationDoorWardrobe");
         SetString(dialogue, "unavailableNaninovelScriptPath", "Scenario/ExplorationDoorDefault");
         SetString(dialogue, "nextNaninovelScriptPath", "Scenario/scene02");
+        SetBool(dialogue, "completeExplorationOnDialogueEnd", true);
         SetBool(dialogue, "requireOutfit", true);
         SetEnum(dialogue, "requiredOutfit", (int)ExplorationOutfit.Wardrobe);
         SetObject(dialogue, "outfitAnimator", playerAnimator);
@@ -458,6 +461,42 @@ public static class ExplorationPrototypeBuilder
         SetObject(dialogue, "fallbackOverlay", fallbackOverlay);
         SetString(dialogue, "fallbackSpeaker", "Wanabi");
         SetStringArray(dialogue, "fallbackLines", new[] { "出社する前に着替える必要があるな" });
+    }
+
+    private static void CreateExplorationState(
+        GameObject player,
+        ExplorationSpriteAnimator playerAnimator)
+    {
+        const string mapId = "prototype-room";
+
+        var root = new GameObject("ExplorationState");
+        var spawnObject = new GameObject("DefaultSpawn");
+        spawnObject.transform.SetParent(root.transform, false);
+        spawnObject.transform.position = player.transform.position;
+        var spawnPoint = spawnObject.AddComponent<ExplorationSpawnPoint>();
+        SetString(spawnPoint, "spawnId", "default");
+
+        var map = root.AddComponent<ExplorationMapStateController>();
+        SetString(map, "mapId", mapId);
+        SetObject(map, "player", player.transform);
+        SetObject(map, "spriteAnimator", playerAnimator);
+        SetObject(map, "currentSpawnPoint", spawnPoint);
+
+        AddStatefulObject("PrototypeNPC", mapId, "npc");
+        AddStatefulObject("WallSuitInteraction", mapId, "wardrobe");
+        AddStatefulObject("DummyItemPickup", mapId, "old-key");
+        AddStatefulObject("LeftDoorInteraction", mapId, "left-door");
+    }
+
+    private static void AddStatefulObject(string objectName, string mapId, string objectId)
+    {
+        var target = GameObject.Find(objectName);
+        if (target == null)
+            throw new InvalidOperationException($"Could not find exploration object '{objectName}'.");
+
+        var stateful = target.AddComponent<ExplorationStatefulObject>();
+        SetString(stateful, "mapId", mapId);
+        SetString(stateful, "objectId", objectId);
     }
 
     private static void CreateCamera(Transform target)

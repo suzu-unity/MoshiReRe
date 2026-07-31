@@ -1,4 +1,5 @@
 using UnityEngine;
+using MoshiReRe.Exploration.State;
 
 namespace MoshiReRe.Exploration
 {
@@ -21,7 +22,10 @@ namespace MoshiReRe.Exploration
         public void Interact(ExplorationPlayerController player)
         {
             if (IsAvailable)
+            {
+                GetComponent<ExplorationStatefulObject>()?.MarkInteracted();
                 OnInteract(player);
+            }
         }
 
         protected abstract void OnInteract(ExplorationPlayerController player);

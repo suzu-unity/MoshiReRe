@@ -141,6 +141,37 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase("true", "TRUE", true)]
+        [TestCase("false", "true", false)]
+        [TestCase("1", "1.0", true)]
+        [TestCase("001.50", "1.5", true)]
+        [TestCase("1", "2", false)]
+        [TestCase("昼", "昼", true)]
+        [TestCase("昼", "夜", false)]
+        public void DoCustomVariableValuesMatch_SupportsBooleanNumberAndStringValues(
+            string currentValue,
+            string requiredValue,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.DoCustomVariableValuesMatch(currentValue, requiredValue),
+                Is.EqualTo(expected));
+        }
+
+        [TestCase(null, "anything", null, true)]
+        [TestCase("questReady", "true", "true", true)]
+        [TestCase("questReady", "true", "false", false)]
+        public void DoesRequiredVariableMatch_TreatsAnEmptyVariableNameAsNoRequirement(
+            string variableName,
+            string requiredValue,
+            string currentValue,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.DoesRequiredVariableMatch(variableName, requiredValue, currentValue),
+                Is.EqualTo(expected));
+        }
+
         [TestCase(true, true, false)]
         [TestCase(true, false, true)]
         [TestCase(false, true, true)]

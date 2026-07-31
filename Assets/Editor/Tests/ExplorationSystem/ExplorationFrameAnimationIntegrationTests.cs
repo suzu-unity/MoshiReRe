@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using MoshiReRe.Exploration;
+using MoshiReRe.Exploration.State;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -281,6 +282,37 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Assert.That(
                     NaninovelDialogueInteractable.NovelHostSceneName,
                     Is.EqualTo("CommonUIHub"));
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        [Test]
+        public void PrototypeScene_HasStableMapAndObjectSaveIdentifiers()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var stateRoot = roots.Single(root => root.name == "ExplorationState");
+                var map = stateRoot.GetComponent<ExplorationMapStateController>();
+                var mapSerialized = new SerializedObject(map);
+
+                Assert.That(mapSerialized.FindProperty("mapId").stringValue, Is.EqualTo("prototype-room"));
+                Assert.That(stateRoot.GetComponentInChildren<ExplorationSpawnPoint>(true), Is.Not.Null);
+
+                var expectedIds = new[] { "npc", "wardrobe", "old-key", "left-door" };
+                var actualIds = roots
+                    .Select(root => root.GetComponent<ExplorationStatefulObject>())
+                    .Where(component => component != null)
+                    .Select(component => new SerializedObject(component)
+                        .FindProperty("objectId").stringValue)
+                    .OrderBy(value => value)
+                    .ToArray();
+
+                Assert.That(actualIds, Is.EqualTo(expectedIds.OrderBy(value => value).ToArray()));
             }
             finally
             {

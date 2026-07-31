@@ -1,5 +1,7 @@
 using System;
+using System.Globalization;
 using Naninovel;
+using MoshiReRe.Exploration.State;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -25,6 +27,16 @@ namespace MoshiReRe.Exploration
         [SerializeField] private ExplorationOutfit requiredOutfit = ExplorationOutfit.Wardrobe;
         [SerializeField] private string unavailableNaninovelScriptPath;
         [SerializeField] private string nextNaninovelScriptPath;
+        [SerializeField, Tooltip("Optional label to play after loading the next Naninovel script.")]
+        private string nextNaninovelLabel;
+        [SerializeField, Tooltip("Optional Naninovel custom variable required to use this exit.")]
+        private string requiredVariableName;
+        [SerializeField, Tooltip("Required custom variable value. Supports boolean, number, or exact string comparison.")]
+        private string requiredVariableValue;
+        [SerializeField, Tooltip("Treat this dialogue as an exploration exit and use the active session's return target when explicit fields are empty.")]
+        private bool completeExplorationOnDialogueEnd;
+        [SerializeField, Tooltip("Optional Unity scene to load when leaving exploration. Defaults to the active session target or CommonUIHub.")]
+        private string nextUnitySceneName;
 
         private bool dialoguePlaying;
         private bool continuePulseActive;
@@ -55,16 +67,30 @@ namespace MoshiReRe.Exploration
             if (dialoguePlaying) return;
 
             var animator = outfitAnimator != null ? outfitAnimator : player?.SpriteAnimator;
-            var meetsRequirement = ShouldUseRequiredOutfit(
+            var meetsOutfitRequirement = ShouldUseRequiredOutfit(
                 animator != null ? animator.Outfit : ExplorationOutfit.Default,
                 requireOutfit, requiredOutfit);
+            var meetsVariableRequirement = DoesRequiredVariableMatch(
+                requiredVariableName,
+                requiredVariableValue,
+                GetCustomVariableValue(requiredVariableName));
+            var meetsRequirement = meetsOutfitRequirement && meetsVariableRequirement;
             var scriptPath = meetsRequirement || string.IsNullOrWhiteSpace(unavailableNaninovelScriptPath)
                 ? naninovelScriptPath : unavailableNaninovelScriptPath;
             var nextPath = meetsRequirement ? nextNaninovelScriptPath : string.Empty;
-            if (!string.IsNullOrWhiteSpace(scriptPath)) PlayDialogueAsync(player, scriptPath, nextPath);
+            var nextLabel = meetsRequirement ? nextNaninovelLabel : string.Empty;
+            var shouldExit = meetsRequirement &&
+                             (completeExplorationOnDialogueEnd || ShouldTransitionToNovel(nextPath));
+            if (!string.IsNullOrWhiteSpace(scriptPath))
+                PlayDialogueAsync(player, scriptPath, shouldExit, nextPath, nextLabel);
         }
 
-        private async void PlayDialogueAsync(ExplorationPlayerController player, string scriptPath, string nextScriptPath)
+        private async void PlayDialogueAsync(
+            ExplorationPlayerController player,
+            string scriptPath,
+            bool shouldExitExploration,
+            string nextScriptPath,
+            string nextLabel)
         {
             dialoguePlaying = true;
             dialogueOpenedFrame = Time.frameCount;
@@ -98,7 +124,7 @@ namespace MoshiReRe.Exploration
                         return;
                     }
 
-                    if (ShouldTransitionToNovel(nextScriptPath))
+                    if (shouldExitExploration)
                         ClearChoiceHandlers();
                     else
                         await PrepareChoiceHandlerAsync();
@@ -112,8 +138,25 @@ namespace MoshiReRe.Exploration
                                scriptPlayer.Playing, CountPendingChoices()))
                         await AsyncUtils.WaitEndOfFrame();
 
-                    if (ShouldTransitionToNovel(nextScriptPath))
+                    if (shouldExitExploration)
                     {
+                        var coordinator = ExplorationStateCoordinator.Instance;
+                        var flow = coordinator.CaptureFlowContext();
+                        // A session target makes one map reusable from multiple novel/quest entry points.
+                        // Inspector values remain as legacy fallbacks for direct scene loads.
+                        var hasSessionReturnTarget =
+                            !string.IsNullOrWhiteSpace(flow.returnScene) ||
+                            !string.IsNullOrWhiteSpace(flow.returnScript) ||
+                            !string.IsNullOrWhiteSpace(flow.returnLabel);
+                        var returnScene = hasSessionReturnTarget
+                            ? FirstNotEmpty(flow.returnScene, NovelHostSceneName)
+                            : FirstNotEmpty(nextUnitySceneName, NovelHostSceneName);
+                        if (hasSessionReturnTarget)
+                        {
+                            nextScriptPath = flow.returnScript;
+                            nextLabel = flow.returnLabel;
+                        }
+
                         // Exploration forces the Dialogue printer into an overlay canvas and runs
                         // in its own Unity scene. Discard that actor and unload the whole scene so
                         // the novel host recreates the printer and camera at their authored values.
@@ -123,15 +166,22 @@ namespace MoshiReRe.Exploration
                         FinishDialogueBeforeSceneUnload();
 
                         var loadOperation = SceneManager.LoadSceneAsync(
-                            NovelHostSceneName, LoadSceneMode.Single);
+                            returnScene, LoadSceneMode.Single);
                         if (loadOperation == null)
                             throw new InvalidOperationException(
-                                $"Could not start loading novel host scene '{NovelHostSceneName}'.");
+                                $"Could not start loading exploration return scene '{returnScene}'.");
 
                         while (!loadOperation.isDone)
                             await AsyncUtils.WaitEndOfFrame();
 
-                        await scriptPlayer.LoadAndPlay(nextScriptPath);
+                        coordinator.CompleteSession();
+                        if (!string.IsNullOrWhiteSpace(nextScriptPath))
+                        {
+                            if (string.IsNullOrWhiteSpace(nextLabel))
+                                await scriptPlayer.LoadAndPlay(nextScriptPath);
+                            else
+                                await scriptPlayer.LoadAndPlayAtLabel(nextScriptPath, nextLabel);
+                        }
                     }
                 }
                 else if (fallbackOverlay != null)
@@ -195,6 +245,33 @@ namespace MoshiReRe.Exploration
             return !requiresOutfit || currentOutfit == requiredOutfit;
         }
 
+        /// <summary>Checks an optional custom-variable requirement using bool, numeric, or exact string semantics.</summary>
+        public static bool DoesRequiredVariableMatch(
+            string requiredVariableName,
+            string requiredVariableValue,
+            string currentVariableValue)
+        {
+            return string.IsNullOrWhiteSpace(requiredVariableName) ||
+                   DoCustomVariableValuesMatch(currentVariableValue, requiredVariableValue);
+        }
+
+        /// <summary>Compares custom-variable string representations without depending on Naninovel services.</summary>
+        public static bool DoCustomVariableValuesMatch(string currentValue, string requiredValue)
+        {
+            var normalizedCurrent = currentValue?.Trim() ?? string.Empty;
+            var normalizedRequired = requiredValue?.Trim() ?? string.Empty;
+
+            if (bool.TryParse(normalizedCurrent, out var currentBool) &&
+                bool.TryParse(normalizedRequired, out var requiredBool))
+                return currentBool == requiredBool;
+
+            if (decimal.TryParse(normalizedCurrent, NumberStyles.Number, CultureInfo.InvariantCulture, out var currentNumber) &&
+                decimal.TryParse(normalizedRequired, NumberStyles.Number, CultureInfo.InvariantCulture, out var requiredNumber))
+                return currentNumber == requiredNumber;
+
+            return string.Equals(normalizedCurrent, normalizedRequired, StringComparison.Ordinal);
+        }
+
         /// <summary>Determines whether exploration must use its local dialogue window instead of a Naninovel printer.</summary>
         public static bool ShouldUseFallbackWhenPrinterUnavailable(bool engineInitialized, bool printerPrepared)
         {
@@ -204,6 +281,25 @@ namespace MoshiReRe.Exploration
         public static bool ShouldTransitionToNovel(string nextScriptPath)
         {
             return !string.IsNullOrWhiteSpace(nextScriptPath);
+        }
+
+        private static string GetCustomVariableValue(string variableName)
+        {
+            if (string.IsNullOrWhiteSpace(variableName) || !Engine.Initialized)
+                return null;
+
+            var variables = Engine.GetService<ICustomVariableManager>();
+            return variables != null && variables.VariableExists(variableName)
+                ? variables.GetVariableValue(variableName).ToString()
+                : null;
+        }
+
+        private static string FirstNotEmpty(params string[] values)
+        {
+            for (var i = 0; i < values.Length; i++)
+                if (!string.IsNullOrWhiteSpace(values[i]))
+                    return values[i];
+            return string.Empty;
         }
 
         public static bool ShouldWaitForDialogueCompletion(bool scriptPlaying, int pendingChoiceCount)
