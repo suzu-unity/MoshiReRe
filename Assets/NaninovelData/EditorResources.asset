@@ -258,6 +258,48 @@ MonoBehaviour:
     - name: scene01/1-12
       pathPrefix: Backgrounds/MainBackground
       guid: 0095a4e7a4fea8c42b7a6f7a3df1ab79
+    - name: scene02/1920x1080-px-Blue-Screen-of-Death-BSOD-Microsoft-Windows-1328311
+      pathPrefix: Backgrounds/MainBackground
+      guid: f9044aa1ed871cf4690a262d17d7c2ca
+    - name: scene02/2-1
+      pathPrefix: Backgrounds/MainBackground
+      guid: c11958cad0ab3254384c3e0daae2ab8b
+    - name: scene02/2-2_1
+      pathPrefix: Backgrounds/MainBackground
+      guid: 619811efb429315419137b6cb7ac844f
+    - name: scene02/2-2_2
+      pathPrefix: Backgrounds/MainBackground
+      guid: a294282a6f6792a4188addfc1021fed0
+    - name: scene02/2-2_3
+      pathPrefix: Backgrounds/MainBackground
+      guid: 515c5098c7c2d964cac2533d6608e9cf
+    - name: scene02/2-2_4
+      pathPrefix: Backgrounds/MainBackground
+      guid: 6a840e7187acd864f99616353e689b45
+    - name: scene02/Adverpng6
+      pathPrefix: Backgrounds/MainBackground
+      guid: f7dc393ef262e0e41afd6ff76a58d2ce
+    - name: scene02/Adverpng8
+      pathPrefix: Backgrounds/MainBackground
+      guid: ca5ceb47fcea6124f8ca150454cf3f51
+    - name: scene02/Adverpng9
+      pathPrefix: Backgrounds/MainBackground
+      guid: e60c40bf195ab084287ea5d2abc572a8
+    - name: scene02/BGsmartphone01
+      pathPrefix: Backgrounds/MainBackground
+      guid: 5b20ae87cdeb5024b8a9bd2414c0fa76
+    - name: scene02/BGsmartphone02
+      pathPrefix: Backgrounds/MainBackground
+      guid: d1f26923fc37cae41a380aacdfef3766
+    - name: scene02/BGsmartphone03
+      pathPrefix: Backgrounds/MainBackground
+      guid: 897911f92239873458c3f54adc95516e
+    - name: scene02/ComfyUI_00283_
+      pathPrefix: Backgrounds/MainBackground
+      guid: a16a5c67b1a54ae4c92f1c2091951302
+    - name: scene02/Webpage1
+      pathPrefix: Backgrounds/MainBackground
+      guid: 4ede79517b25a6141b8b155c32d583c6
   - Id: Backgrounds/a81d8fb7-d083-44c8-99ef-955018a704ab
     Resources:
     - name: scene01/1-1
@@ -363,3 +405,21 @@ MonoBehaviour:
     - name: "SFX/\u30B7\u30E3\u30AD\u30FC\u30F32"
       pathPrefix: Audio
       guid: 7e6349ad735604e8d9b2576199959c94
+    - name: BGM/title_bgm
+      pathPrefix: Audio
+      guid: 223415bd978f3104f8bb220b710d434c
+    - name: "SFX/\u30BF\u30A4\u30D7\u30E9\u30A4\u30BF\u30FC\uFF08\u30AD\u30FC\uFF09"
+      pathPrefix: Audio
+      guid: 21bf9f0928687486ca47f1bba88bc8da
+    - name: "SFX/\u96FB\u8ECA\u505C\u8ECA"
+      pathPrefix: Audio
+      guid: 22ba1bb8b85dd6144bccdd900127f950
+    - name: "SFX/\u96FB\u8ECA\u84B8\u6C17\u5674\u51FA"
+      pathPrefix: Audio
+      guid: d7238475aac123d40930d4dc721d9b7b
+    - name: "SFX/\u96FB\u8ECA\u8D70\u884C\u4E2D2"
+      pathPrefix: Audio
+      guid: 2ded610117bda3447b5b18ada21b9900
+    - name: "SFX/\u9769\u9774\u3067\u6B69\u304F"
+      pathPrefix: Audio
+      guid: 0d6b6c4492d8ceb4f92dc92782681c07
