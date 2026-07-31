@@ -237,35 +237,51 @@ Avoid scanning the entire repository unless necessary.
 
 # Sub-agent Workflow
 
-For this project, Sol is the primary/orchestrating agent. When a task can be
-delegated safely, Sol should assign implementation and verification work to a
-cost-efficient sub-agent (for example, luna; other capable low-cost models may
-be used as they become available). A more capable model may be used when the
-task requires difficult debugging, broad architectural judgment, or repeated
-failure recovery.
+For this project, Sol remains the primary/orchestrating agent, but Luna max is
+the default implementation and verification sub-agent. Sol should delegate
+substantial work to Luna max whenever the task can be scoped safely. Luna max
+may create and run lower Luna models as subordinate workers when a task can be
+split into focused, independent units or when that is more cost-efficient.
+Luna max owns the integration and final review of work performed by those
+subordinate workers before reporting back to Sol.
+
+Use Luna max directly for broad changes, cross-system work, architectural
+judgment, difficult debugging, or recovery from repeated failures. Use lower
+Luna models only for bounded tasks with clear files, acceptance criteria, and
+verification steps. A lower model must be promoted back to Luna max (or
+escalated to Sol) when it encounters ambiguity, cross-system impact, unsafe or
+destructive operations, or repeated verification failure.
 
 ## Delegation Rules
 
 - Sol defines the task scope, acceptance criteria, files or system in scope,
-  and required tests before delegating.
-- Prefer one focused sub-agent task per gameplay system or change unit.
-- The sub-agent should inspect the relevant files, make the smallest safe
+  and required tests before delegating to Luna max.
+- Luna max decides whether to work directly or to create lower Luna workers.
+- Prefer one focused worker task per gameplay system or change unit.
+- Luna max must give each lower worker only the objective, acceptance criteria,
+  owned files, relevant references, and verification commands it needs; do not
+  fork the full conversation history by default.
+- Every worker should inspect only the relevant files, make the smallest safe
   change, run the appropriate tests, and avoid unrelated cleanup.
-- The sub-agent should not scan or modify ignored folders: `Library`, `Temp`,
-  `Logs`, `Build`, and `obj`.
-- The sub-agent should preserve public APIs, serialized fields, inspector
+- Workers must not scan or modify ignored folders: `Library`, `Temp`, `Logs`,
+  `Build`, and `obj`.
+- All workers must preserve public APIs, serialized fields, inspector
   compatibility, and existing event flows.
-- If the task is ambiguous, destructive, requires a new external authority, or
-  crosses system boundaries unexpectedly, stop and escalate to Sol instead of
+- If a task is ambiguous, destructive, requires a new external authority, or
+  crosses system boundaries unexpectedly, stop and escalate upward instead of
   guessing.
+- Lower workers should normally leave commit creation to Luna max. Luna max
+  reviews and integrates their changes, then creates the coherent task commit
+  after verification passes.
 
 ## Progress and Reporting
 
-Sub-agents should not send routine intermediate progress updates to Sol. They
-should return one compressed completion report after the work is finished. An
-immediate escalation is allowed only for a blocker, failed verification that
-cannot be resolved safely, an unexpected scope expansion, or a decision that
-materially affects the design.
+Workers should not send routine intermediate progress updates to Sol. Lower
+Luna workers report once, after finishing, to Luna max. Luna max reviews the
+worker results, resolves integration issues, and sends Sol one compressed
+completion report. Immediate escalation is allowed only for a blocker, failed
+verification that cannot be resolved safely, unexpected scope expansion, or a
+decision that materially affects the design.
 
 The completion report must contain only:
 
@@ -301,8 +317,8 @@ git diff --stat:
 - Never reset, discard, or overwrite unrelated user changes.
 - If the working tree contains unrelated changes, report them and do not mix
   them into the task commit.
-- Sol should relay the compressed report to the user rather than forwarding
-  the sub-agent's internal reasoning or routine progress log.
+- Luna max should relay only the compressed report to Sol; Sol should relay it
+  to the user rather than forwarding worker reasoning or routine progress logs.
 - The commit hash is evidence of the handoff state; it does not replace test
   results or a summary of unresolved issues.
 
