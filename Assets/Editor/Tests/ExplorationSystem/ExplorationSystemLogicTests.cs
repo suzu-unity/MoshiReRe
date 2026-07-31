@@ -156,6 +156,17 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase(null, false)]
+        [TestCase("", false)]
+        [TestCase("   ", false)]
+        [TestCase("Scenario/scene02", true)]
+        public void ShouldTransitionToNovel_RequiresANextScript(string nextScriptPath, bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldTransitionToNovel(nextScriptPath),
+                Is.EqualTo(expected));
+        }
+
         [TestCase(false, false, false, false)]
         [TestCase(true, false, false, true)]
         [TestCase(false, true, false, true)]

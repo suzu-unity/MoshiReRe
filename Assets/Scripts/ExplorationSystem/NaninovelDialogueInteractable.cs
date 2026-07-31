@@ -2,12 +2,15 @@ using System;
 using Naninovel;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace MoshiReRe.Exploration
 {
     /// <summary>Runs a Naninovel script and pauses the interacting player's movement until it completes.</summary>
     public class NaninovelDialogueInteractable : ExplorationInteractable
     {
+        public const string NovelHostSceneName = "CommonUIHub";
+
         [SerializeField, Tooltip("Naninovel script path, for example Scenario/Exploration/Shopkeeper.")]
         private string naninovelScriptPath;
         [SerializeField, Min(0f)] private float initializationTimeout = 3f;
@@ -65,6 +68,7 @@ namespace MoshiReRe.Exploration
             dialoguePlaying = true;
             dialogueOpenedFrame = Time.frameCount;
             var restoreMovement = player != null && player.MovementEnabled;
+            var transitioningToNovel = false;
             player?.SetMovementEnabled(false);
             DialogueStarted?.Invoke();
 
@@ -102,8 +106,26 @@ namespace MoshiReRe.Exploration
                     while (scriptPlayer.Playing)
                         await AsyncUtils.WaitEndOfFrame();
 
-                    if (!string.IsNullOrWhiteSpace(nextScriptPath))
+                    if (ShouldTransitionToNovel(nextScriptPath))
+                    {
+                        // Exploration forces the Dialogue printer into an overlay canvas and runs
+                        // in its own Unity scene. Discard that actor and unload the whole scene so
+                        // the novel host recreates the printer and camera at their authored values.
+                        Engine.GetService<ITextPrinterManager>()?.RemoveActor(textPrinterId);
+                        transitioningToNovel = true;
+                        FinishDialogueBeforeSceneUnload();
+
+                        var loadOperation = SceneManager.LoadSceneAsync(
+                            NovelHostSceneName, LoadSceneMode.Single);
+                        if (loadOperation == null)
+                            throw new InvalidOperationException(
+                                $"Could not start loading novel host scene '{NovelHostSceneName}'.");
+
+                        while (!loadOperation.isDone)
+                            await AsyncUtils.WaitEndOfFrame();
+
                         await scriptPlayer.LoadAndPlay(nextScriptPath);
+                    }
                 }
                 else if (fallbackOverlay != null)
                 {
@@ -116,18 +138,37 @@ namespace MoshiReRe.Exploration
             }
             catch (Exception exception)
             {
-                Debug.LogException(exception, this);
-                await PlayFallbackAsync();
+                if (transitioningToNovel)
+                {
+                    // The Single scene load destroys this component and the captured player.
+                    // Do not touch either Unity object after the transition has started.
+                    Debug.LogException(exception);
+                }
+                else
+                {
+                    Debug.LogException(exception, this);
+                    await PlayFallbackAsync();
+                }
             }
             finally
             {
-                ReleaseContinueInput();
-                if (restoreMovement)
-                    player?.SetMovementEnabled(true);
+                if (!transitioningToNovel)
+                {
+                    ReleaseContinueInput();
+                    if (restoreMovement)
+                        player?.SetMovementEnabled(true);
 
-                dialoguePlaying = false;
-                DialogueFinished?.Invoke();
+                    dialoguePlaying = false;
+                    DialogueFinished?.Invoke();
+                }
             }
+        }
+
+        private void FinishDialogueBeforeSceneUnload()
+        {
+            ReleaseContinueInput();
+            dialoguePlaying = false;
+            DialogueFinished?.Invoke();
         }
 
         public static bool ShouldForwardContinueInput(
@@ -151,6 +192,11 @@ namespace MoshiReRe.Exploration
         public static bool ShouldUseFallbackWhenPrinterUnavailable(bool engineInitialized, bool printerPrepared)
         {
             return !engineInitialized || !printerPrepared;
+        }
+
+        public static bool ShouldTransitionToNovel(string nextScriptPath)
+        {
+            return !string.IsNullOrWhiteSpace(nextScriptPath);
         }
 
         private async void PulseContinueInputAsync()

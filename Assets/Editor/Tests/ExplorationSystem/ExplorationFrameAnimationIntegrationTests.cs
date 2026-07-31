@@ -235,6 +235,32 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
+        public void LeftDoor_TransitionsThroughEnabledNovelHostIntoScene02()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var door = scene.GetRootGameObjects().Single(root => root.name == "LeftDoorInteraction");
+                var dialogue = new SerializedObject(door.GetComponent<NaninovelDialogueInteractable>());
+                var hostScene = EditorBuildSettings.scenes.SingleOrDefault(
+                    candidate => candidate.path == "Assets/Scenes/CommonUIHub.unity");
+
+                Assert.That(
+                    dialogue.FindProperty("nextNaninovelScriptPath").stringValue,
+                    Is.EqualTo("Scenario/scene02"));
+                Assert.That(hostScene, Is.Not.Null);
+                Assert.That(hostScene.enabled, Is.True);
+                Assert.That(
+                    NaninovelDialogueInteractable.NovelHostSceneName,
+                    Is.EqualTo("CommonUIHub"));
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        [Test]
         public void CompanyExplorationBackgrounds_AreFiveNamedSingleSprites()
         {
             var backgrounds = new[]
