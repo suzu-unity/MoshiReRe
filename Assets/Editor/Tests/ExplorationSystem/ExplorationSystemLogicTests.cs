@@ -213,6 +213,23 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 Is.EqualTo(expected));
         }
 
+        [TestCase(false, false, 0, false, false)]
+        [TestCase(false, true, 0, false, true)]
+        [TestCase(false, false, 1, false, true)]
+        [TestCase(false, false, 0, true, true)]
+        public void ShouldWaitForDialogueCompletion_KeepsMovementLockedWhileDialogueUiIsActive(
+            bool scriptPlaying,
+            bool waitingForInput,
+            int pendingChoiceCount,
+            bool printerVisible,
+            bool expected)
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldWaitForDialogueCompletion(
+                    scriptPlaying, waitingForInput, pendingChoiceCount, printerVisible),
+                Is.EqualTo(expected));
+        }
+
         [TestCase(false, false, false, false)]
         [TestCase(true, false, false, true)]
         [TestCase(false, true, false, true)]

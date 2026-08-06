@@ -1,0 +1,46 @@
+; Office exploration interactions.
+; Keep one map-level script and add labels for new objects instead of creating one .nani file per object.
+
+# Desk01
+@printer Dialogue
+@showPrinter Dialogue
+
+Wanabi: 今日は……まず、自分の机に座ろうかな。
+@choice "机に座る" goto:.Desk01Sit
+@choice "まだ歩き回る" goto:.Desk01Leave
+@stop
+
+# Desk01Sit
+Wanabi: ちょっとだけ休んでから仕事を始めよう……。
+@wait 1.5
+@officeNpcSlide
+Tizu: 先輩、おはよっす。もう来てたんですね。
+Wanabi: ……おはよう。今来たところ。
+Tizu: その顔、絶対もっと前から来てた人の顔ですよ。
+Wanabi: 顔で出勤時間を決めつけるな……。
+@hidePrinter Dialogue wait!
+@stop
+
+# Desk01Leave
+Wanabi: もう少しだけ、社内を見て回ろう。
+@hidePrinter Dialogue wait!
+@stop
+
+# Desk02
+@printer Dialogue
+@showPrinter Dialogue
+
+Wanabi: 引き出しの奥に、古びた鍵が入っている。
+@acquireExplorationItem id:old_key
+Wanabi: 古びた鍵を手に入れた。
+@hidePrinter Dialogue wait!
+@stop
+
+# DeskGeneric
+@printer Dialogue
+@showPrinter Dialogue
+
+Wanabi: 誰かの机だ。書類がきれいに並んでいる。
+Wanabi: 今は勝手に触らない方がよさそうだ。
+@hidePrinter Dialogue wait!
+@stop

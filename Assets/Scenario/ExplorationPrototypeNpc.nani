@@ -2,6 +2,8 @@
 
 @printer Dialogue
 @showPrinter Dialogue
+@explorationPortrait side:left id:npc_default
+@explorationPortrait side:right id:player_default
 
 仮置きのNPC「こんばんは。部屋の中を歩いて、私に話しかけられたみたいね」
 
@@ -9,5 +11,7 @@
 
 「これは探索ADV用のダミー会話です。」
 
+@explorationPortrait side:left id:npc_alt
+@explorationPortrait side:right id:player_alt
 @hidePrinter Dialogue wait!
 @stop

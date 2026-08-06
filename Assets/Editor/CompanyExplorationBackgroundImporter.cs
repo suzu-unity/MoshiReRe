@@ -4,10 +4,12 @@ using UnityEditor;
 public sealed class CompanyExplorationBackgroundImporter : AssetPostprocessor
 {
     private const string BackgroundFolder = "Assets/Art/CompanyExploration/Backgrounds/";
+    private const string ScenarioBackgroundFolder = "Assets/Art/ScenarioExploration/Backgrounds/";
 
     private void OnPreprocessTexture()
     {
-        if (!assetPath.StartsWith(BackgroundFolder, System.StringComparison.Ordinal))
+        if (!assetPath.StartsWith(BackgroundFolder, System.StringComparison.Ordinal) &&
+            !assetPath.StartsWith(ScenarioBackgroundFolder, System.StringComparison.Ordinal))
             return;
 
         var importer = (TextureImporter)assetImporter;
@@ -25,7 +27,8 @@ public sealed class CompanyExplorationBackgroundImporter : AssetPostprocessor
     [MenuItem("Tools/MoshiReRe/Company Exploration/Reimport Backgrounds")]
     public static void ReimportBackgrounds()
     {
-        foreach (var guid in AssetDatabase.FindAssets("t:Texture2D", new[] { BackgroundFolder.TrimEnd('/') }))
+        var folders = new[] { BackgroundFolder.TrimEnd('/'), ScenarioBackgroundFolder.TrimEnd('/') };
+        foreach (var guid in AssetDatabase.FindAssets("t:Texture2D", folders))
         {
             var path = AssetDatabase.GUIDToAssetPath(guid);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);

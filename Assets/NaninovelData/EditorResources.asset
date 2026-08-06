@@ -182,6 +182,9 @@ MonoBehaviour:
     - name: Scenario/ExplorationDummyItem
       pathPrefix: Scripts
       guid: 50217987625456f48aeeb40608971335
+    - name: Scenario/OfficeExploration
+      pathPrefix: Scripts
+      guid: 75be2a09126b82742971e3c988aeeb37
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default

@@ -15,11 +15,26 @@ namespace MoshiReRe.Exploration
 
         [SerializeField, Tooltip("Naninovel script path, for example Scenario/Exploration/Shopkeeper.")]
         private string naninovelScriptPath;
+        [SerializeField, Tooltip("Optional label inside the script. Use one map-level .nani file for many interactables instead of one file per object.")]
+        private string naninovelScriptLabel;
         [SerializeField, Min(0f)] private float initializationTimeout = 3f;
         [SerializeField] private string textPrinterId = "Dialogue";
         [SerializeField] private int textPrinterSortingOrder = 300;
         [SerializeField] private int choiceHandlerSortingOrder = 310;
         [SerializeField] private ExplorationDialogueOverlay fallbackOverlay;
+        [Header("Exploration ADV portraits")]
+        [SerializeField] private ExplorationDialoguePortraits dialoguePortraits;
+        [SerializeField] private bool showNpcPortrait = true;
+        [SerializeField, Tooltip("Optional direct portrait override. Uses the player's current sliced sprite when empty.")]
+        private Sprite protagonistPortrait;
+        [SerializeField, Tooltip("Optional direct portrait override. Uses this object's current sliced sprite when empty.")]
+        private Sprite npcPortrait;
+        [SerializeField, Tooltip("Optional protagonist expression ID resolved from the presenter or local variants.")]
+        private string protagonistPortraitVariant;
+        [SerializeField, Tooltip("Optional NPC expression ID resolved from the presenter or local variants.")]
+        private string npcPortraitVariant;
+        [SerializeField, Tooltip("Expression sprites available only while this interaction is active.")]
+        private ExplorationPortraitVariant[] portraitVariants = Array.Empty<ExplorationPortraitVariant>();
         [SerializeField] private string fallbackSpeaker = "仮置きのNPC";
         [SerializeField, TextArea] private string[] fallbackLines;
         [SerializeField] private ExplorationSpriteAnimator outfitAnimator;
@@ -40,26 +55,34 @@ namespace MoshiReRe.Exploration
 
         private bool dialoguePlaying;
         private bool continuePulseActive;
+        private bool submitPulseActive;
+        private bool toggleUiWasEnabled;
+        private bool toggleUiSuppressed;
         private int dialogueOpenedFrame;
+        private ExplorationDialoguePortraits activePortraitPresenter;
+        private int portraitPresentationId;
 
         public event Action DialogueStarted;
         public event Action DialogueFinished;
 
         private void Update()
         {
-            if (!dialoguePlaying || continuePulseActive || !Engine.Initialized)
+            if (!dialoguePlaying || (continuePulseActive || submitPulseActive) || !Engine.Initialized)
                 return;
 
             var keyboard = Keyboard.current;
             if (keyboard == null ||
-                !ShouldForwardContinueInput(
+                !ShouldForwardDialogueInput(
                     dialogueOpenedFrame,
                     Time.frameCount,
                     keyboard.eKey.wasPressedThisFrame,
                     keyboard.spaceKey.wasPressedThisFrame))
                 return;
 
-            PulseContinueInputAsync();
+            if (CountPendingChoices() > 0)
+                PulseSubmitInputAsync();
+            else
+                PulseContinueInputAsync();
         }
 
         protected override void OnInteract(ExplorationPlayerController player)
@@ -97,6 +120,8 @@ namespace MoshiReRe.Exploration
             var restoreMovement = player != null && player.MovementEnabled;
             var transitioningToNovel = false;
             player?.SetMovementEnabled(false);
+            SuppressToggleUiInput();
+            BeginPortraitPresentation(player);
             DialogueStarted?.Invoke();
 
             try
@@ -132,10 +157,16 @@ namespace MoshiReRe.Exploration
                     if (scriptPlayer == null)
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
 
-                    await scriptPlayer.LoadAndPlay(scriptPath);
+                    if (string.IsNullOrWhiteSpace(naninovelScriptLabel))
+                        await scriptPlayer.LoadAndPlay(scriptPath);
+                    else
+                        await scriptPlayer.LoadAndPlayAtLabel(scriptPath, naninovelScriptLabel);
                     await ReapplyTextPrinterPresentationAsync(scriptPlayer);
                     while (ShouldWaitForDialogueCompletion(
-                               scriptPlayer.Playing, CountPendingChoices()))
+                               scriptPlayer.Playing,
+                               scriptPlayer.WaitingForInput,
+                               CountPendingChoices(),
+                               IsTextPrinterVisible()))
                         await AsyncUtils.WaitEndOfFrame();
 
                     if (shouldExitExploration)
@@ -212,6 +243,8 @@ namespace MoshiReRe.Exploration
                 if (!transitioningToNovel)
                 {
                     ReleaseContinueInput();
+                    RestoreToggleUiInput();
+                    EndPortraitPresentation();
                     if (restoreMovement)
                         player?.SetMovementEnabled(true);
 
@@ -224,6 +257,8 @@ namespace MoshiReRe.Exploration
         private void FinishDialogueBeforeSceneUnload()
         {
             ReleaseContinueInput();
+            RestoreToggleUiInput();
+            EndPortraitPresentation();
             dialoguePlaying = false;
             DialogueFinished?.Invoke();
         }
@@ -235,6 +270,15 @@ namespace MoshiReRe.Exploration
             bool spacePressed)
         {
             return currentFrame > openedFrame && (ePressed || spacePressed);
+        }
+
+        public static bool ShouldForwardDialogueInput(
+            int openedFrame,
+            int currentFrame,
+            bool ePressed,
+            bool spacePressed)
+        {
+            return ShouldForwardContinueInput(openedFrame, currentFrame, ePressed, spacePressed);
         }
 
         public static bool ShouldUseRequiredOutfit(
@@ -307,6 +351,15 @@ namespace MoshiReRe.Exploration
             return scriptPlaying || pendingChoiceCount > 0;
         }
 
+        public static bool ShouldWaitForDialogueCompletion(
+            bool scriptPlaying,
+            bool waitingForInput,
+            int pendingChoiceCount,
+            bool printerVisible)
+        {
+            return scriptPlaying || waitingForInput || pendingChoiceCount > 0 || printerVisible;
+        }
+
         private async void PulseContinueInputAsync()
         {
             var continueInput = Engine.GetService<IInputManager>()?.GetContinue();
@@ -324,6 +377,59 @@ namespace MoshiReRe.Exploration
                 continueInput.Activate(0f);
                 continuePulseActive = false;
             }
+        }
+
+        private async void PulseSubmitInputAsync()
+        {
+            var inputManager = Engine.GetService<IInputManager>();
+            var submitInput = inputManager?.GetSubmit() ?? inputManager?.GetContinue();
+            if (submitInput == null)
+                return;
+
+            submitPulseActive = true;
+            submitInput.Activate(1f);
+            try
+            {
+                await AsyncUtils.WaitEndOfFrame();
+            }
+            finally
+            {
+                submitInput.Activate(0f);
+                submitPulseActive = false;
+            }
+        }
+
+        private bool IsTextPrinterVisible()
+        {
+            var manager = Engine.GetService<ITextPrinterManager>();
+            return manager != null && manager.ActorExists(textPrinterId) &&
+                   manager.GetActor(textPrinterId)?.Visible == true;
+        }
+
+        private void SuppressToggleUiInput()
+        {
+            if (toggleUiSuppressed || !Engine.Initialized)
+                return;
+
+            var toggleUi = Engine.GetService<IInputManager>()?.GetToggleUI();
+            if (toggleUi == null)
+                return;
+
+            toggleUiWasEnabled = toggleUi.Enabled;
+            toggleUi.Enabled = false;
+            toggleUiSuppressed = true;
+        }
+
+        private void RestoreToggleUiInput()
+        {
+            if (!toggleUiSuppressed || !Engine.Initialized)
+                return;
+
+            var toggleUi = Engine.GetService<IInputManager>()?.GetToggleUI();
+            if (toggleUi != null)
+                toggleUi.Enabled = toggleUiWasEnabled;
+
+            toggleUiSuppressed = false;
         }
 
         private async UniTask<bool> TryPrepareTextPrinterAsync()
@@ -408,6 +514,49 @@ namespace MoshiReRe.Exploration
                 await fallbackOverlay.PlayAsync(fallbackSpeaker, fallbackLines);
         }
 
+        private void BeginPortraitPresentation(ExplorationPlayerController player)
+        {
+            activePortraitPresenter = dialoguePortraits != null
+                ? dialoguePortraits
+                : fallbackOverlay != null
+                    ? fallbackOverlay.GetComponent<ExplorationDialoguePortraits>()
+                    : FindFirstObjectByType<ExplorationDialoguePortraits>(FindObjectsInactive.Include);
+            if (activePortraitPresenter == null)
+                return;
+
+            var playerSprite = protagonistPortrait != null
+                ? protagonistPortrait
+                : FindCurrentSprite(player);
+            var interactionSprite = showNpcPortrait
+                ? npcPortrait != null ? npcPortrait : FindCurrentSprite(this)
+                : null;
+            portraitPresentationId = activePortraitPresenter.BeginPresentation(
+                playerSprite,
+                interactionSprite,
+                protagonistPortraitVariant,
+                npcPortraitVariant,
+                portraitVariants);
+        }
+
+        private void EndPortraitPresentation()
+        {
+            if (activePortraitPresenter != null)
+                activePortraitPresenter.EndPresentation(portraitPresentationId);
+            activePortraitPresenter = null;
+            portraitPresentationId = 0;
+        }
+
+        private static Sprite FindCurrentSprite(Component source)
+        {
+            if (source == null)
+                return null;
+            var renderers = source.GetComponentsInChildren<SpriteRenderer>(true);
+            for (var i = 0; i < renderers.Length; i++)
+                if (renderers[i].sprite != null)
+                    return renderers[i].sprite;
+            return null;
+        }
+
         private async UniTask ReapplyTextPrinterPresentationAsync(IScriptPlayer scriptPlayer)
         {
             // @printer/@showPrinter can restore the prefab's original camera mode after the
@@ -464,11 +613,16 @@ namespace MoshiReRe.Exploration
 
         private void ReleaseContinueInput()
         {
-            if (!continuePulseActive || !Engine.Initialized)
+            if (!Engine.Initialized)
                 return;
 
-            Engine.GetService<IInputManager>()?.GetContinue()?.Activate(0f);
+            var inputManager = Engine.GetService<IInputManager>();
+            if (continuePulseActive)
+                inputManager?.GetContinue()?.Activate(0f);
+            if (submitPulseActive)
+                (inputManager?.GetSubmit() ?? inputManager?.GetContinue())?.Activate(0f);
             continuePulseActive = false;
+            submitPulseActive = false;
         }
     }
 }
