@@ -452,8 +452,6 @@ public static class ExplorationPrototypeBuilder
         SetString(dialogue, "promptText", "出社する");
         SetString(dialogue, "naninovelScriptPath", "Scenario/ExplorationDoorWardrobe");
         SetString(dialogue, "unavailableNaninovelScriptPath", "Scenario/ExplorationDoorDefault");
-        SetString(dialogue, "nextNaninovelScriptPath", "Scenario/scene02");
-        SetBool(dialogue, "completeExplorationOnDialogueEnd", true);
         SetBool(dialogue, "requireOutfit", true);
         SetEnum(dialogue, "requiredOutfit", (int)ExplorationOutfit.Wardrobe);
         SetObject(dialogue, "outfitAnimator", playerAnimator);

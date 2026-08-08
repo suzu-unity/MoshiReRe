@@ -84,5 +84,77 @@ namespace MoshiReRe.Editor.Tests.ExplorationSystem
             Assert.That(restored.FindMap("apartment").TryGetLocal("flag", out var value), Is.True);
             Assert.That(value, Is.EqualTo("saved"));
         }
+
+        [Test]
+        public void DialogueWithoutReturnCommand_StaysOnExplorationMap()
+        {
+            Assert.That(
+                NaninovelDialogueInteractable.ShouldTransitionToNovel(default(ExplorationReturnRequest)),
+                Is.False);
+        }
+
+        [Test]
+        public void ReturnToNovelRequest_CausesDialogueToExitExploration()
+        {
+            var request = new ExplorationReturnRequest(null, null, null);
+
+            Assert.That(NaninovelDialogueInteractable.ShouldTransitionToNovel(request), Is.True);
+            Assert.That(
+                NaninovelDialogueInteractable.ResolveReturnTarget(request, null, null, null).SceneName,
+                Is.EqualTo(NaninovelDialogueInteractable.NovelHostSceneName));
+        }
+
+        [Test]
+        public void ReturnToNovelRequest_CapturesExplicitSceneScriptAndLabel()
+        {
+            var request = new ExplorationReturnRequest(
+                "NovelHost", "Scenario/Return", "Resume");
+
+            Assert.That(request.Requested, Is.True);
+            Assert.That(request.SceneName, Is.EqualTo("NovelHost"));
+            Assert.That(request.ScriptPath, Is.EqualTo("Scenario/Return"));
+            Assert.That(request.Label, Is.EqualTo("Resume"));
+        }
+
+        [Test]
+        public void ReturnToNovelBranch_OverridesInspectorDefaults()
+        {
+            var request = new ExplorationReturnRequest(
+                "BranchHost", "Scenario/Branch", "BranchLabel");
+
+            var target = NaninovelDialogueInteractable.ResolveReturnTarget(
+                request,
+                "LegacyHost",
+                "Scenario/Legacy",
+                "LegacyLabel");
+
+            Assert.That(target.SceneName, Is.EqualTo("BranchHost"));
+            Assert.That(target.ScriptPath, Is.EqualTo("Scenario/Branch"));
+            Assert.That(target.Label, Is.EqualTo("BranchLabel"));
+        }
+
+        [Test]
+        public void ReturnTargetResolution_IgnoresLegacyEnterExplorationValues()
+        {
+            var legacyFlow = new ExplorationFlowContext();
+            legacyFlow.Begin(
+                "office",
+                "OfficeExploration",
+                "entrance",
+                "LegacyHost",
+                "Scenario/Legacy",
+                "LegacyLabel");
+
+            var target = NaninovelDialogueInteractable.ResolveReturnTarget(
+                new ExplorationReturnRequest(null, null, null),
+                null,
+                null,
+                null);
+
+            Assert.That(legacyFlow.returnScript, Is.EqualTo("Scenario/Legacy"));
+            Assert.That(target.SceneName, Is.EqualTo(NaninovelDialogueInteractable.NovelHostSceneName));
+            Assert.That(target.ScriptPath, Is.Empty);
+            Assert.That(target.Label, Is.Empty);
+        }
     }
 }

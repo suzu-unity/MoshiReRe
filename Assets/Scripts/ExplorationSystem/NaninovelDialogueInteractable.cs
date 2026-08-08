@@ -48,9 +48,9 @@ namespace MoshiReRe.Exploration
         private string requiredVariableName;
         [SerializeField, Tooltip("Required custom variable value. Supports boolean, number, or exact string comparison.")]
         private string requiredVariableValue;
-        [SerializeField, Tooltip("Treat this dialogue as an exploration exit and use the active session's return target when explicit fields are empty.")]
+        [SerializeField, Tooltip("Legacy serialized option. Exploration now exits only when the dialogue executes @returnToNovel.")]
         private bool completeExplorationOnDialogueEnd;
-        [SerializeField, Tooltip("Optional Unity scene to load when leaving exploration. Defaults to the active session target or CommonUIHub.")]
+        [SerializeField, Tooltip("Legacy fallback scene for @returnToNovel when its scene parameter is empty. Defaults to CommonUIHub.")]
         private string nextUnitySceneName;
 
         private bool dialoguePlaying;
@@ -102,19 +102,20 @@ namespace MoshiReRe.Exploration
                 ? naninovelScriptPath : unavailableNaninovelScriptPath;
             var nextPath = meetsRequirement ? nextNaninovelScriptPath : string.Empty;
             var nextLabel = meetsRequirement ? nextNaninovelLabel : string.Empty;
-            var shouldExit = meetsRequirement &&
-                             (completeExplorationOnDialogueEnd || ShouldTransitionToNovel(nextPath));
             if (!string.IsNullOrWhiteSpace(scriptPath))
-                PlayDialogueAsync(player, scriptPath, shouldExit, nextPath, nextLabel);
+                PlayDialogueAsync(player, scriptPath, nextPath, nextLabel);
         }
 
         private async void PlayDialogueAsync(
             ExplorationPlayerController player,
             string scriptPath,
-            bool shouldExitExploration,
             string nextScriptPath,
             string nextLabel)
         {
+            var coordinator = ExplorationStateCoordinator.Instance;
+            // Requests are scoped to exactly one dialogue. An ordinary @stop must leave the
+            // player on the exploration map, even when legacy Next fields are serialized.
+            coordinator.ClearReturnToNovelRequest();
             dialoguePlaying = true;
             dialogueOpenedFrame = Time.frameCount;
             var restoreMovement = player != null && player.MovementEnabled;
@@ -149,10 +150,7 @@ namespace MoshiReRe.Exploration
                         return;
                     }
 
-                    if (shouldExitExploration)
-                        ClearChoiceHandlers();
-                    else
-                        await PrepareChoiceHandlerAsync();
+                    await PrepareChoiceHandlerAsync();
                     var scriptPlayer = Engine.GetService<IScriptPlayer>();
                     if (scriptPlayer == null)
                         throw new InvalidOperationException("Naninovel script player is unavailable.");
@@ -165,28 +163,17 @@ namespace MoshiReRe.Exploration
                     while (ShouldWaitForDialogueCompletion(
                                scriptPlayer.Playing,
                                scriptPlayer.WaitingForInput,
-                               CountPendingChoices(),
-                               IsTextPrinterVisible()))
+                               coordinator.ReturnToNovelRequested ? 0 : CountPendingChoices(),
+                               !coordinator.ReturnToNovelRequested && IsTextPrinterVisible()))
                         await AsyncUtils.WaitEndOfFrame();
 
-                    if (shouldExitExploration)
+                    if (coordinator.TryConsumeReturnToNovelRequest(out var returnRequest))
                     {
-                        var coordinator = ExplorationStateCoordinator.Instance;
-                        var flow = coordinator.CaptureFlowContext();
-                        // A session target makes one map reusable from multiple novel/quest entry points.
-                        // Inspector values remain as legacy fallbacks for direct scene loads.
-                        var hasSessionReturnTarget =
-                            !string.IsNullOrWhiteSpace(flow.returnScene) ||
-                            !string.IsNullOrWhiteSpace(flow.returnScript) ||
-                            !string.IsNullOrWhiteSpace(flow.returnLabel);
-                        var returnScene = hasSessionReturnTarget
-                            ? FirstNotEmpty(flow.returnScene, NovelHostSceneName)
-                            : FirstNotEmpty(nextUnitySceneName, NovelHostSceneName);
-                        if (hasSessionReturnTarget)
-                        {
-                            nextScriptPath = flow.returnScript;
-                            nextLabel = flow.returnLabel;
-                        }
+                        var target = ResolveReturnTarget(
+                            returnRequest,
+                            nextUnitySceneName,
+                            nextScriptPath,
+                            nextLabel);
 
                         // Exploration forces the Dialogue printer into an overlay canvas and runs
                         // in its own Unity scene. Discard that actor and unload the whole scene so
@@ -197,21 +184,21 @@ namespace MoshiReRe.Exploration
                         FinishDialogueBeforeSceneUnload();
 
                         var loadOperation = SceneManager.LoadSceneAsync(
-                            returnScene, LoadSceneMode.Single);
+                            target.SceneName, LoadSceneMode.Single);
                         if (loadOperation == null)
                             throw new InvalidOperationException(
-                                $"Could not start loading exploration return scene '{returnScene}'.");
+                                $"Could not start loading exploration return scene '{target.SceneName}'.");
 
                         while (!loadOperation.isDone)
                             await AsyncUtils.WaitEndOfFrame();
 
                         coordinator.CompleteSession();
-                        if (!string.IsNullOrWhiteSpace(nextScriptPath))
+                        if (!string.IsNullOrWhiteSpace(target.ScriptPath))
                         {
-                            if (string.IsNullOrWhiteSpace(nextLabel))
-                                await scriptPlayer.LoadAndPlay(nextScriptPath);
+                            if (string.IsNullOrWhiteSpace(target.Label))
+                                await scriptPlayer.LoadAndPlay(target.ScriptPath);
                             else
-                                await scriptPlayer.LoadAndPlayAtLabel(nextScriptPath, nextLabel);
+                                await scriptPlayer.LoadAndPlayAtLabel(target.ScriptPath, target.Label);
                         }
                     }
                 }
@@ -242,6 +229,7 @@ namespace MoshiReRe.Exploration
             {
                 if (!transitioningToNovel)
                 {
+                    coordinator.ClearReturnToNovelRequest();
                     ReleaseContinueInput();
                     RestoreToggleUiInput();
                     EndPortraitPresentation();
@@ -324,7 +312,27 @@ namespace MoshiReRe.Exploration
 
         public static bool ShouldTransitionToNovel(string nextScriptPath)
         {
+            // Retained for callers that inspect legacy Next configuration. Runtime exit
+            // decisions are made exclusively from ExplorationReturnRequest.
             return !string.IsNullOrWhiteSpace(nextScriptPath);
+        }
+
+        public static bool ShouldTransitionToNovel(ExplorationReturnRequest request) => request.Requested;
+
+        /// <summary>
+        /// Resolves each explicit command value before legacy Inspector defaults. Session return
+        /// values are intentionally excluded so @enterExploration cannot override this branch.
+        /// </summary>
+        public static ExplorationNovelTarget ResolveReturnTarget(
+            ExplorationReturnRequest request,
+            string inspectorSceneName,
+            string inspectorScriptPath,
+            string inspectorLabel)
+        {
+            return new ExplorationNovelTarget(
+                FirstNotEmpty(request.SceneName, inspectorSceneName, NovelHostSceneName),
+                FirstNotEmpty(request.ScriptPath, inspectorScriptPath),
+                FirstNotEmpty(request.Label, inspectorLabel));
         }
 
         private static string GetCustomVariableValue(string variableName)
@@ -623,6 +631,20 @@ namespace MoshiReRe.Exploration
                 (inputManager?.GetSubmit() ?? inputManager?.GetContinue())?.Activate(0f);
             continuePulseActive = false;
             submitPulseActive = false;
+        }
+    }
+
+    public readonly struct ExplorationNovelTarget
+    {
+        public string SceneName { get; }
+        public string ScriptPath { get; }
+        public string Label { get; }
+
+        public ExplorationNovelTarget(string sceneName, string scriptPath, string label)
+        {
+            SceneName = sceneName;
+            ScriptPath = scriptPath;
+            Label = label;
         }
     }
 }

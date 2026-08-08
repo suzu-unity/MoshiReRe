@@ -45,7 +45,7 @@ Wanabi: 「あ……降りなきゃ…」
 @showLocation "オフィス街-会社4F" hold:1.5
 @setLocation "オフィス街-会社4F"
 @showUI LocationHUD
-@enterExploration scene:OfficeExploration map:office spawn:entrance returnScene:CommonUIHub returnScript:Scenario/scene02 returnLabel:OfficeAfterAdv
+@enterExploration scene:OfficeExploration map:office spawn:entrance
 @stop
 
 # OfficeAfterAdv

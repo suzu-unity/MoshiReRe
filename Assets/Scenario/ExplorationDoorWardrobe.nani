@@ -2,4 +2,5 @@
 @showPrinter Dialogue
 Wanabi: 「行くか…」
 @hidePrinter Dialogue wait!
+@returnToNovel scene:CommonUIHub script:Scenario/scene02 label:OfficeAfterAdv
 @stop

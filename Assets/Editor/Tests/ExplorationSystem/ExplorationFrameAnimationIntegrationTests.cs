@@ -264,7 +264,7 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
-        public void LeftDoor_TransitionsThroughEnabledNovelHostIntoScene02()
+        public void LeftDoor_UsesConditionalReturnCommandThroughEnabledNovelHost()
         {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
             try
@@ -275,8 +275,12 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                     candidate => candidate.path == "Assets/Scenes/CommonUIHub.unity");
 
                 Assert.That(
-                    dialogue.FindProperty("nextNaninovelScriptPath").stringValue,
-                    Is.EqualTo("Scenario/scene02"));
+                    dialogue.FindProperty("naninovelScriptPath").stringValue,
+                    Is.EqualTo("Scenario/ExplorationDoorWardrobe"));
+                var script = File.ReadAllText("Assets/Scenario/ExplorationDoorWardrobe.nani");
+                StringAssert.Contains(
+                    "@returnToNovel scene:CommonUIHub script:Scenario/scene02 label:OfficeAfterAdv",
+                    script);
                 Assert.That(hostScene, Is.Not.Null);
                 Assert.That(hostScene.enabled, Is.True);
                 Assert.That(

@@ -4,7 +4,10 @@ using UnityEngine.SceneManagement;
 
 namespace MoshiReRe.Exploration.State
 {
-    /// <summary>Starts a reusable exploration map while recording where it should return.</summary>
+    /// <summary>
+    /// Starts a reusable exploration map. Return parameters are retained for script/save
+    /// compatibility, but are deprecated and ignored when resolving @returnToNovel exits.
+    /// </summary>
     [Command.CommandAlias("enterExploration")]
     public sealed class EnterExplorationCommand : Command
     {
@@ -17,6 +20,7 @@ namespace MoshiReRe.Exploration.State
         [Command.ParameterAlias("spawn")]
         public StringParameter Spawn;
 
+        // Deprecated compatibility fields. @returnToNovel owns exit target selection.
         [Command.ParameterAlias("returnScene")]
         public StringParameter ReturnScene;
 
@@ -55,6 +59,33 @@ namespace MoshiReRe.Exploration.State
 
             while (!operation.isDone)
                 await AsyncUtils.WaitEndOfFrame();
+        }
+    }
+
+    /// <summary>
+    /// Requests an exit after the current exploration dialogue finishes. With no parameters,
+    /// the dialogue returns to CommonUIHub; omitted target values may use the interactable's
+    /// legacy Inspector defaults.
+    /// </summary>
+    [Command.CommandAlias("returnToNovel")]
+    public sealed class ReturnToNovelCommand : Command
+    {
+        [Command.ParameterAlias("scene")]
+        public StringParameter Scene;
+
+        [Command.ParameterAlias("script")]
+        public StringParameter ScriptPath;
+
+        [Command.ParameterAlias("label")]
+        public StringParameter Label;
+
+        public override UniTask Execute(AsyncToken asyncToken = default)
+        {
+            ExplorationStateCoordinator.Instance.RequestReturnToNovel(
+                Scene?.Value,
+                ScriptPath?.Value,
+                Label?.Value);
+            return UniTask.CompletedTask;
         }
     }
 

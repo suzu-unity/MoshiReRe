@@ -6,6 +6,23 @@ using UnityEngine.SceneManagement;
 
 namespace MoshiReRe.Exploration.State
 {
+    /// <summary>A one-dialogue request to leave exploration and resume Naninovel.</summary>
+    public readonly struct ExplorationReturnRequest
+    {
+        public bool Requested { get; }
+        public string SceneName { get; }
+        public string ScriptPath { get; }
+        public string Label { get; }
+
+        public ExplorationReturnRequest(string sceneName, string scriptPath, string label)
+        {
+            Requested = true;
+            SceneName = sceneName ?? string.Empty;
+            ScriptPath = scriptPath ?? string.Empty;
+            Label = label ?? string.Empty;
+        }
+    }
+
     /// <summary>Persistent bridge between authored exploration scenes and Naninovel game saves.</summary>
     [DisallowMultipleComponent]
     public sealed class ExplorationStateCoordinator : MonoBehaviour
@@ -17,6 +34,7 @@ namespace MoshiReRe.Exploration.State
         private readonly List<ExplorationMapStateController> maps = new List<ExplorationMapStateController>();
         private readonly List<ExplorationStatefulObject> objects = new List<ExplorationStatefulObject>();
         private ExplorationSaveState savedState = new ExplorationSaveState();
+        private ExplorationReturnRequest returnToNovelRequest;
         private ExplorationMapStateController activeMap;
         private IStateManager registeredStateManager;
 
@@ -32,6 +50,7 @@ namespace MoshiReRe.Exploration.State
 
         public ExplorationMapStateController ActiveMap => activeMap;
         public ExplorationFlowContext FlowContext => savedState.flow;
+        public bool ReturnToNovelRequested => returnToNovelRequest.Requested;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void CreateAtRuntime() => EnsureInstance();
@@ -121,7 +140,23 @@ namespace MoshiReRe.Exploration.State
         public void BeginSession(string mapId, string sceneName, string spawnId,
             string returnScene, string returnScript, string returnLabel)
         {
+            ClearReturnToNovelRequest();
             savedState.flow.Begin(mapId, sceneName, spawnId, returnScene, returnScript, returnLabel);
+        }
+
+        /// <summary>Records an explicit exit requested by the currently playing exploration dialogue.</summary>
+        public void RequestReturnToNovel(string sceneName, string scriptPath, string label)
+        {
+            returnToNovelRequest = new ExplorationReturnRequest(sceneName, scriptPath, label);
+        }
+
+        public void ClearReturnToNovelRequest() => returnToNovelRequest = default;
+
+        public bool TryConsumeReturnToNovelRequest(out ExplorationReturnRequest request)
+        {
+            request = returnToNovelRequest;
+            returnToNovelRequest = default;
+            return request.Requested;
         }
 
         public ExplorationFlowContext CaptureFlowContext()
@@ -130,7 +165,11 @@ namespace MoshiReRe.Exploration.State
             return JsonUtility.FromJson<ExplorationFlowContext>(JsonUtility.ToJson(savedState.flow));
         }
 
-        public void Complete() => savedState.flow.Complete();
+        public void Complete()
+        {
+            ClearReturnToNovelRequest();
+            savedState.flow.Complete();
+        }
 
         public void CompleteSession() => Complete();
 
