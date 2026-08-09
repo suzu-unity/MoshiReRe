@@ -1,0 +1,403 @@
+MoshiReRe UI 使い方ガイド
+==========================
+
+このファイルは、現在のプロジェクトにある主要UIの「どこを編集するか」と「どう使うか」をまとめたものです。
+UIの見た目はUnity、会話の内容やシナリオ分岐はVS Code（.nani）で編集する、と考えると迷いにくくなります。
+
+0. まず覚える編集場所
+----------------------
+
+### Unityで編集するもの
+
+- 画像、文字の位置、大きさ、色、ボタンの当たり判定、表示／非表示。
+- Prefabに登録されているUIの共通レイアウト。
+- シーン固有の探索HUD、マップ上のオブジェクト、コライダー、主人公の移動範囲。
+- Inspectorで設定できるメッセージ、スクリプトパス、ラベル、アイテムID。
+
+### VS Codeで編集するもの
+
+- 会話本文、選択肢、ラベル、条件分岐、アイテム取得、シナリオ遷移。
+- 表情や演出を何行目で出すかなど、文章の進行に密接な指定。
+- `.nani`ファイルの保存場所は `Assets/Scenario` です。
+
+### 編集の基本手順
+
+1. UnityのProjectウィンドウで対象のPrefabまたはSceneを開きます。
+2. PrefabはダブルクリックしてPrefab Modeに入り、Hierarchyで編集したい子オブジェクトを選びます。
+3. InspectorでRectTransform、Image、TextMeshPro、Buttonなどを変更します。
+4. Prefab Modeを終了すると変更がPrefabへ保存されます。
+5. シーン上だけを変えたい場合はScene内のオブジェクトを編集し、Ctrl+Sで保存します。
+6. VS Codeで`.nani`を変更した場合は保存後にUnityへ戻り、コンパイル完了を待ってから再生します。
+
+注意：`Library`、`Temp`、`Logs`、`Build`、`obj`は編集対象ではありません。
+
+1. UIの一覧と役割
+------------------
+
+### 常駐・共通UI
+
+| UI名 | 主な役割 | 編集場所 |
+|---|---|---|
+| `MoneyUI` | 所持金の表示、増減時のフロート表示、SE | `Assets/NaninovelData/Resources/UI/MoneyUI.prefab` |
+| `LocationHUD` | 現在地の小さな表示 | `Assets/NaninovelData/Resources/UI/LocationHUD.prefab` |
+| `LocationCard` | 場所移動時のタイプライター式カード | `Assets/NaninovelData/Resources/UI/LocationCard.prefab` |
+| `MenuRootV2` | メインメニューの入口 | `Assets/NaninovelData/Resources/UI/MenuRootV2.prefab` |
+| `MenuRoot` | 旧メニュー。既存シナリオ互換用 | `Assets/NaninovelData/Resources/UI/MenuRoot.prefab` |
+| `ReReButton` | ReReのボタン、ヒント、通知マーカー | `Assets/NaninovelData/Resources/UI/ReReButton.prefab` |
+| `AdviceBubble` | ヘルプやReReの吹き出し | `Assets/NaninovelData/Resources/UI/AdviceBubble.prefab` |
+| `MainQuestPopup` | クエスト更新時の画面端ポップアップ | `Assets/NaninovelData/Resources/UI/MainQuestPopup.prefab` |
+| `CharacterCell` | CHARACTERSページの人物カード1件分 | `Assets/NaninovelData/Resources/UI/CharacterCell.prefab` |
+| `ItemCell` | ITEMSページのアイテムカード1件分 | `Assets/NaninovelData/Resources/UI/ItemCell.prefab` |
+
+現在のメインメニューは`MenuRootV2`を使います。
+`MenuRoot`は古いシナリオが明示的に呼ぶ場合だけ残し、新しいUI追加は`MenuRootV2`へ行います。
+`CharacterCell`と`ItemCell`は一覧生成用の部品なので、通常は個別にシナリオから呼び出さず、カードの共通見た目だけPrefabで編集します。
+
+### メニュー内のページ
+
+| ページ | できること | 主な設定先 |
+|---|---|---|
+| TOP | 各ページへの移動、ReRe案内 | `MenuRootV2.prefab`のTop／ナビゲーション |
+| STATUS | 主人公の能力値、レーダーチャート、立ち絵 | `StatusPage`、`StatusManager`、`RadarChart` |
+| ITEMS | 入手済みアイテムの一覧、詳細、バッグ詰め | `InventoryPage`、`ItemMenuController`、`InventoryDatabase.asset` |
+| CHARACTERS | 登場人物一覧、人物詳細、関係・情報ノード | `CharacterPage`、`CharacterMenuController`、`CharacterInformationNodePanel` |
+| QUEST | メインクエストの受信箱、案件ボード、目的・進捗 | `QuestMenuController`、`MainQuestState` |
+| MAP | 場所選択、説明、危険度、昼夜表示、関連人物 | `MapMenuController`の`LocationDraft[]` |
+| SAVE／LOAD | セーブ、ロード、削除 | `MenuSaveLoadController`のSlot設定 |
+| SETTINGS | BGM、SE、ボイス、文字送り、オート速度、フルスクリーン | `MenuSettingsController` |
+| OUTFIT／衣装 | 衣装選択、能力補正、試着演出 | `DressMenuController`の`OutfitData[]` |
+
+2. メインメニューの開き方
+--------------------------
+
+通常は、シナリオ側で次のように表示します。
+
+```nani
+@showUI MenuRootV2
+```
+
+非表示にする場合は次のようにします。
+
+```nani
+@hideUI MenuRootV2
+```
+
+ゲーム中にEscを押すと`MenuEsc`が`MenuRootV2`を開閉します。
+探索中はメニューを開いている間、主人公の移動も停止します。
+
+### メニューを開いてページを直接指定する場合
+
+通常はTOPからボタンで移動します。
+コードからページを切り替える必要がある場合は、`MenuRootV2UI`の次の公開メソッドを使います。
+
+- `ShowTop()`
+- `ShowStatus()`
+- `ShowItems()`
+- `ShowCharacters()`
+- `ShowQuest()`
+- `ShowMap()`
+- `ShowSave()`
+- `ShowSettings()`
+
+Prefab上のボタンのOnClickは、原則としてこれらのページ切り替えへ接続済みです。
+
+3. 所持金、現在地、場所カード
+------------------------------
+
+### 所持金（MoneyUI）
+
+シナリオから所持金を増減する場合は、次のように書きます。
+
+```nani
+@addMoney 50000
+@addMoney -20000
+```
+
+`MoneyUI`は`Money`カスタム変数と同期して表示を更新します。
+文字の位置やフォントは`MoneyUI.prefab`、増減時の表示時間やSEはPrefab内の`MoneyUI`コンポーネントで調整します。
+
+### 現在地（LocationHUD）
+
+```nani
+@setLocation "オフィス街-会社4F"
+@showUI LocationHUD
+```
+
+表示を消す場合は`@hideUI LocationHUD`です。
+見た目は`LocationHUD.prefab`、表示文字の変更は`.nani`の`@setLocation`で行います。
+
+### 場所カード（LocationCard）
+
+場所カードは、場所名を一時表示する演出用UIです。
+フェード時間、1文字ごとの間隔、表示後の待ち時間、文字送りSEは`LocationCard.prefab`のInspectorで調整します。
+
+4. TOP／STATUSページの編集
+----------------------------
+
+### TOPページ
+
+ボタンの位置、画像、ラベル、背景は`MenuRootV2.prefab`のTopページ内で編集します。
+ReReの吹き出し文言を変える場合は、対象ボタンの子にある`AdviceClickTrigger`や`MenuRootV2InteractionController`の設定を確認します。
+
+### STATUSページ
+
+能力値は`StatusManager`が保持し、シナリオ中の変数`Guts`、`Intelligence`、`Attention`、`Technique`、`Strength`と同期します。
+レーダーチャートの半径、最大値、グリッド、色は`RadarChart`コンポーネントで変更できます。
+表示の位置やサイズは`StatusPage`とPrefab内のRectTransformを編集します。
+
+5. ITEMSページとアイテム登録
+-----------------------------
+
+アイテムの定義は、原則として個別MonoBehaviourを増やさずScriptableObjectで管理します。
+
+### 新しいアイテムを登録する手順
+
+1. `Assets/Database/Items/ItemData`にある`InventoryItem`アセットを複製するか、Createメニューから作成します。
+2. `id`をシナリオで使う固定IDにします。
+3. `displayName`、`icon`、`detailImage`、`summary`、`description`を設定します。
+4. `InventoryDatabase.asset`の`items`リストへアセットを追加します。
+5. `MenuRootV2`のITEMSページを開き、一覧と詳細へ反映されることを確認します。
+
+アイテム取得は`.nani`から次のように書きます。
+
+```nani
+@acquireExplorationItem id:old_key
+```
+
+アイコンが設定されたアイテムは、探索中に画面中央の`ExplorationItemAcquisitionPopup`で一時表示されます。
+表示時間とアイコンサイズは`OfficeExploration`シーンの`ExplorationHUD`配下にあるPopup設定で調整します。
+
+`Assets/Database/Items/README.md`にもアイテム登録項目の一覧があります。
+
+### バッグ演出を調整する場合
+
+ITEMSページのバッグ詰め演出は`ItemMenuController`が制御します。
+バッグ画像、ジッパー画像、ReReフレーム、演出秒数は`MenuRootV2.prefab`のItemページ内で差し替えます。
+
+6. CHARACTERSページと立ち絵
+-----------------------------
+
+登場人物の一覧情報は`CharacterDatabase.asset`の`characters`リストで管理します。
+各`CharacterInfo`の名前、説明、アイコン、立ち絵を登録すると、`CharacterPage`の一覧と詳細へ反映されます。
+
+関係ページや情報ノードの表示は、`CharacterMenuController`と`CharacterInformationNodePanel`のPrefab配線を編集します。
+ノードの解放状態や信頼度は、シナリオ側の状態と連携するため、見た目だけを変える場合はPrefab、条件を変える場合はシナリオまたは状態管理側を編集します。
+
+7. QUESTページ
+---------------
+
+メインクエストは`MainQuestState`の現在値を`QuestMenuController`が表示します。
+シナリオ中でクエストを設定・更新したとき、受信箱と案件ボードが自動更新されます。
+文字の配置やカード画像は`MenuRootV2.prefab`のQUESTページで編集します。
+クエストの条件や進捗を増やす場合は、Prefabの仮データを増やすだけでなく、`MainQuestState`とシナリオの更新処理も確認します。
+
+8. MAPページ
+------------
+
+場所カードの表示内容は`MapMenuController`のInspectorにある`LocationDraft[]`で設定します。
+各要素に場所名、説明、ReReヒント、危険度、関連アイテム、関連人物、昼色、夜色を入力します。
+ボタン配列と`LocationDraft[]`の順番を揃えると、クリックした場所の詳細が正しく表示されます。
+
+昼夜の判定は`dayStartsAt`と`nightStartsAt`、時刻取得元は`timeProvider`で設定します。
+マップ画像の位置や形はPrefab／SceneのImageと`MapLocationPolygon`、ボタンの当たり判定は対象ButtonのRectTransformで調整します。
+
+9. SAVE／LOADページ
+--------------------
+
+SAVEページでセーブモード、LOADページでロードモードを選びます。
+既存スロットへの保存と削除は確認画面を挟みます。
+スロットの数、ボタン、日時表示は`MenuSaveLoadController`の`SlotView[]`配線と`MenuRootV2.prefab`で編集します。
+
+セーブされるゲーム状態はNaninovelのState Managerが管理します。
+探索状態や独自のローカル状態を追加する場合は、シナリオ変数または探索状態Coordinator側へ保存処理を追加する必要があります。
+
+10. SETTINGSページ
+-------------------
+
+スライダーを動かすと、その場でBGM、SE、ボイス、文字速度、オート速度へ反映されます。
+変更はページを閉じるときに設定として保存されます。
+初期値へ戻す場合はRESETボタンを押します。
+スライダーの位置、ラベル、目盛りは`MenuRootV2.prefab`、反映対象は`MenuSettingsController`で確認します。
+
+11. ヘルプ吹き出しとReReボタン
+--------------------------------
+
+### AdviceBubble
+
+`AdviceBubble`は説明文を表示する共通吹き出しです。
+フェード時間、ポップ倍率、文字送り間隔、表示ルートは`AdviceBubble.prefab`またはコンポーネントのInspectorで調整します。
+
+### ホバーで表示する場合
+
+対象Buttonに`AdviceTrigger`を追加し、`hoverMessage`へ説明文を入力します。
+`AdviceClickTrigger`を使うとクリック時に表示したり、一定時間で自動消去したりできます。
+
+### ReReButton
+
+通常画像、ホバー画像、押下画像、通知マーカー、ヒント文は`ReReButton.prefab`の`ReReButtonController`で設定します。
+UIごとの説明文を変える場合は、対象ボタン側のAdvice設定を編集します。
+
+12. 探索ADVのUI
+----------------
+
+探索シーンの例は`Assets/Scenes/OfficeExploration.unity`です。
+シーンを開くと、主に次の構成になっています。
+
+- `RoomBackground`：背景画像。
+- `Player`：主人公、移動、向き、立ち絵アニメーション。
+- `ExplorationHUD/InteractionPromptController`：近くの対象と操作キーの表示。
+- `ExplorationHUD/DialogueOverlayController`：探索中にプリンターが使えない場合の会話ウィンドウ。
+- `ExplorationHUD`配下のポートレート：会話中の主人公右下／NPC左下の立ち絵。
+- `ExplorationHUD`配下のアイテムPopup：取得アイコンの中央表示。
+- `OfficeDesk_01`～`OfficeDesk_05`：机のコライダーとインタラクション。
+- `ExplorationState`：マップ状態の保存対象。
+
+### 探索中の操作
+
+- 移動：A／Dまたは左右矢印。
+- 調べる：EまたはSpace。
+- 会話送り・選択肢決定：探索側の入力ブリッジではEまたはSpace。
+- メニュー：Esc。
+
+### 主人公の移動範囲
+
+`OfficeExploration`シーンの`Player`を選び、`ExplorationPlayerController`の`clampHorizontalPosition`、`minX`、`maxX`を調整します。
+途中で見えない壁に当たる場合は、Playerや背景前の`BoxCollider2D`など、物理コライダーも確認します。
+インタラクション範囲だけを変える場合は`ExplorationInteractionController`の`interactionRadius`を調整します。
+
+### 探索マップ画像のサイズ
+
+`RoomBackground`を選び、SpriteRendererを使っている場合はTransformのScale、UI Imageを使っている場合はRectTransformのSize Deltaを調整します。
+画面に収まる範囲そのものを変えたい場合は`Main Camera`のOrthographic Sizeと`SideScrollCamera`の追従範囲も確認します。
+
+### マップ上のオブジェクト
+
+オブジェクトを複製して位置を変え、`BoxCollider2D`のサイズを変更すると、Unity上で調べる範囲を手動調整できます。
+`NaninovelDialogueInteractable`の主な項目は次のとおりです。
+
+- `naninovelScriptPath`：実行する`.nani`のパス。例は`Scenario/OfficeExploration`。
+- `naninovelScriptLabel`：同じファイル内の開始ラベル。例は`Desk02`。
+- `fallbackSpeaker`、`fallbackLines`：Naninovel未初期化時の簡易会話。
+- `nextNaninovelScriptPath`、`nextNaninovelLabel`：互換用のInspector遷移先。通常は`.nani`側の`@returnToNovel`を優先します。
+- `requiredVariableName`、`requiredVariableValue`：条件付きインタラクション。
+- `unavailableNaninovelScriptPath`：条件未達時に再生する会話。
+- `protagonistPortrait`、`npcPortrait`：会話中の立ち絵を直接指定。
+- `protagonistPortraitVariant`、`npcPortraitVariant`：表情IDを指定。
+- `portraitVariants`：このオブジェクトの会話中だけ使える表情差分。
+
+オブジェクトごとに`.nani`ファイルを増やす必要はありません。
+通常は`Assets/Scenario/OfficeExploration.nani`にラベルを追加し、各オブジェクトの`naninovelScriptLabel`だけを変えます。
+
+例：`OfficeDesk_02`の設定
+
+```text
+Naninovel Script Path: Scenario/OfficeExploration
+Naninovel Script Label: Desk02
+```
+
+探索中のポートレートとアイテムPopupは、Inspectorで参照を割り当てた事前配置UIを使うことも、`createMissingUi`による実行時生成に任せることもできます。
+Play Mode中に実行時生成されたオブジェクトを直接動かしても保存されないため、位置やサイズを固定したい場合は事前配置のImageを作り、`portraitRoot`、`npcImage`、`protagonistImage`、`popupRoot`、`iconImage`へ割り当てます。
+
+13. 探索ADVの会話・立ち絵・アイテム演出
+------------------------------------------
+
+### 会話中に立ち絵を出す
+
+`NaninovelDialogueInteractable`の立ち絵設定を使うと、NPCは左、主人公は右に表示されます。
+会話終了時には会話開始前の表示状態へ戻ります。
+
+表情を会話の途中で変更する場合は、`.nani`の任意の行に次を置きます。
+
+```nani
+@explorationPortrait side:right id:player_alt
+@explorationPortrait side:left id:npc_alt
+```
+
+表情IDは、そのインタラクションの`portraitVariants`または共有`ExplorationDialoguePortraits`のVariantsと一致させます。
+指定がない場合は現在の表情を維持します。
+
+### アイテム取得
+
+```nani
+@acquireExplorationItem id:old_key
+Wanabi: 鍵を手に入れた。
+```
+
+`InventoryItem`にiconが設定されていれば、中央Popupにアイコンが表示され、一定時間後に消えます。
+
+### 会話終了と探索復帰
+
+通常の`@stop`は会話だけを終了し、探索マップに残ります。
+次のノベルシーンへ移る場合だけ、明示的に`@returnToNovel`を書きます。
+
+```nani
+@hidePrinter Dialogue wait!
+@returnToNovel scene:CommonUIHub script:Scenario/scene02 label:OfficeAfterAdv
+@stop
+```
+
+`@returnToNovel`の`scene`、`script`、`label`が最優先です。
+値を省略した場合は、Inspectorの互換用設定を経由して、最終的に`CommonUIHub`へ戻ります。
+`@enterExploration`側の帰還先指定は現在の運用では使わず、戻り先は会話側の`@returnToNovel`へ集約します。
+
+14. 通常のノベル会話UIと演出
+----------------------------
+
+通常のノベルパートでは、NaninovelのDialogue／Choice／Backlog等のUIが使われます。
+本文と選択肢は`.nani`、ウィンドウの位置や見た目はNaninovelのUIリソースをUnityで編集します。
+
+一拍ためる場合は、文章の後に`@wait`を置きます。
+
+```nani
+Wanabi: ……。
+@wait 0.8
+Wanabi: それから、仕事を始めた。
+```
+
+クリックまたはキー入力まで止める場合は`@wait i`を使います。
+
+感情演出を追加する場合は、初期ライブラリ作成後に次のコマンドを使えます。
+
+```nani
+@beat type:shock
+@charMotion id:Wanabi type:nervous
+```
+
+`@beat`は画面フラッシュ、短い停止、揺れなどのプリセット演出です。
+`@charMotion`は既存の立ち絵actorを揺らす演出です。
+どちらもプリセット名とPrefab／Libraryの登録が必要です。
+
+文字送り音を変える場合は、`TypingBlipController`に`TypingBlipProfile`を割り当て、Entriesの`Author Id`をNaninovelのキャラクターIDに合わせます。
+
+15. Unityだけで文章を編集するか、VS Codeを使うか
+---------------------------------------------------
+
+短い固定メッセージはInspectorの`fallbackLines`やPopupのTextでも編集できます。
+ただし、分岐、選択肢、条件、取得、シナリオ遷移を含む会話はVS Codeの`.nani`で管理する方が安全です。
+
+おすすめの分担は次のとおりです。
+
+- Unity：オブジェクトの位置、コライダー、ボタン範囲、UIの見た目、Inspectorの参照設定。
+- VS Code：会話本文、ラベル、選択肢、変数、アイテム取得、`@returnToNovel`、演出コマンド。
+- ScriptableObject：アイテム、キャラクター、場所など、複数画面から参照するデータ。
+
+16. 変更後の確認手順
+---------------------
+
+1. Unity Consoleにコンパイルエラーがないことを確認します。
+2. `CommonUIHub`から通常ノベルを再生し、EscでMenuRootV2を開きます。
+3. ITEMS、CHARACTERS、QUEST、MAP、SAVE、SETTINGSを一度ずつ開きます。
+4. `OfficeExploration`を再生し、主人公の移動、E／Spaceの調べる、会話送り、アイテムPopupを確認します。
+5. `@returnToNovel`を含む会話では、指定したシーンとラベルへ戻ることを確認します。
+6. 既存セーブを使う場合は、変更前のセーブを上書きせず、空きスロットで確認します。
+
+困ったときに最初に確認するファイル
+------------------------------------
+
+- メインメニュー：`Assets/NaninovelData/Resources/UI/MenuRootV2.prefab`
+- メニュー制御：`Assets/Scripts/MenuSystem/MenuRootV2UI.cs`
+- 探索マップ：`Assets/Scenes/OfficeExploration.unity`
+- 探索会話：`Assets/Scenario/OfficeExploration.nani`
+- アイテム定義：`Assets/Database/Items/InventoryDatabase.asset`と`Assets/Database/Items/ItemData`
+- キャラクター定義：`Assets/Database/Characters/CharacterDatabase.asset`と`Assets/Scripts/Data`
+- 共通UI生成：`Assets/Scripts/CommonUIHub.cs`
