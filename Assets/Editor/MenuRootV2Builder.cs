@@ -119,8 +119,9 @@ public static class MenuRootV2Builder
 
         var dim = ImageRoot("SceneDim", rect, new Color(0.08f, 0.07f, 0.10f, 0f));
         Stretch(dim.rectTransform, Vector2.zero, Vector2.zero);
+        dim.raycastTarget = false;
 
-        var pageTop = BuildTopArtworkPage(rect, out var portraitPhoneFrame, out var topMascot, out var dressTileButton, out var statusTileButton,
+        var pageTop = BuildTopHudPage(rect, out var portraitPhoneFrame, out var topMascot, out var dressTileButton, out var statusTileButton,
             out var itemsTileButton, out var charactersTileButton, out var questTileButton, out var mapTileButton);
 
         var phone = ImageRoot("SmartphoneLayer", rect, new Color(0.13f, 0.08f, 0.17f, 0.96f));
@@ -169,6 +170,187 @@ public static class MenuRootV2Builder
             pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject);
 
         return root;
+    }
+
+    private static RectTransform BuildTopHudPage(RectTransform parent, out RectTransform portraitPhoneFrame, out MenuTopReReMascot topMascot,
+        out Button dressTileButton, out Button statusTileButton, out Button itemsTileButton, out Button charactersTileButton,
+        out Button questTileButton, out Button mapTileButton)
+    {
+        const float phoneWidth = 824f;
+        const float phoneHeight = phoneWidth / (9f / 19.5f);
+        var surface = new Color(0.94f, 0.97f, 1f, 0.97f);
+        var surfaceBright = new Color(0.985f, 0.99f, 1f, 0.98f);
+        var navy = new Color(0.055f, 0.085f, 0.16f, 1f);
+        var accent = new Color(0.43f, 0.38f, 0.90f, 1f);
+        var accentLight = new Color(0.70f, 0.70f, 1f, 0.82f);
+        var cyanHighlight = new Color(0.56f, 0.88f, 0.96f, 0.90f);
+        var coralAlert = new Color(0.96f, 0.34f, 0.40f, 1f);
+
+        var page = RectRoot("PageTop", parent);
+        Stretch(page, Vector2.zero, Vector2.zero);
+        page.gameObject.AddComponent<CanvasGroup>();
+
+        // Rim only: there is no body, screen, stage, or other central panel.
+        // The tall shell continues below the 16:9 safe area instead of being shrunk to fit.
+        portraitPhoneFrame = RectRoot("PortraitPhonePresentation", page);
+        SetRect(portraitPhoneFrame, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1f),
+            new Vector2(535f, 546f), new Vector2(phoneWidth, phoneHeight));
+        BuildHudPhoneRim(portraitPhoneFrame, navy, accent, accentLight, cyanHighlight);
+
+        var speaker = ImageRoot("PortraitPhoneTopSpeaker", portraitPhoneFrame, new Color(navy.r, navy.g, navy.b, 0.94f));
+        speaker.raycastTarget = false;
+        SetRect(speaker.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f),
+            new Vector2(0f, -47f), new Vector2(164f, 34f));
+        PixelBorder(speaker.rectTransform, "SpeakerFrame", new Color(accent.r, accent.g, accent.b, 0.65f), 2f);
+
+        var dayChip = HudInfoChip(portraitPhoneFrame, "HudDayChip", new Vector2(-287f, -132f), new Vector2(96f, 88f), surfaceBright, navy, accentLight);
+        var debtChip = HudInfoChip(portraitPhoneFrame, "HudDebtChip", new Vector2(-115f, -132f), new Vector2(214f, 72f), surface, navy, accentLight);
+        var moneyChip = HudInfoChip(portraitPhoneFrame, "HudMoneyChip", new Vector2(126f, -132f), new Vector2(230f, 72f), surface, navy, accentLight);
+        var settingsButton = HudActionButton(portraitPhoneFrame, "HudSettingsButton", string.Empty, "settings",
+            new Vector2(330f, -132f), new Vector2(76f, 76f), surfaceBright, navy, accent, cyanHighlight, false, true);
+
+        var dayText = Text("DAY\n03", dayChip.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Center, navy,
+            new Vector2(4f, 4f), new Vector2(-4f, -4f));
+        dayText.name = "DayValue";
+        var debtText = Text("7 DAYS", debtChip.rectTransform, 21f, FontStyles.Bold, TextAlignmentOptions.Center, navy,
+            new Vector2(35f, 4f), new Vector2(-10f, -4f));
+        debtText.name = "DebtDaysValue";
+        var moneyText = Text("¥ 145,000", moneyChip.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Center, navy,
+            new Vector2(16f, 4f), new Vector2(-8f, -4f));
+        moneyText.name = "MoneyValue";
+
+        var urgencyMark = ImageRoot("DebtUrgencyMark", debtChip.rectTransform, coralAlert);
+        urgencyMark.raycastTarget = false;
+        SetRect(urgencyMark.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(24f, 0f), new Vector2(14f, 14f));
+        PixelBorder(urgencyMark.rectTransform, "UrgencyMarkFrame", navy, 1f);
+
+        // Sparse right shortcuts: MAP then QUEST, both inside the 16:9 safe area.
+        mapTileButton = HudActionButton(portraitPhoneFrame, "HudMapButton", "MAP", "map",
+            new Vector2(280f, -432f), new Vector2(130f, 126f), surfaceBright, navy, accent, cyanHighlight, false, false);
+        questTileButton = HudActionButton(portraitPhoneFrame, "HudQuestButton", "QUEST", "quest",
+            new Vector2(280f, -626f), new Vector2(130f, 126f), surfaceBright, navy, accent, cyanHighlight, false, false);
+
+        // The five controls float separately over the transparent center; HOME is the selected blue-violet action.
+        dressTileButton = HudActionButton(portraitPhoneFrame, "HudDressButton", "DRESS", "dress",
+            new Vector2(-266f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+        charactersTileButton = HudActionButton(portraitPhoneFrame, "HudCharactersButton", "CHAR", "char",
+            new Vector2(-133f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+        var homeButton = HudActionButton(portraitPhoneFrame, "HudHomeButton", "HOME", "home",
+            new Vector2(0f, -978f), new Vector2(136f, 128f), surfaceBright, navy, accent, cyanHighlight, true, false);
+        itemsTileButton = HudActionButton(portraitPhoneFrame, "HudItemsButton", "ITEM", "item",
+            new Vector2(137f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+        var saveButton = HudActionButton(portraitPhoneFrame, "HudSaveButton", "SAVE", "save",
+            new Vector2(270f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+        statusTileButton = null;
+
+        var dressBadge = AddDynamicNotificationBadge(dressTileButton, "DressNotificationBadge");
+        var charactersBadge = AddDynamicNotificationBadge(charactersTileButton, "CharactersNotificationBadge");
+        var homeBadge = AddDynamicNotificationBadge(homeButton, "HomeNotificationBadge");
+        var itemsBadge = AddDynamicNotificationBadge(itemsTileButton, "ItemsNotificationBadge");
+        var saveBadge = AddDynamicNotificationBadge(saveButton, "SaveNotificationBadge");
+        var mapBadge = AddDynamicNotificationBadge(mapTileButton, "MapNotificationBadge");
+        var questBadge = AddDynamicNotificationBadge(questTileButton, "QuestNotificationBadge", 1);
+        var settingsBadge = AddDynamicNotificationBadge(settingsButton, "SettingsNotificationBadge");
+
+        ConfigurePageNavigation(page.gameObject, homeButton, null, null, null, null, null, saveButton, settingsButton);
+        ConfigureTopHudState(page.gameObject, dayText, debtText, moneyText, urgencyMark.gameObject,
+            dressBadge, charactersBadge, homeBadge, itemsBadge, saveBadge, mapBadge, questBadge, settingsBadge);
+
+        // The animated ReRe sprite and click-triggered local speech bubble stay inside the open center.
+        topMascot = BuildTopReReMascot(portraitPhoneFrame, new Vector2(-24f, -804f), new Vector2(252f, 350f), new Vector2(-188f, 230f));
+        return page;
+    }
+
+    private static void BuildHudPhoneRim(RectTransform parent, Color navy, Color accent, Color accentLight, Color cyanHighlight)
+    {
+        var outer = RectRoot("PortraitPhoneOuterRim", parent);
+        Stretch(outer, Vector2.zero, Vector2.zero);
+        PixelBorder(outer, "OuterNavyFrame", navy, 10f);
+
+        var accentRim = RectRoot("PortraitPhoneAccentRim", parent);
+        Stretch(accentRim, new Vector2(12f, 12f), new Vector2(-12f, -12f));
+        PixelBorder(accentRim, "AccentFrame", accent, 3f);
+
+        var innerRim = RectRoot("PortraitPhoneInnerRim", parent);
+        Stretch(innerRim, new Vector2(23f, 23f), new Vector2(-23f, -23f));
+        PixelBorder(innerRim, "InnerHighlightFrame", accentLight, 1.5f);
+
+        var leftGlow = ImageRoot("LeftRimCyanHighlight", parent, new Color(cyanHighlight.r, cyanHighlight.g, cyanHighlight.b, 0.68f));
+        leftGlow.raycastTarget = false;
+        SetRect(leftGlow.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0.5f, 0.5f), new Vector2(30f, -194f), new Vector2(4f, 94f));
+        var topGlow = ImageRoot("TopRimCyanHighlight", parent, new Color(cyanHighlight.r, cyanHighlight.g, cyanHighlight.b, 0.64f));
+        topGlow.raycastTarget = false;
+        SetRect(topGlow.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-188f, -28f), new Vector2(78f, 3f));
+
+        AddHudRimSpark(parent, "TopLeftSpark", new Vector2(38f, -52f), accentLight);
+        AddHudRimSpark(parent, "TopRightSpark", new Vector2(-38f, -52f), accentLight, true);
+        AddHudRimSpark(parent, "LowerLeftSpark", new Vector2(38f, -900f), cyanHighlight);
+        AddHudRimSpark(parent, "LowerRightSpark", new Vector2(-38f, -900f), cyanHighlight, true);
+    }
+
+    private static void AddHudRimSpark(RectTransform parent, string name, Vector2 position, Color color, bool right = false)
+    {
+        var spark = ImageRoot(name, parent, color);
+        spark.raycastTarget = false;
+        var anchor = right ? new Vector2(1f, 1f) : new Vector2(0f, 1f);
+        var pivot = right ? new Vector2(1f, 0.5f) : new Vector2(0f, 0.5f);
+        SetRect(spark.rectTransform, anchor, anchor, pivot, position, new Vector2(14f, 4f));
+        var upright = ImageRoot("Upright", spark.rectTransform, color);
+        upright.raycastTarget = false;
+        SetRect(upright.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(4f, 14f));
+    }
+
+    private static Image HudInfoChip(RectTransform parent, string name, Vector2 position, Vector2 size, Color surface, Color navy, Color accentLight)
+    {
+        var chip = ImageRoot(name, parent, surface);
+        chip.raycastTarget = false;
+        SetRect(chip.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f), position, size);
+        PixelBorder(chip.rectTransform, "NavyFrame", navy, 3f);
+        var edge = RectRoot("AccentEdge", chip.rectTransform);
+        Stretch(edge, new Vector2(6f, 6f), new Vector2(-6f, -6f));
+        PixelBorder(edge, "AccentFrame", accentLight, 1f);
+        return chip;
+    }
+
+    private static Button HudActionButton(RectTransform parent, string name, string label, string iconId, Vector2 position, Vector2 size,
+        Color surface, Color navy, Color accent, Color cyanHighlight, bool selected, bool iconOnly)
+    {
+        var button = ButtonRoot(name, parent, surface);
+        var rect = button.GetComponent<RectTransform>();
+        SetRect(rect, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f), position, size);
+        PixelBorder(rect, "NavyFrame", navy, 3f);
+        var inset = RectRoot("InsetFrame", rect);
+        Stretch(inset, new Vector2(6f, 6f), new Vector2(-6f, -6f));
+        PixelBorder(inset, "SoftFrame", new Color(0.73f, 0.78f, 0.91f, 0.95f), 1f);
+
+        if (selected)
+        {
+            var selectedFrame = RectRoot("SelectedAccentFrame", rect);
+            Stretch(selectedFrame, new Vector2(-3f, -3f), new Vector2(3f, 3f));
+            PixelBorder(selectedFrame, "AccentFrame", accent, 3f);
+            var underline = ImageRoot("SelectedUnderline", rect, accent);
+            underline.raycastTarget = false;
+            SetRect(underline.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 9f), new Vector2(size.x - 24f, 7f));
+        }
+        else
+        {
+            var highlight = ImageRoot("CyanCornerHighlight", rect, new Color(cyanHighlight.r, cyanHighlight.g, cyanHighlight.b, 0.70f));
+            highlight.raycastTarget = false;
+            SetRect(highlight.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(9f, -9f), new Vector2(12f, 3f));
+        }
+
+        var icon = ImageRoot("HudIcon", rect, selected ? accent : navy);
+        icon.sprite = LoadNavigationSprite(iconId);
+        icon.preserveAspect = true;
+        icon.raycastTarget = false;
+        var iconSize = iconOnly ? new Vector2(44f, 44f) : selected ? new Vector2(58f, 58f) : new Vector2(52f, 52f);
+        SetRect(icon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            iconOnly ? Vector2.zero : new Vector2(0f, 15f), iconSize);
+        if (!iconOnly)
+            Text(label, rect, 16f, FontStyles.Bold, TextAlignmentOptions.Bottom, navy,
+                new Vector2(6f, 8f), new Vector2(-6f, -52f));
+        return button;
     }
 
     private static RectTransform BuildTopArtworkPage(RectTransform parent, out RectTransform portraitPhoneFrame, out MenuTopReReMascot topMascot,
@@ -1867,7 +2049,43 @@ public static class MenuRootV2Builder
         EditorUtility.SetDirty(navigation);
     }
 
-    private static MenuNotificationBadge AddDynamicNotificationBadge(Button button, string name)
+    private static void ConfigureTopHudState(GameObject target, TextMeshProUGUI dayText, TextMeshProUGUI debtText,
+        TextMeshProUGUI moneyText, GameObject urgencyMark, MenuNotificationBadge dressBadge,
+        MenuNotificationBadge charactersBadge, MenuNotificationBadge homeBadge, MenuNotificationBadge itemsBadge,
+        MenuNotificationBadge saveBadge, MenuNotificationBadge mapBadge, MenuNotificationBadge questBadge,
+        MenuNotificationBadge settingsBadge)
+    {
+        var state = target.GetComponent<MenuTopHudState>() ?? target.AddComponent<MenuTopHudState>();
+        var so = new SerializedObject(state);
+        SetObject(so, "dayText", dayText);
+        SetObject(so, "debtDaysText", debtText);
+        SetObject(so, "moneyText", moneyText);
+        SetObject(so, "debtUrgencyMark", urgencyMark);
+
+        var bindings = so.FindProperty("badgeBindings");
+        if (bindings != null)
+        {
+            var values = new[]
+            {
+                dressBadge, charactersBadge, homeBadge, itemsBadge,
+                saveBadge, mapBadge, questBadge, settingsBadge
+            };
+            bindings.arraySize = values.Length;
+            for (var i = 0; i < values.Length; i++)
+            {
+                var binding = bindings.GetArrayElementAtIndex(i);
+                var action = binding.FindPropertyRelative("action");
+                var badge = binding.FindPropertyRelative("badge");
+                if (action != null) action.enumValueIndex = i;
+                if (badge != null) badge.objectReferenceValue = values[i];
+            }
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(state);
+    }
+
+    private static MenuNotificationBadge AddDynamicNotificationBadge(Button button, string name, int initialCount = 0)
     {
         button.transform.SetAsLastSibling();
         var badge = ImageRoot(name, button.GetComponent<RectTransform>(), Coral);
@@ -1880,11 +2098,11 @@ public static class MenuRootV2Builder
         SetObject(so, "badgeTarget", badge.gameObject);
         SetObject(so, "countText", count);
         var visible = so.FindProperty("initialVisible");
-        if (visible != null) visible.boolValue = false;
-        var initialCount = so.FindProperty("initialCount");
-        if (initialCount != null) initialCount.intValue = 0;
+        if (visible != null) visible.boolValue = initialCount > 0;
+        var initialCountProperty = so.FindProperty("initialCount");
+        if (initialCountProperty != null) initialCountProperty.intValue = Mathf.Max(0, initialCount);
         so.ApplyModifiedPropertiesWithoutUndo();
-        badge.gameObject.SetActive(false);
+        badge.gameObject.SetActive(initialCount > 0);
         EditorUtility.SetDirty(controller);
         return controller;
     }

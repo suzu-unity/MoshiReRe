@@ -18,6 +18,7 @@ public sealed class MenuRootV2OrientationTransition : MonoBehaviour
     [SerializeField, Min(0.05f)] private float enterDuration = 0.18f;
     [SerializeField, Range(1f, 20f)] private float tiltDegrees = 8f;
     [SerializeField, Range(0.7f, 1f)] private float transitionScale = 0.9f;
+    [SerializeField, Range(-8f, 8f)] private float portraitRestingRotation = -3f;
 
     private Coroutine transitionRoutine;
     private GameObject currentPage;
@@ -33,9 +34,9 @@ public sealed class MenuRootV2OrientationTransition : MonoBehaviour
             transitionRoutine = null;
         }
 
-        Restore(portraitPhoneFrame);
+        Restore(portraitPhoneFrame, portraitRestingRotation);
         Restore(sharedLandscapePhoneFrame);
-        Restore(GetPresentationRoot(page, isPortrait));
+        Restore(GetPresentationRoot(page, isPortrait), isPortrait ? portraitRestingRotation : 0f);
 
         currentPage = page;
         currentPageIsPortrait = isPortrait;
@@ -70,7 +71,8 @@ public sealed class MenuRootV2OrientationTransition : MonoBehaviour
             yield return Tilt(incoming, 0f, 1f, enterDuration);
         }
 
-        Restore(outgoing);
+        Restore(outgoing, currentPageIsPortrait ? portraitRestingRotation : 0f);
+        Restore(incoming, targetIsPortrait ? portraitRestingRotation : 0f);
         currentPage = targetPage;
         currentPageIsPortrait = targetIsPortrait;
         transitionRoutine = null;
@@ -122,12 +124,12 @@ public sealed class MenuRootV2OrientationTransition : MonoBehaviour
         target.localScale = Vector3.one * targetScale;
     }
 
-    private static void Restore(RectTransform target)
+    private static void Restore(RectTransform target, float rotation = 0f)
     {
         if (!target)
             return;
 
-        target.localRotation = Quaternion.identity;
+        target.localRotation = Quaternion.Euler(0f, 0f, rotation);
         target.localScale = Vector3.one;
     }
 
@@ -139,7 +141,7 @@ public sealed class MenuRootV2OrientationTransition : MonoBehaviour
             transitionRoutine = null;
         }
 
-        Restore(portraitPhoneFrame);
+        Restore(portraitPhoneFrame, portraitRestingRotation);
         Restore(sharedLandscapePhoneFrame);
     }
 }

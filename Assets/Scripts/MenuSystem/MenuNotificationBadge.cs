@@ -26,6 +26,12 @@ public class MenuNotificationBadge : MonoBehaviour
 
         if (badgeTarget != null)
             badgeTarget.SetActive(visible);
+
+        if (countText != null)
+        {
+            countText.text = Count > 0 ? Count.ToString() : "!";
+            countText.gameObject.SetActive(visible);
+        }
     }
 
     public void SetCount(int count)
@@ -36,7 +42,7 @@ public class MenuNotificationBadge : MonoBehaviour
 
         if (countText == null) return;
 
-        countText.text = Count.ToString();
-        countText.gameObject.SetActive(Count > 0);
+        countText.text = Count > 0 ? Count.ToString() : "!";
+        countText.gameObject.SetActive(IsVisible);
     }
 }
