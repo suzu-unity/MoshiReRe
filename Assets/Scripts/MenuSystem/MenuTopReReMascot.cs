@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MenuTopReReMascot : MonoBehaviour
 {
-    private const string DefaultHint = "今夜の準備をしよう。迷ったら、期限と情報ノードを確認してね。";
+    private const string DefaultHint = "気になるところ、ある？\nわたしに聞いてね。";
 
     [Serializable]
     private class MotionSet
@@ -19,10 +19,12 @@ public class MenuTopReReMascot : MonoBehaviour
         public string nextId;
         public int loopsBeforeNext = 1;
         public float holdSeconds = 1f;
+        public bool loop;
     }
 
     [SerializeField] private Image mascotImage;
     [SerializeField] private Button mascotButton;
+    [SerializeField] private Button blankStageButton;
     [SerializeField] private RectTransform mascot;
     [SerializeField] private RectTransform bubble;
     [SerializeField] private TextMeshProUGUI bubbleText;
@@ -54,13 +56,19 @@ public class MenuTopReReMascot : MonoBehaviour
             bubble.gameObject.SetActive(false);
 
         if (mascotButton)
-            mascotButton.onClick.AddListener(ShowClickedBubble);
+            mascotButton.onClick.AddListener(TriggerSpeechBubble);
+
+        if (blankStageButton && blankStageButton != mascotButton)
+            blankStageButton.onClick.AddListener(TriggerSpeechBubble);
     }
 
     private void OnDestroy()
     {
         if (mascotButton)
-            mascotButton.onClick.RemoveListener(ShowClickedBubble);
+            mascotButton.onClick.RemoveListener(TriggerSpeechBubble);
+
+        if (blankStageButton && blankStageButton != mascotButton)
+            blankStageButton.onClick.RemoveListener(TriggerSpeechBubble);
     }
 
     private void OnEnable()
@@ -189,6 +197,13 @@ public class MenuTopReReMascot : MonoBehaviour
         frameIndex++;
         if (frameIndex >= frames.Length)
         {
+            if (currentMotion.loop)
+            {
+                frameIndex = 0;
+                ApplyFrame(frameIndex);
+                return;
+            }
+
             completedLoops++;
             if (completedLoops >= Mathf.Max(1, currentMotion.loopsBeforeNext))
             {
@@ -233,13 +248,17 @@ public class MenuTopReReMascot : MonoBehaviour
         mascotImage.sprite = currentMotion.frames[Mathf.Abs(index) % currentMotion.frames.Length];
     }
 
-    private void ShowClickedBubble()
+    /// <summary>
+    /// Shows ReRe's local speech bubble from either the mascot or the transparent stage.
+    /// Kept public so authored UI click targets can invoke it without coupling to motion internals.
+    /// </summary>
+    public void TriggerSpeechBubble()
     {
         if (bubbleText)
             bubbleText.text = DefaultHint;
 
         var clickMotion = PickClickMotion();
-        if (clickMotion != null)
+        if (clickMotion != null && clickMotion != currentMotion)
             StartMotion(clickMotion, false);
 
         if (bubble)

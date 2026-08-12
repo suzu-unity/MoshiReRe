@@ -19,6 +19,8 @@ public static class MenuRootV2Builder
     private const string ReReSpeechBubblePath = "Assets/Art/UIConcepts/rere_pixel_speech_bubble.png";
     private const string DressCommentBubblePath = "Assets/Art/UIConcepts/dress_comment_bubble_tail.png";
     private const string TopReReSpritePath = "Assets/Art/ReReSprites/rere_chibi_idle.png";
+    private const string TopIdleVideoFolder = "Assets/Art/ReReSprites/TopIdleVideo";
+    private const string TopPreviewBackgroundPath = "Assets/Art/ScenarioExploration/Backgrounds/11-4_office_night&light.png";
     private const string TopReReWalkFolder = "Assets/Art/ReReSprites/Actions/walk_right";
     private const string TopReReNoticeFolder = "Assets/Art/ReReSprites/Actions/notice_idle";
     private const string TopReReSitYawnFolder = "Assets/Art/ReReSprites/Actions/sit_yawn";
@@ -195,6 +197,34 @@ public static class MenuRootV2Builder
         portraitPhoneFrame = RectRoot("PortraitPhonePresentation", page);
         SetRect(portraitPhoneFrame, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1f),
             new Vector2(535f, 546f), new Vector2(phoneWidth, phoneHeight));
+        // This is a clipped scene layer, not a phone body: the rim remains the only shell.
+        // It gives the transparent HUD a temporary in-world stage while leaving no opaque panel
+        // between the background and ReRe.
+        var stage = RectRoot("TopTransparentStage", portraitPhoneFrame);
+        SetRect(stage, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(-42f, -218f), new Vector2(670f, 664f));
+        stage.gameObject.AddComponent<RectMask2D>();
+
+        var background = ImageRoot("TopPreviewBackground", stage, Color.white);
+        background.sprite = LoadSprite(TopPreviewBackgroundPath);
+        background.raycastTarget = false;
+        SetRect(background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(0.5f, 0.5f), Vector2.zero, stage.sizeDelta);
+        var backgroundFitter = background.gameObject.AddComponent<AspectRatioFitter>();
+        backgroundFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+        backgroundFitter.aspectRatio = background.sprite && background.sprite.texture
+            ? (float)background.sprite.texture.width / background.sprite.texture.height
+            : 1f;
+
+        // This nearly invisible target is intentionally below ReRe and every HUD action. It catches
+        // only the open stage so the visible controls continue to receive their own clicks.
+        var blankStageButton = ButtonRoot("TopStageBlankClick", stage, new Color(0.08f, 0.12f, 0.22f, 0.002f));
+        Stretch(blankStageButton.GetComponent<RectTransform>(), Vector2.zero, Vector2.zero);
+        blankStageButton.transition = Selectable.Transition.None;
+
+        topMascot = BuildTopReReMascot(stage, new Vector2(-54f, 6f), new Vector2(310f, 630f),
+            new Vector2(-170f, 414f), blankStageButton);
+
         BuildHudPhoneRim(portraitPhoneFrame, navy, accent, accentLight, cyanHighlight);
 
         var speaker = ImageRoot("PortraitPhoneTopSpeaker", portraitPhoneFrame, new Color(navy.r, navy.g, navy.b, 0.94f));
@@ -257,8 +287,8 @@ public static class MenuRootV2Builder
         ConfigureTopHudState(page.gameObject, dayText, debtText, moneyText, urgencyMark.gameObject,
             dressBadge, charactersBadge, homeBadge, itemsBadge, saveBadge, mapBadge, questBadge, settingsBadge);
 
-        // The animated ReRe sprite and click-triggered local speech bubble stay inside the open center.
-        topMascot = BuildTopReReMascot(portraitPhoneFrame, new Vector2(-24f, -804f), new Vector2(252f, 350f), new Vector2(-188f, 230f));
+        // ReRe is built above the scene background but below the rim and controls, preserving the
+        // intended background -> character -> HUD draw order.
         return page;
     }
 
@@ -448,7 +478,8 @@ public static class MenuRootV2Builder
         return button;
     }
 
-    private static MenuTopReReMascot BuildTopReReMascot(RectTransform parent, Vector2 position, Vector2 mascotSize, Vector2 bubbleOffset)
+    private static MenuTopReReMascot BuildTopReReMascot(RectTransform parent, Vector2 position, Vector2 mascotSize, Vector2 bubbleOffset,
+        Button blankStageButton = null)
     {
         var container = RectRoot("TopReReMascot", parent);
         Stretch(container, Vector2.zero, Vector2.zero);
@@ -462,7 +493,7 @@ public static class MenuRootV2Builder
         var bubble = ImageRoot("IdleBubble", container, Color.white);
         bubble.sprite = LoadSprite(ReReSpeechBubblePath);
         bubble.preserveAspect = true;
-        SetRect(bubble.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 1f), bubbleOffset, new Vector2(324f, 140f));
+        SetRect(bubble.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 0f), bubbleOffset, new Vector2(324f, 140f));
         bubble.raycastTarget = false;
         var bubbleText = Text("今夜の準備をしよう。迷ったら、期限と情報ノードを確認してね。", bubble.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(32f, 22f), new Vector2(-48f, -32f));
@@ -472,10 +503,11 @@ public static class MenuRootV2Builder
         var so = new SerializedObject(mascotController);
         SetObject(so, "mascotImage", mascot);
         SetObject(so, "mascotButton", mascotButton);
+        SetObject(so, "blankStageButton", blankStageButton);
         SetObject(so, "mascot", mascot.rectTransform);
         SetObject(so, "bubble", bubble.rectTransform);
         SetObject(so, "bubbleText", bubbleText);
-        SetStringArray(so, "clickMotionIds", new[] { "click_talk", "click_talk_wink", "click_talk_proud", "click_talk_secret" });
+        SetStringArray(so, "clickMotionIds", System.Array.Empty<string>());
         SetVector2(so, "fixedBottomRightPosition", position);
         SetVector2(so, "bubbleOffset", bubbleOffset);
         SetFloat(so, "walkDistance", 36f);
@@ -2794,23 +2826,9 @@ public static class MenuRootV2Builder
         if (prop == null)
             return;
 
-        var sets = new (string id, string folder, float weight, float frameRate, bool walkMotion, bool showBubble, string nextId, int loops, float hold)[]
+        var sets = new (string id, string folder, float weight, float frameRate, bool walkMotion, bool showBubble, string nextId, int loops, float hold, bool loop)[]
         {
-            ("walk_right", TopReReWalkFolder, 1f, 5.2f, true, false, "notice_idle", 5, 0.5f),
-            ("notice_idle", TopReReNoticeFolder, 1f, 3.2f, false, false, "", 1, 1.6f),
-            ("sit_yawn", TopReReSitYawnFolder, 1f, 3.1f, false, false, "doze", 1, 0.8f),
-            ("stretch", TopReReStretchFolder, 1f, 3.6f, false, false, "notice_idle", 1, 1.0f),
-            ("read_book", TopReReReadBookFolder, 1f, 2.8f, false, false, "notice_idle", 2, 1.2f),
-            ("use_phone", TopReReUsePhoneFolder, 1f, 3.0f, false, false, "talk", 2, 0.7f),
-            ("wave", TopReReWaveFolder, 1f, 3.8f, false, false, "notice_idle", 1, 1.0f),
-            ("hair_adjust", TopReReHairAdjustFolder, 1f, 3.2f, false, false, "notice_idle", 1, 0.9f),
-            ("sit_swing", TopReReSitSwingFolder, 1f, 3.0f, false, false, "sit_yawn", 2, 0.8f),
-            ("doze", TopReReDozeFolder, 1f, 2.5f, false, false, "notice_idle", 2, 1.2f),
-            ("talk", TopReReTalkFolder, 1f, 3.8f, false, false, "notice_idle", 1, 1.0f),
-            ("click_talk", TopReReClickTalkFolder, 0f, 4.0f, false, false, "notice_idle", 2, 0.35f),
-            ("click_talk_wink", TopReReClickTalkWinkFolder, 0f, 4.0f, false, false, "notice_idle", 2, 0.35f),
-            ("click_talk_proud", TopReReClickTalkProudFolder, 0f, 4.0f, false, false, "notice_idle", 2, 0.35f),
-            ("click_talk_secret", TopReReClickTalkSecretFolder, 0f, 4.0f, false, false, "notice_idle", 2, 0.35f)
+            ("idle_video", TopIdleVideoFolder, 1f, 12f, false, false, "", 1, 0f, true)
         };
 
         prop.arraySize = sets.Length;
@@ -2826,6 +2844,7 @@ public static class MenuRootV2Builder
             SetChildString(element, "nextId", sets[i].nextId);
             SetChildInt(element, "loopsBeforeNext", sets[i].loops);
             SetChildFloat(element, "holdSeconds", sets[i].hold);
+            SetChildBool(element, "loop", sets[i].loop);
         }
     }
 

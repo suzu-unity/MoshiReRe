@@ -1,0 +1,17 @@
+{
+  "source": "job_20260811_204521_d0fd15e9_5s_fast.mp4",
+  "source_fps": 24.0,
+  "playback_fps": 12.0,
+  "frame_count": 60,
+  "crop_source_pixels": [
+    129,
+    0,
+    569,
+    896
+  ],
+  "output_size": [
+    378,
+    768
+  ],
+  "rembg_model": "u2net_human_seg"
+}
