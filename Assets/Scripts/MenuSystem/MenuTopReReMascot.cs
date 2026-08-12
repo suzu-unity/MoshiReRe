@@ -29,6 +29,7 @@ public class MenuTopReReMascot : MonoBehaviour
     [SerializeField] private MotionSet[] motionSets;
     [SerializeField] private string[] clickMotionIds;
     [SerializeField] private Vector2 fixedBottomRightPosition = new Vector2(628f, -338f);
+    [SerializeField] private Vector2 bubbleOffset = new Vector2(-382f, 250f);
     [SerializeField] private float walkDistance = 118f;
     [SerializeField] private float walkSpeed = 34f;
 
@@ -278,6 +279,6 @@ public class MenuTopReReMascot : MonoBehaviour
         if (!mascot || !bubble || !bubble.gameObject.activeSelf)
             return;
 
-        bubble.anchoredPosition = mascot.anchoredPosition + new Vector2(-382f, 250f);
+        bubble.anchoredPosition = mascot.anchoredPosition + bubbleOffset;
     }
 }

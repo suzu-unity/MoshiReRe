@@ -15,6 +15,9 @@ public class MenuRootV2UI : CustomUI
     [SerializeField] private GameObject pageSave;
     [SerializeField] private GameObject pageSettings;
 
+    [Header("Presentation")]
+    [SerializeField] private MenuRootV2OrientationTransition orientationTransition;
+
     [Header("Navigation")]
     [SerializeField] private Button topButton;
     [SerializeField] private Button statusButton;
@@ -51,13 +54,15 @@ public class MenuRootV2UI : CustomUI
     [SerializeField] private Button questTileButton;
     [SerializeField] private Button mapTileButton;
 
+    private bool pageStateInitialized;
+
     public override bool BlockInputWhenVisible => true;
 
     protected override void Awake()
     {
         base.Awake();
         BindButtons();
-        ShowTop();
+        ShowPageImmediate(pageTop);
     }
 
     protected override void OnDestroy()
@@ -74,7 +79,7 @@ public class MenuRootV2UI : CustomUI
 
     public void ResetToTop()
     {
-        ShowTop();
+        ShowPageImmediate(pageTop);
         if (topMascot)
             topMascot.PlaceForMenuOpen();
     }
@@ -89,6 +94,34 @@ public class MenuRootV2UI : CustomUI
     public void ShowSettings() => ShowPage(pageSettings);
 
     private void ShowPage(GameObject target)
+    {
+        if (!target)
+            return;
+
+        var targetIsPortrait = target == pageTop;
+        if (pageStateInitialized && orientationTransition)
+        {
+            if (orientationTransition.RequestPage(target, targetIsPortrait, () => ApplyPage(target)))
+                return;
+
+            if (orientationTransition.IsTransitioning)
+                return;
+        }
+
+        ShowPageImmediate(target);
+    }
+
+    private void ShowPageImmediate(GameObject target)
+    {
+        if (!target)
+            return;
+
+        ApplyPage(target);
+        orientationTransition?.SetInitialPage(target, target == pageTop);
+        pageStateInitialized = true;
+    }
+
+    private void ApplyPage(GameObject target)
     {
         if (standardPhoneLayer)
             standardPhoneLayer.SetActive(target != pageTop && target != pageStatus && target != pageItems && target != pageCharacters);

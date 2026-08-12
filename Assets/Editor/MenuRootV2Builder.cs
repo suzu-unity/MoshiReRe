@@ -66,7 +66,8 @@ public static class MenuRootV2Builder
         instance.name = "MenuRootV2";
         var previewCamera = AddPreviewCamera();
         SetPreviewCanvasCamera(instance, previewCamera);
-        ActivatePreviewPage(instance, "PageMap");
+        ActivatePreviewPage(instance, "PageTop");
+        SetPreviewVisibleOnAwake(instance, true);
         EditorSceneManager.SaveScene(scene, PreviewScenePath);
 
         AssetDatabase.SaveAssets();
@@ -90,15 +91,16 @@ public static class MenuRootV2Builder
     {
         foreach (var child in root.GetComponentsInChildren<Transform>(true))
         {
-            if (child.name == "PageTop") child.gameObject.SetActive(false);
-            if (child.name == "SmartphoneLayer") child.gameObject.SetActive(true);
-            if (child.name.StartsWith("Page")) child.gameObject.SetActive(child.name == pageName);
+            if (child.name == "SmartphoneLayer")
+                child.gameObject.SetActive(pageName != "PageTop");
+            else if (child.name.StartsWith("Page"))
+                child.gameObject.SetActive(child.name == pageName);
         }
     }
 
     private static GameObject BuildMenuRoot()
     {
-        var root = new GameObject("MenuRootV2", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasGroup), typeof(MenuRootV2UI), typeof(MenuRootV2InteractionController));
+        var root = new GameObject("MenuRootV2", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasGroup), typeof(MenuRootV2UI), typeof(MenuRootV2InteractionController), typeof(MenuRootV2OrientationTransition));
         var rect = root.GetComponent<RectTransform>();
         rect.anchorMin = new Vector2(0.5f, 0.5f);
         rect.anchorMax = new Vector2(0.5f, 0.5f);
@@ -118,8 +120,8 @@ public static class MenuRootV2Builder
         var dim = ImageRoot("SceneDim", rect, new Color(0.08f, 0.07f, 0.10f, 0f));
         Stretch(dim.rectTransform, Vector2.zero, Vector2.zero);
 
-        var pageTop = BuildTopArtworkPage(rect, out var topMascot, out var dressTileButton, out var statusTileButton, out var itemsTileButton,
-            out var charactersTileButton, out var questTileButton, out var mapTileButton);
+        var pageTop = BuildTopArtworkPage(rect, out var portraitPhoneFrame, out var topMascot, out var dressTileButton, out var statusTileButton,
+            out var itemsTileButton, out var charactersTileButton, out var questTileButton, out var mapTileButton);
 
         var phone = ImageRoot("SmartphoneLayer", rect, new Color(0.13f, 0.08f, 0.17f, 0.96f));
         SetRect(phone.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1672f, 941f));
@@ -156,46 +158,115 @@ public static class MenuRootV2Builder
         pageSettings.gameObject.SetActive(false);
         phone.gameObject.SetActive(false);
 
-        ConfigureRoot(root.GetComponent<MenuRootV2UI>(), phone.gameObject, pageTop.gameObject, pageStatus.gameObject, pageItems.gameObject,
+        ConfigureRoot(root.GetComponent<MenuRootV2UI>(), root.GetComponent<MenuRootV2OrientationTransition>(), phone.gameObject, pageTop.gameObject, pageStatus.gameObject, pageItems.gameObject,
             pageCharacters.gameObject, pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject, topButton, statusButton, itemsButton,
             charactersButton, questButton, mapButton, saveButton, settingsButton, topMascot, dressTileButton, statusTileButton, itemsTileButton,
             charactersTileButton, questTileButton, mapTileButton, dressHomeButton, dressDressButton, dressStatusButton,
             dressItemsButton, dressMapButton, charactersHomeButton, charactersDressButton, charactersItemsButton,
             charactersCharactersButton, charactersQuestButton, charactersMapButton, itemsHomeButton, itemsDressButton,
             itemsItemsButton, itemsCharactersButton, itemsQuestButton, itemsMapButton);
+        ConfigureOrientation(root.GetComponent<MenuRootV2OrientationTransition>(), portraitPhoneFrame, phone.rectTransform,
+            pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject);
 
         return root;
     }
 
-    private static RectTransform BuildTopArtworkPage(RectTransform parent, out MenuTopReReMascot topMascot, out Button dressTileButton,
-        out Button statusTileButton, out Button itemsTileButton, out Button charactersTileButton, out Button questTileButton, out Button mapTileButton)
+    private static RectTransform BuildTopArtworkPage(RectTransform parent, out RectTransform portraitPhoneFrame, out MenuTopReReMascot topMascot,
+        out Button dressTileButton, out Button statusTileButton, out Button itemsTileButton, out Button charactersTileButton,
+        out Button questTileButton, out Button mapTileButton)
     {
         var page = RectRoot("PageTop", parent);
         Stretch(page, Vector2.zero, Vector2.zero);
+        page.gameObject.AddComponent<CanvasGroup>();
 
-        var artwork = ImageRoot("TopPhoneArtwork", page, Color.white);
-        artwork.sprite = LoadSprite(TopArtworkPath);
-        artwork.preserveAspect = true;
-        artwork.raycastTarget = false;
-        SetRect(artwork.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1675f, 943f));
+        portraitPhoneFrame = RectRoot("PortraitPhonePresentation", page);
+        SetRect(portraitPhoneFrame, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(660f, 972f));
 
-        dressTileButton = TopHitbox(page, "DressTileHitbox", new Rect(250f, 205f, 400f, 216f));
+        var phoneShell = ImageRoot("PortraitPhoneShell", portraitPhoneFrame, new Color(0.10f, 0.06f, 0.16f, 0.18f));
+        Stretch(phoneShell.rectTransform, Vector2.zero, Vector2.zero);
+        phoneShell.raycastTarget = false;
+        PixelBorder(phoneShell.rectTransform, "PortraitPhoneOuterFrame", new Color(0.02f, 0.02f, 0.04f, 1f), 10f);
+
+        var phoneRim = ImageRoot("PortraitPhoneRim", portraitPhoneFrame, new Color(0.98f, 0.95f, 0.89f, 0.10f));
+        Stretch(phoneRim.rectTransform, new Vector2(18f, 18f), new Vector2(-18f, -18f));
+        phoneRim.raycastTarget = false;
+        PixelBorder(phoneRim.rectTransform, "PortraitPhoneRimFrame", new Color(0.48f, 0.41f, 0.60f, 1f), 4f);
+
+        var screen = ImageRoot("TransparentReReStage", portraitPhoneFrame, new Color(0.30f, 0.18f, 0.42f, 0.055f));
+        Stretch(screen.rectTransform, new Vector2(34f, 34f), new Vector2(-34f, -34f));
+        screen.raycastTarget = false;
+        PixelBorder(screen.rectTransform, "TransparentStageFrame", new Color(0.54f, 0.43f, 0.76f, 0.72f), 3f);
+
+        var speaker = ImageRoot("PortraitPhoneSpeaker", portraitPhoneFrame, new Color(0.10f, 0.06f, 0.16f, 0.92f));
+        speaker.raycastTarget = false;
+        SetRect(speaker.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -26f), new Vector2(118f, 10f));
+
+        var statusBar = ImageRoot("PortraitStatusBar", portraitPhoneFrame, new Color(0.18f, 0.11f, 0.28f, 0.94f));
+        statusBar.raycastTarget = false;
+        SetRect(statusBar.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -82f), new Vector2(562f, 66f));
+        PixelBorder(statusBar.rectTransform, "PortraitStatusFrame", Ink, 3f);
+        Text("DAY 03   •   22:14", statusBar.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Left, Cream,
+            new Vector2(18f, 8f), new Vector2(-230f, -8f));
+        Text("MoshiReRe  /  ReRe ONLINE", statusBar.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Right, Mint,
+            new Vector2(190f, 8f), new Vector2(-18f, -8f));
+
+        var debtChip = PortraitStatusChip(portraitPhoneFrame, "DebtDeadlineChip", "返済まで 7 DAYS", new Vector2(-150f, 330f), Coral);
+        var moneyChip = PortraitStatusChip(portraitPhoneFrame, "MoneyStatusChip", "¥ 145,000", new Vector2(150f, 330f), Mint);
+        debtChip.raycastTarget = false;
+        moneyChip.raycastTarget = false;
+
+        var liveStage = ImageRoot("ReReLiveWindow", portraitPhoneFrame, new Color(0.48f, 0.76f, 0.91f, 0.035f));
+        liveStage.raycastTarget = false;
+        SetRect(liveStage.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 20f), new Vector2(314f, 480f));
+        PixelBorder(liveStage.rectTransform, "ReReLiveWindowFrame", new Color(0.54f, 0.80f, 0.94f, 0.66f), 2f);
+        Text("ReRe  LIVE LINK", liveStage.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Top, new Color(0.76f, 0.95f, 0.96f, 0.90f),
+            new Vector2(8f, 8f), new Vector2(-8f, -8f));
+        Text("tap ReRe to ask for a hint", liveStage.rectTransform, 11f, FontStyles.Bold, TextAlignmentOptions.Bottom, new Color(0.83f, 0.90f, 0.98f, 0.82f),
+            new Vector2(10f, 10f), new Vector2(-10f, -8f));
+
+        dressTileButton = PortraitShortcutButton(portraitPhoneFrame, "DressTileHitbox", "DRESS", "dress", Lavender, new Vector2(-226f, 205f), new Vector2(116f, 104f));
+        charactersTileButton = PortraitShortcutButton(portraitPhoneFrame, "CharactersTileHitbox", "CHAR", "char", Coral, new Vector2(-226f, 75f), new Vector2(116f, 104f));
+        itemsTileButton = PortraitShortcutButton(portraitPhoneFrame, "ItemsTileHitbox", "ITEM", "item", Yellow, new Vector2(226f, 205f), new Vector2(116f, 104f));
+        questTileButton = PortraitShortcutButton(portraitPhoneFrame, "QuestTileHitbox", "QUEST", "quest", Peach, new Vector2(226f, 75f), new Vector2(116f, 104f));
+        mapTileButton = PortraitShortcutButton(portraitPhoneFrame, "MapTileHitbox", "MAP", "map", Cyan, new Vector2(-166f, -330f), new Vector2(150f, 96f));
+        var saveButton = PortraitShortcutButton(portraitPhoneFrame, "SaveTileHitbox", "SAVE", "save", new Color(0.66f, 0.72f, 0.94f, 1f), Vector2.zero + new Vector2(0f, -330f), new Vector2(144f, 96f));
+        var settingsButton = PortraitShortcutButton(portraitPhoneFrame, "SettingsTileHitbox", "SET", "settings", new Color(0.78f, 0.78f, 0.82f, 1f), new Vector2(166f, -330f), new Vector2(150f, 96f));
         statusTileButton = null;
-        itemsTileButton = TopHitbox(page, "ItemsTileHitbox", new Rect(1083f, 205f, 362f, 216f));
-        charactersTileButton = TopHitbox(page, "CharactersTileHitbox", new Rect(250f, 438f, 348f, 160f));
-        questTileButton = TopHitbox(page, "QuestTileHitbox", new Rect(614f, 438f, 276f, 160f));
-        mapTileButton = TopHitbox(page, "MapTileHitbox", new Rect(904f, 438f, 540f, 322f));
-        var saveButton = TopHitbox(page, "SaveTileHitbox", new Rect(250f, 610f, 348f, 150f));
-        var settingsButton = TopHitbox(page, "SettingsTileHitbox", new Rect(614f, 610f, 276f, 150f));
+
         AddDynamicNotificationBadge(itemsTileButton, "TopItemNotificationBadge");
         AddDynamicNotificationBadge(questTileButton, "TopQuestNotificationBadge");
         ConfigurePageNavigation(page.gameObject, null, null, null, null, null, null, saveButton, settingsButton);
-        topMascot = BuildTopReReMascot(page);
+        topMascot = BuildTopReReMascot(portraitPhoneFrame, new Vector2(0f, -36f), new Vector2(276f, 402f), new Vector2(-160f, 232f));
 
         return page;
     }
 
-    private static MenuTopReReMascot BuildTopReReMascot(RectTransform parent)
+    private static Image PortraitStatusChip(RectTransform parent, string name, string value, Vector2 position, Color color)
+    {
+        var chip = ImageRoot(name, parent, color);
+        SetRect(chip.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position, new Vector2(254f, 46f));
+        PixelBorder(chip.rectTransform, name + "Frame", Ink, 2f);
+        Text(value, chip.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        return chip;
+    }
+
+    private static Button PortraitShortcutButton(RectTransform parent, string name, string label, string iconId, Color color, Vector2 position, Vector2 size)
+    {
+        var button = ButtonRoot(name, parent, color);
+        var rect = button.GetComponent<RectTransform>();
+        SetRect(rect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position, size);
+        PixelBorder(rect, "Frame", Ink, 3f);
+
+        var icon = ImageRoot("ShortcutIcon", rect, Color.white);
+        icon.sprite = LoadNavigationSprite(iconId);
+        icon.preserveAspect = true;
+        icon.raycastTarget = false;
+        SetRect(icon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 12f), new Vector2(48f, 48f));
+        Text(label, rect, 14f, FontStyles.Bold, TextAlignmentOptions.Bottom, Ink, new Vector2(5f, 6f), new Vector2(-5f, -4f));
+        return button;
+    }
+
+    private static MenuTopReReMascot BuildTopReReMascot(RectTransform parent, Vector2 position, Vector2 mascotSize, Vector2 bubbleOffset)
     {
         var container = RectRoot("TopReReMascot", parent);
         Stretch(container, Vector2.zero, Vector2.zero);
@@ -203,16 +274,16 @@ public static class MenuRootV2Builder
         mascot.sprite = LoadSprite(TopReReSpritePath);
         mascot.preserveAspect = true;
         mascot.raycastTarget = true;
-        SetRect(mascot.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), new Vector2(628f, -338f), new Vector2(190f, 190f));
+        SetRect(mascot.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), position, mascotSize);
         var mascotButton = EnsureButton(mascot);
 
         var bubble = ImageRoot("IdleBubble", container, Color.white);
         bubble.sprite = LoadSprite(ReReSpeechBubblePath);
         bubble.preserveAspect = true;
-        SetRect(bubble.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 1f), new Vector2(246f, -88f), new Vector2(390f, 150f));
+        SetRect(bubble.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 1f), bubbleOffset, new Vector2(324f, 140f));
         bubble.raycastTarget = false;
-        var bubbleText = Text("今夜の準備をしよう。迷ったら、期限と情報ノードを確認してね。", bubble.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
-            new Vector2(40f, 24f), new Vector2(-62f, -38f));
+        var bubbleText = Text("今夜の準備をしよう。迷ったら、期限と情報ノードを確認してね。", bubble.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(32f, 22f), new Vector2(-48f, -32f));
         bubbleText.font = FindPixelFontAsset();
 
         var mascotController = container.gameObject.AddComponent<MenuTopReReMascot>();
@@ -223,9 +294,10 @@ public static class MenuRootV2Builder
         SetObject(so, "bubble", bubble.rectTransform);
         SetObject(so, "bubbleText", bubbleText);
         SetStringArray(so, "clickMotionIds", new[] { "click_talk", "click_talk_wink", "click_talk_proud", "click_talk_secret" });
-        SetVector2(so, "fixedBottomRightPosition", new Vector2(628f, -338f));
-        SetFloat(so, "walkDistance", 82f);
-        SetFloat(so, "walkSpeed", 26f);
+        SetVector2(so, "fixedBottomRightPosition", position);
+        SetVector2(so, "bubbleOffset", bubbleOffset);
+        SetFloat(so, "walkDistance", 36f);
+        SetFloat(so, "walkSpeed", 22f);
         SetMotionSets(so);
         so.ApplyModifiedPropertiesWithoutUndo();
         mascotController.PlaceForMenuOpen();
@@ -1759,12 +1831,7 @@ public static class MenuRootV2Builder
 
     private static void AddNavigationIcon(Button button, string id)
     {
-        var key = id.ToLowerInvariant();
-        if (key == "top") key = "home";
-        if (key == "items") key = "item";
-        if (key == "characters") key = "char";
-        if (key == "settings") key = "settings";
-        var sprite = LoadSprite(CommonUiCropFolder + "/nav_" + key + ".png");
+        var sprite = LoadNavigationSprite(id);
         if (!sprite) return;
         var icon = ImageRoot("NavIcon", button.GetComponent<RectTransform>(), Color.white);
         icon.sprite = sprite;
@@ -1772,6 +1839,15 @@ public static class MenuRootV2Builder
         icon.raycastTarget = false;
         SetRect(icon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(6f, 0f), new Vector2(46f, 46f));
         icon.transform.SetAsFirstSibling();
+    }
+
+    private static Sprite LoadNavigationSprite(string id)
+    {
+        var key = id.ToLowerInvariant();
+        if (key == "top") key = "home";
+        if (key == "items") key = "item";
+        if (key == "characters") key = "char";
+        return LoadSprite(CommonUiCropFolder + "/nav_" + key + ".png");
     }
 
     private static void ConfigurePageNavigation(GameObject target, Button home, Button dress, Button item, Button characters,
@@ -2353,7 +2429,7 @@ public static class MenuRootV2Builder
         return pixelFont ? pixelFont : TMP_Settings.defaultFontAsset;
     }
 
-    private static void ConfigureRoot(MenuRootV2UI ui, GameObject standardPhoneLayer, GameObject topPage, GameObject statusPage, GameObject itemsPage,
+    private static void ConfigureRoot(MenuRootV2UI ui, MenuRootV2OrientationTransition orientationTransition, GameObject standardPhoneLayer, GameObject topPage, GameObject statusPage, GameObject itemsPage,
         GameObject charactersPage, GameObject questPage, GameObject mapPage, GameObject savePage, GameObject settingsPage, Button top, Button status, Button items,
         Button characters, Button quest, Button map, Button save, Button settings, MenuTopReReMascot topMascot, Button dressTile,
         Button statusTile, Button itemsTile, Button charactersTile, Button questTile, Button mapTile, Button dressHome,
@@ -2363,6 +2439,7 @@ public static class MenuRootV2Builder
     {
         var so = new SerializedObject(ui);
         SetBool(so, "visibleOnAwake", false);
+        SetObject(so, "orientationTransition", orientationTransition);
         SetObject(so, "standardPhoneLayer", standardPhoneLayer);
         SetObject(so, "pageTop", topPage);
         SetObject(so, "pageStatus", statusPage);
@@ -2404,6 +2481,41 @@ public static class MenuRootV2Builder
         SetObject(so, "charactersTileButton", charactersTile);
         SetObject(so, "questTileButton", questTile);
         SetObject(so, "mapTileButton", mapTile);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(ui);
+    }
+
+    private static void ConfigureOrientation(MenuRootV2OrientationTransition controller, RectTransform portraitPhoneFrame,
+        RectTransform sharedLandscapePhoneFrame, params GameObject[] sharedLandscapePages)
+    {
+        if (!controller)
+            return;
+
+        var so = new SerializedObject(controller);
+        SetObject(so, "portraitPhoneFrame", portraitPhoneFrame);
+        SetObject(so, "sharedLandscapePhoneFrame", sharedLandscapePhoneFrame);
+        var pages = so.FindProperty("sharedLandscapePages");
+        if (pages != null)
+        {
+            pages.arraySize = sharedLandscapePages.Length;
+            for (var i = 0; i < sharedLandscapePages.Length; i++)
+                pages.GetArrayElementAtIndex(i).objectReferenceValue = sharedLandscapePages[i];
+        }
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(controller);
+    }
+
+    private static void SetPreviewVisibleOnAwake(GameObject root, bool visible)
+    {
+        if (!root)
+            return;
+
+        var ui = root.GetComponent<MenuRootV2UI>();
+        if (!ui)
+            return;
+
+        var so = new SerializedObject(ui);
+        SetBool(so, "visibleOnAwake", visible);
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(ui);
     }
