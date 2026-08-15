@@ -76,7 +76,9 @@ if ($ValidateOnly) {
 New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
 
 if (-not $serverReady) {
-    $blockingProcessIds = Get-ListeningProcessIds -Port $music3Port
+    # Preserve an empty result as an array under StrictMode; otherwise an
+    # unoccupied port yields $null and accessing .Count aborts startup.
+    $blockingProcessIds = @(Get-ListeningProcessIds -Port $music3Port)
     if ($blockingProcessIds.Count -gt 0) {
         throw "Port $music3Port is in use by PID(s) $($blockingProcessIds -join ', ') but is not a healthy Music3 ComfyUI server. No process was stopped."
     }
