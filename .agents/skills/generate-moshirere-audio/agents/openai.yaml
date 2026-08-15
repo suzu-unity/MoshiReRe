@@ -1,0 +1,4 @@
+interface:
+  display_name: "MoshiReRe Audio"
+  short_description: "Generate BGM, SFX, and ambience"
+  default_prompt: "Use $generate-moshirere-audio to generate game audio for MoshiReRe."
