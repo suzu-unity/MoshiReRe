@@ -1,0 +1,91 @@
+{
+  "title": "未読のわたし",
+  "asset": {
+    "path": "Assets/Audio/BGM/Generated/opening_unread_me_whisper_pop_00001.mp3",
+    "filename_prefix": "opening_unread_me_whisper_pop",
+    "format": "mp3",
+    "quality": "high-quality VBR (libsndfile MP3, compression_level 0.0)",
+    "non_looping": true,
+    "sha256": "28e71f13f5792005d0ebcda7f204e9bee58985ea3bd0a5c73ed7636ba6331562"
+  },
+  "generator": {
+    "name": "MiniMax Music 3",
+    "mode": "text-to-music",
+    "official_workflow_template": "G:\\ComfyUI_Flux_Workspace\\ComfyUI_Music3\\python_overlay\\comfyui_workflow_templates_json\\templates\\audio_minimax_music_3.json",
+    "music_inference_runs": 1,
+    "export_note": "The inference was cached once and exported with SaveAudioMP3 after the current API rejected SaveAudioAdvanced's dynamic format input. A 40 ms quarter-sine de-click tail was then applied to prevent a hard cutoff; it is not a musical fade-out."
+  },
+  "caption": "Global Metadata: Japanese whisper-vocal art pop / minimal new-wave indie pop. 124 BPM, F-sharp minor with brief modal-major flashes, 4/4. A 90-second non-looping game opening about the split between daytime company life and nighttime phone life, debt deadlines, choice, and exploitation. Urban digital surrealism: cute, cool, catchy, and faintly unsettling. Precise but human, with a short unresolved button ending and no fade.\n\nVocal Details: Close-miked airy Japanese adult female whisper-singing in a soft upper-mid register. Restrained deadpan timbre with audible but controlled breathiness, clear consonants, minimal vibrato, and slightly syncopated spoken-like verse phrasing. Choruses are gently double-tracked, never huge; small centered backing whispers of \"Re Re Re\" support key hooks. Keep the lead centered and forward in a dry intimate mix. No belting, idol squeal, rap, opera, or theatrical vocal runs.\n\nArrangement: [Intro] begins with a two-bar filtered synth notification motif, then muted clean-guitar 16ths and a small analog synth appear. [Verse 1] stays sparse: melodic dry bass, tight dry rim clicks and hi-hat, guitar, and rare glockenspiel replies. [Pre-Chorus] adds restrained rising synth pressure and a little more hat movement. [Chorus] opens into a catchy but controlled full groove with gently doubled vocal, dry drums, bass, guitar, analog synth, and sparse glockenspiel; no EDM drop. [Verse 2] returns to the close, sparse texture with altered guitar and bass responses. [Bridge] switches to half-time minimal drums, filtered notification motif, and isolated breathy whispers. [Final Chorus] returns the full restrained hook with a small lift, then [Outro] strips to notification synth, guitar harmonic, and an unresolved final button. Non-looping; end cleanly without a fade.",
+  "lyrics": "[Intro]\n(Re Re Re)\n午前零時　画面がひかる\n知らない声が　わたしを知ってる\n\n[Verse 1]\n十日ぶんの呼吸を数え\n五十万の朝を待つ\n会社のわたしはコピー用紙\n夜のわたしはパスワード\n借りものの笑顔を貼って\n名前のない期待を読む\n誰かの正解なぞるたび\n本音だけログアウト\n\n[Pre-Chorus]\nやさしさは　利息つき\n本音には　既読がつかない\n「選んで」って言われる前に\n選ばれたのは　どっち？\n\n[Chorus]\nRe Re Re　繰り返して\nわたしの値段を書き換える\n白い昼と　青い夜\n境界線をスワイプする\nねえ　奪われないためなら\nどこまで奪っていいの？\n通知音だけが　かわいく鳴った\n\n[Verse 2]\nエレベーターは上へ行くのに\n残高だけは下へ行く\n嘘をつくのは下手なくせに\n黙ることだけ上手になる\nポケットのなかの予言者が\nあなたの弱さを指でなぞる\n助けるふりのアルゴリズム\nわたしまで解析する\n\n[Pre-Chorus]\n同情には　期限つき\n後悔には　名前がない\n「信じて」って言われる前に\n疑ったのは　どっち？\n\n[Bridge]\n(ねえ　Re Re Re)\n正しさを　反転して\n被害者と加害者の\nあいだでカーソルが点滅\nだれが　だれを　選ぶの\n\n[Chorus]\nRe Re Re　繰り返して\nわたしの未来を書き換える\n白い昼も　青い夜も\nひとつの嘘でつながってる\nねえ　奪われないためなら\nどこまで奪っていいの？\n通知音だけが　かわいく鳴った\n(Re Re Re)\n\n[Outro]\n午前零時　画面が消える\n知らないわたしが　こちらを見てる",
+  "parameters": {
+    "seed": 415072031,
+    "max_duration_seconds": 108.0,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "steps": 30,
+    "cfg": 1.7,
+    "cfg_scale": 1.7,
+    "top_k": 50,
+    "top_p": {
+      "requested": 0.9,
+      "applied": false,
+      "reason": "The current MiniMaxMusic3TextEncode node does not expose top_p."
+    },
+    "temperature": {
+      "requested": 1.0,
+      "applied": false,
+      "reason": "The current MiniMaxMusic3TextEncode node does not expose temperature."
+    },
+    "models": {
+      "unet_name": "minimax_music3_dit_int8_convrot.safetensors",
+      "clip_name": "minimax_music3_text_encoder_pruned_int8_convrot.safetensors",
+      "vae_name": "minimax_music3_dav.safetensors"
+    },
+    "tiled_decode": true,
+    "tile_size": 1536,
+    "tile_overlap": 64,
+    "post_processing": {
+      "type": "quarter-sine de-click fade-to-zero",
+      "duration_ms": 40,
+      "fade_samples": 1764,
+      "purpose": "Prevent a hard cutoff without changing the musical ending."
+    }
+  },
+  "audio_validation": {
+    "bytes": 3532797,
+    "duration_seconds": 107.99600907029479,
+    "decoded_duration_seconds": 107.99600907029479,
+    "sample_rate_hz": 44100,
+    "channels": 2,
+    "codec": "MP3 (MPEG Layer III)",
+    "bitrate_bps": 261555,
+    "peak_dBFS": -1.8111453016558503,
+    "rms_dBFS": -18.333869098661843,
+    "silence_ratio_below_minus50dB": 0.007309470063420402,
+    "tail_1s_rms_dBFS": -17.573855291055352,
+    "tail_100ms_rms": 0.11037423461675644,
+    "tail_100ms_rms_dBFS": -19.142645899838435,
+    "tail_20ms_rms": 0.03140699863433838,
+    "tail_20ms_rms_dBFS": -30.05947128720054,
+    "tail_10ms_rms": 0.011681503616273403,
+    "tail_10ms_rms_dBFS": -38.650025044778005,
+    "final_sample_abs_max": 5.1798233471345156e-05
+  },
+  "vocal_validation": {
+    "method": "Whisper tiny transcription on the first 60 seconds plus pYIN pitch analysis of the harmonic mix.",
+    "whisper_language": "ja",
+    "whisper_segment_count": 22,
+    "recognized_requested_lyric_terms": [
+      "画面",
+      "コピー",
+      "繰り返して"
+    ],
+    "harmonic_mix_f0_median_hz": 353.2860680198857,
+    "assessment": "The non-empty Japanese lyric transcription and high-register pitch distribution are consistent with a sung upper-register female lead. This is signal-based verification, not a speaker-identity claim."
+  },
+  "originality": {
+    "performer_or_band_references_in_caption": false,
+    "named_song_references_in_caption": false,
+    "lyrics_written_for_this_asset": true
+  }
+}
