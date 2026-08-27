@@ -223,7 +223,7 @@ public static class MenuRootV2Builder
         Stretch(blankStageButton.GetComponent<RectTransform>(), Vector2.zero, Vector2.zero);
         blankStageButton.transition = Selectable.Transition.None;
 
-        topMascot = BuildTopReReMascot(stage, new Vector2(-54f, 6f), new Vector2(310f, 630f),
+        topMascot = BuildTopReReMascot(stage, new Vector2(-54f, 6f), new Vector2(430f, 650f),
             new Vector2(-170f, 414f), blankStageButton);
 
         BuildHudPhoneRim(portraitPhoneFrame, navy, accent, accentLight, cyanHighlight);
@@ -297,7 +297,7 @@ public static class MenuRootV2Builder
     {
         var root = RectRoot("ReReConversation", parent);
         SetRect(root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
-            new Vector2(-48f, -724f), new Vector2(650f, 236f));
+            new Vector2(-48f, -724f), new Vector2(650f, 142f));
 
         var panel = ImageRoot("ConversationPanel", root, new Color(0.10f, 0.08f, 0.18f, 0.94f));
         Stretch(panel.rectTransform, Vector2.zero, Vector2.zero);
@@ -305,17 +305,17 @@ public static class MenuRootV2Builder
 
         var speech = ImageRoot("ReReSpeechBubble", root, new Color(1f, 0.96f, 0.88f, 1f));
         SetRect(speech.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
-            new Vector2(0f, -12f), new Vector2(-24f, -94f));
+            new Vector2(0f, -8f), new Vector2(-24f, 64f));
         speech.raycastTarget = false;
-        var speechText = Text("ここにReReの返答が表示されるよ。", speech.rectTransform, 18f, FontStyles.Bold,
-            TextAlignmentOptions.TopLeft, Ink, new Vector2(20f, 12f), new Vector2(-20f, -12f));
+        var speechText = Text("ここにReReの返答が表示されるよ。", speech.rectTransform, 16f, FontStyles.Bold,
+            TextAlignmentOptions.TopLeft, Ink, new Vector2(16f, 8f), new Vector2(-16f, -8f));
         speechText.name = "ResponseText";
 
         var inputGo = new GameObject("ReReInput", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(TMP_InputField));
         inputGo.transform.SetParent(root, false);
         var inputRect = inputGo.GetComponent<RectTransform>();
         SetRect(inputRect, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(-46f, 14f), new Vector2(-118f, 54f));
+            new Vector2(-41f, 10f), new Vector2(-106f, 44f));
         var inputImage = inputGo.GetComponent<Image>();
         inputImage.sprite = GetDefaultSprite();
         inputImage.color = new Color(0.97f, 0.94f, 1f, 1f);
@@ -337,9 +337,9 @@ public static class MenuRootV2Builder
 
         var send = ButtonRoot("ReReSend", root, Mint);
         SetRect(send.GetComponent<RectTransform>(), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f),
-            new Vector2(-14f, 14f), new Vector2(92f, 54f));
+            new Vector2(-10f, 10f), new Vector2(82f, 44f));
         PixelBorder(send.GetComponent<RectTransform>(), "SendFrame", Ink, 2f);
-        Text("SEND", send.GetComponent<RectTransform>(), 15f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        Text("SEND", send.GetComponent<RectTransform>(), 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
 
         var controller = root.gameObject.AddComponent<ReReConversationUI>();
         var so = new SerializedObject(controller);
@@ -352,7 +352,11 @@ public static class MenuRootV2Builder
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
 
-        root.gameObject.AddComponent<ReReConversationContextProvider>();
+        var contextProvider = root.gameObject.AddComponent<ReReConversationContextProvider>();
+        var contextSo = new SerializedObject(contextProvider);
+        SetObject(contextSo, "inventoryDatabase", FindFirstAssetOfType<InventoryDatabase>());
+        contextSo.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(contextProvider);
     }
 
     private static void BuildHudPhoneRim(RectTransform parent, Color navy, Color accent, Color accentLight, Color cyanHighlight)
@@ -550,7 +554,7 @@ public static class MenuRootV2Builder
         mascot.sprite = LoadSprite(TopReReSpritePath);
         mascot.preserveAspect = true;
         mascot.raycastTarget = true;
-        SetRect(mascot.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), position, mascotSize);
+        SetRect(mascot.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), position, mascotSize);
         var mascotButton = EnsureButton(mascot);
 
         var bubble = ImageRoot("IdleBubble", container, Color.white);
@@ -1741,7 +1745,7 @@ public static class MenuRootV2Builder
             SetChildBool(route, "enabled", true);
             SetChildInt(route, "locationIndex", 3);
             SetChildString(route, "routeId", "papa_cafe");
-            SetChildString(route, "sceneName", "PapaCafeExploration");
+            SetChildString(route, "sceneName", string.Empty);
             SetChildString(route, "mapId", "papa_cafe");
             SetChildString(route, "entryScriptPath", "Scenario/PapaQuestDemo");
             SetChildString(route, "entryLabel", string.Empty);
@@ -2910,7 +2914,7 @@ public static class MenuRootV2Builder
 
         var sets = new (string id, string folder, float weight, float frameRate, bool walkMotion, bool showBubble, string nextId, int loops, float hold, bool loop)[]
         {
-            ("idle_video", TopIdleVideoFolder, 1f, 12f, false, false, "", 1, 0f, true)
+            ("idle_talk", TopReReTalkFolder, 1f, 5f, false, false, "", 1, 0f, true)
         };
 
         prop.arraySize = sets.Length;

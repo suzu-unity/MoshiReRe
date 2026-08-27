@@ -1,0 +1,53 @@
+; First papa-activity exploration vertical slice.
+; The office exploration scene is intentionally reused with the papa_cafe map variant.
+
+# PapaCafeClue
+@printer Dialogue
+@showPrinter Dialogue
+@explorationPortrait side:right id:player_default
+
+Wanabi: 窓際の二人席。予約札の裏に、小さな真鍮タグが挟まっている。
+ReRe: 「席番号17。相手が送ってきた写真の鍵にも、同じ番号が刻まれていました」
+Wanabi: 忘れ物……にしては、ずいぶん見せつける置き方だな。
+ReRe: 「“この店の常連であること”を気づいてほしい人の置き方ですね。持っておきましょう」
+@acquireExplorationItem id:old_key
+@set papaCafeKeyFound=true
+@set rereContext="papa_cafe_clue_found"
+Wanabi: 席番号17の真鍮タグを手に入れた。
+@hidePrinter Dialogue wait!
+@stop
+
+# PapaCafeExitTable
+@printer Dialogue
+@showPrinter Dialogue
+@explorationPortrait side:left id:npc_default
+@explorationPortrait side:right id:player_default
+
+ReRe: 「下調べは、もう十分ですか？」
+@if papaCafeKeyFound
+    ReRe: 「席番号17のタグも確保済み。会話を動かす材料はあります」
+@else
+    ReRe: 「まだ窓際の席を見ていません。相手の写真にあった番号を確認できます」
+
+@choice "はい。ここで待つ" goto:.WaitForOjisan
+@choice "もう少し調べる" goto:.KeepLooking
+@stop
+
+# WaitForOjisan
+@set rereContext="papa_cafe_negotiation"
+@hidePrinter Dialogue wait!
+@returnToNovel scene:CommonUIHub script:Scenario/PapaQuestDemo label:OjisanArrival
+@stop
+
+# KeepLooking
+Wanabi: まだ見落としがあるかもしれない。もう一周だけ見てみよう。
+@hidePrinter Dialogue wait!
+@stop
+
+# PapaCafeGeneric
+@printer Dialogue
+@showPrinter Dialogue
+Wanabi: 入口、レジ、化粧室までの距離を確認する。帰りたい時に迷わない配置だ。
+ReRe: 「良い観察です。会話だけでなく、いつでも帰れる導線を確保してください」
+@hidePrinter Dialogue wait!
+@stop

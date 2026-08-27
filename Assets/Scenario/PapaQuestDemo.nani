@@ -1,0 +1,111 @@
+; Papa-activity demo: briefing -> exploration -> negotiation -> item presentation.
+; Temporary character label OjA can be replaced after the first target is finalized.
+
+# Briefing
+@set papaCafeKeyFound=false
+@set rereContext="papa_cafe_briefing"
+@set papaResult="none"
+@setMainQuest "初回入金の足がかりを作ろう" objective:"対象Aと会い、安全に援助の約束を引き出す" days:7
+
+ReRe: 「今夜の対象は“先生”と呼ばれたがる会社員。自分の行きつけを紹介するのが好きです」
+Wanabi: つまり、店を褒めて話を聞けばいい？
+ReRe: 「半分正解。褒めるより、“何を知っていてほしいか”を見つけてください」
+ReRe: 「待ち合わせより先に着いて、店内を見ておきましょう。メニューを開けば、探索中でも私に相談できます」
+
+@choice "相手の弱点を確認する" goto:.AskWeakness
+@choice "安全に帰る条件を確認する" goto:.AskSafety
+@stop
+
+# AskWeakness
+ReRe: 「承認欲求は強め。ただし露骨なお世辞は試されていると感じます。具体物から質問を始めるのが有効です」
+@goto .EnterCafe
+
+# AskSafety
+ReRe: 「出口までの導線、飲み物から目を離さないこと、援助額より先に次の約束を確定しないこと。この三つです」
+@goto .EnterCafe
+
+# EnterCafe
+@enterExploration scene:OfficeExploration map:papa_cafe spawn:entrance
+@stop
+
+# OjisanArrival
+@set rereContext="papa_cafe_negotiation"
+@back ScenarioExploration/Backgrounds/02_bakery_cafe
+
+店のベルが鳴り、濃紺のジャケットを着た男が入ってきた。
+相手は罠美を見つけると、安心したように手を上げ、それから店内を一度だけ見回した。
+
+OjA: 待たせたかな。ここ、僕が若い頃から使ってる店でね。
+Wanabi: 私も少し早く着いただけです。落ち着くお店ですね。
+OjA: 分かる？　チェーンとは空気が違うんだよ。
+
+@choice "店の歴史を教えてもらう" goto:.ListenHistory
+@choice "すぐ援助の話を切り出す" goto:.RushMoney
+@stop
+
+# ListenHistory
+@set papaTone="listen"
+OjA: 昔は編集者や作家がよく来ていてね。僕も仕事を教わったものだよ。
+Wanabi: 誰かに教わった場所だから、今度は誰かを連れてきたくなるんですね。
+OjA: ……君は、話が早いな。
+@goto .DecisionPoint
+
+# RushMoney
+@set papaTone="rush"
+Wanabi: それで、メッセージで話していた援助のことなんですけど。
+OjA: はは。若い人は結論が早い。嫌いじゃないが、少し寂しいね。
+@goto .DecisionPoint
+
+# DecisionPoint
+OjA: そういえば、来る途中で鍵につけていたタグを落としたらしい。店の番号が入った古い物でね。
+
+@if papaCafeKeyFound
+    @choice "席番号17の真鍮タグを提示する" goto:.PresentKeyItem
+@choice "話題を変えて援助を頼む" goto:.AskWithoutItem
+@choice "今日はここで帰る" goto:.SafeExit
+@stop
+
+# PresentKeyItem
+@set papaResult="insight"
+@back ScenarioCG/papa_cafe_key_demo
+Wanabi: これですか？　窓際の席にありました。
+OjA: ……それだ。よく見つけたね。
+Wanabi: 17番の席、写真にも写っていました。大切な思い出の席なんですか？
+OjA: 妻と初めて会った席だ。もう何年も、誰にも話していなかった。
+
+相手の声から、自慢げな響きが少しだけ消えた。
+罠美はタグをテーブルへ置き、続きを急かさずに待った。
+
+OjA: 君には、無理をしてほしくない。まず今月分として、十万円なら力になれる。
+@addMoney 100000
+ReRe: 「援助の申し出を確認。相手の自己像“面倒を見る先生”を推測から確認済みに更新します」
+@sfx SFX/Generated/rere_analysis_confirm_00001
+@goto .Result
+
+# AskWithoutItem
+@set papaResult="basic"
+OjA: 事情は分かった。今日は交通費と食事代として、三万円でどうかな。
+@addMoney 30000
+ReRe: 「最低限の援助を確保。情報ノードは未確認のままです」
+@goto .Result
+
+# SafeExit
+@set papaResult="safe"
+Wanabi: 今日は会って話せただけで十分です。次の約束は、少し考えさせてください。
+OjA: 慎重なんだね。分かった、無理には誘わないよ。
+ReRe: 「安全撤退。報酬はありませんが、執着リスクも増えていません」
+@goto .Result
+
+# Result
+@set rereContext="papa_cafe_complete"
+@if papaResult=="insight"
+    ReRe: 「成功です。お金だけでなく、次の会話に使える事実を持ち帰れました」
+@else
+    @if papaResult=="basic"
+        ReRe: 「進行は可能です。ただし次回は、相手が語りたがっている物を先に探しましょう」
+    @else
+        ReRe: 「撤退も攻略です。危険を感じたら、利益が出る前でも終えて構いません」
+
+Wanabi: 人の欲しい言葉を探すって、思ったより疲れるな。
+ReRe: 「だから私がいます。次は、今日の結果を会社でどう使うか考えましょう」
+@stop

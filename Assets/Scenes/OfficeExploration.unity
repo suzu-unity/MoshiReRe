@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &22747207
+--- !u!1 &80693323
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,40 +127,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 22747211}
-  - component: {fileID: 22747210}
-  - component: {fileID: 22747209}
-  - component: {fileID: 22747208}
+  - component: {fileID: 80693327}
+  - component: {fileID: 80693326}
+  - component: {fileID: 80693325}
+  - component: {fileID: 80693324}
   m_Layer: 0
-  m_Name: OfficeDesk_03
+  m_Name: OfficeDesk_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &22747208
+--- !u!114 &80693324
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22747207}
+  m_GameObject: {fileID: 80693323}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
-  objectId: office-desk-03
+  objectId: office-desk-05
   mapId: office
   interacted: 0
   localState: 
---- !u!114 &22747209
+--- !u!114 &80693325
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22747207}
+  m_GameObject: {fileID: 80693323}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
@@ -179,8 +179,8 @@ MonoBehaviour:
   showNpcPortrait: 0
   protagonistPortrait: {fileID: 0}
   npcPortrait: {fileID: 0}
-  protagonistPortraitVariant: 
-  npcPortraitVariant: 
+  protagonistPortraitVariant: player_default
+  npcPortraitVariant: npc_default
   portraitVariants: []
   fallbackSpeaker: Wanabi
   fallbackLines:
@@ -195,13 +195,13 @@ MonoBehaviour:
   requiredVariableValue: 
   completeExplorationOnDialogueEnd: 0
   nextUnitySceneName: 
---- !u!61 &22747210
+--- !u!61 &80693326
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22747207}
+  m_GameObject: {fileID: 80693323}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -241,16 +241,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.7, y: 1.6}
   m_EdgeRadius: 0
---- !u!4 &22747211
+--- !u!4 &80693327
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22747207}
+  m_GameObject: {fileID: 80693323}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.15, y: -2.65, z: 0}
+  m_LocalPosition: {x: 5.45, y: -2.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -266,7 +266,6 @@ GameObject:
   m_Component:
   - component: {fileID: 92773868}
   - component: {fileID: 92773867}
-  - component: {fileID: 92773869}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -354,35 +353,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &92773869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 92773866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_CustomShadowLayers: 0
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!1 &108790975
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,282 +534,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1384712053}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &457757649
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 457757653}
-  - component: {fileID: 457757652}
-  - component: {fileID: 457757651}
-  - component: {fileID: 457757650}
-  m_Layer: 0
-  m_Name: OfficeDesk_05
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &457757650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457757649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
-  objectId: office-desk-05
-  mapId: office
-  interacted: 0
-  localState: 
---- !u!114 &457757651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457757649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
-  promptText: "\u673A\u3092\u8ABF\u3079\u308B"
-  interactable: 1
-  naninovelScriptPath: Scenario/OfficeExploration
-  naninovelScriptLabel: DeskGeneric
-  initializationTimeout: 2
-  textPrinterId: Dialogue
-  textPrinterSortingOrder: 300
-  choiceHandlerSortingOrder: 310
-  fallbackOverlay: {fileID: 1144798597}
-  dialoguePortraits: {fileID: 0}
-  showNpcPortrait: 0
-  protagonistPortrait: {fileID: 0}
-  npcPortrait: {fileID: 0}
-  protagonistPortraitVariant: 
-  npcPortraitVariant: 
-  portraitVariants: []
-  fallbackSpeaker: Wanabi
-  fallbackLines:
-  - "\u7279\u306B\u5909\u308F\u3063\u305F\u3082\u306E\u306F\u306A\u3044\u3002"
-  outfitAnimator: {fileID: 0}
-  requireOutfit: 0
-  requiredOutfit: 1
-  unavailableNaninovelScriptPath: 
-  nextNaninovelScriptPath: 
-  nextNaninovelLabel: 
-  requiredVariableName: 
-  requiredVariableValue: 
-  completeExplorationOnDialogueEnd: 0
-  nextUnitySceneName: 
---- !u!61 &457757652
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457757649}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1.7, y: 1.6}
-  m_EdgeRadius: 0
---- !u!4 &457757653
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457757649}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.45, y: -2.65, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &465786620
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 465786624}
-  - component: {fileID: 465786623}
-  - component: {fileID: 465786622}
-  - component: {fileID: 465786621}
-  m_Layer: 0
-  m_Name: OfficeDesk_02
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &465786621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465786620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
-  objectId: office-desk-02
-  mapId: office
-  interacted: 0
-  localState: 
---- !u!114 &465786622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465786620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89df94eada4e24749aae4385325cfcda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationItemPickup
-  promptText: "\u673A\u3092\u8ABF\u3079\u308B"
-  interactable: 1
-  naninovelScriptPath: Scenario/OfficeExploration
-  naninovelScriptLabel: Desk02
-  initializationTimeout: 2
-  textPrinterId: Dialogue
-  textPrinterSortingOrder: 300
-  choiceHandlerSortingOrder: 310
-  fallbackOverlay: {fileID: 1144798597}
-  dialoguePortraits: {fileID: 0}
-  showNpcPortrait: 0
-  protagonistPortrait: {fileID: 0}
-  npcPortrait: {fileID: 0}
-  protagonistPortraitVariant: 
-  npcPortraitVariant: 
-  portraitVariants: []
-  fallbackSpeaker: Wanabi
-  fallbackLines:
-  - "\u7279\u306B\u5909\u308F\u3063\u305F\u3082\u306E\u306F\u306A\u3044\u3002"
-  outfitAnimator: {fileID: 0}
-  requireOutfit: 0
-  requiredOutfit: 1
-  unavailableNaninovelScriptPath: 
-  nextNaninovelScriptPath: 
-  nextNaninovelLabel: 
-  requiredVariableName: 
-  requiredVariableValue: 
-  completeExplorationOnDialogueEnd: 0
-  nextUnitySceneName: 
-  inventoryDatabase: {fileID: 11400000, guid: 538b9346db7894ae8a0dd7406f64b3ef, type: 2}
-  item: {fileID: 11400000, guid: 9b8df8266d0864e21bea24c97ea6b657, type: 2}
---- !u!61 &465786623
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465786620}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1.7, y: 1.6}
-  m_EdgeRadius: 0
---- !u!4 &465786624
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465786620}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.998, y: -1.747, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &475277724
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,7 +683,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 200
@@ -1146,6 +840,143 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.6, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &512697518
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 512697522}
+  - component: {fileID: 512697521}
+  - component: {fileID: 512697520}
+  - component: {fileID: 512697519}
+  m_Layer: 0
+  m_Name: OfficeDesk_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &512697519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512697518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
+  objectId: office-desk-04
+  mapId: office
+  interacted: 0
+  localState: 
+--- !u!114 &512697520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512697518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
+  promptText: "\u673A\u3092\u8ABF\u3079\u308B"
+  interactable: 1
+  naninovelScriptPath: Scenario/OfficeExploration
+  naninovelScriptLabel: DeskGeneric
+  initializationTimeout: 2
+  textPrinterId: Dialogue
+  textPrinterSortingOrder: 300
+  choiceHandlerSortingOrder: 310
+  fallbackOverlay: {fileID: 1144798597}
+  dialoguePortraits: {fileID: 0}
+  showNpcPortrait: 0
+  protagonistPortrait: {fileID: 0}
+  npcPortrait: {fileID: 0}
+  protagonistPortraitVariant: player_default
+  npcPortraitVariant: npc_default
+  portraitVariants: []
+  fallbackSpeaker: Wanabi
+  fallbackLines:
+  - "\u7279\u306B\u5909\u308F\u3063\u305F\u3082\u306E\u306F\u306A\u3044\u3002"
+  outfitAnimator: {fileID: 0}
+  requireOutfit: 0
+  requiredOutfit: 1
+  unavailableNaninovelScriptPath: 
+  nextNaninovelScriptPath: 
+  nextNaninovelLabel: 
+  requiredVariableName: 
+  requiredVariableValue: 
+  completeExplorationOnDialogueEnd: 0
+  nextUnitySceneName: 
+--- !u!61 &512697521
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512697518}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.7, y: 1.6}
+  m_EdgeRadius: 0
+--- !u!4 &512697522
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512697518}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.85, y: -2.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1450,8 +1281,8 @@ Transform:
   m_GameObject: {fileID: 619550468}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1961, y: 0.0654, z: 0}
-  m_LocalScale: {x: 0.8468, y: 0.345744, z: 1}
+  m_LocalPosition: {x: 0, y: 0.07, z: 0}
+  m_LocalScale: {x: 1, y: 0.36, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1539416055}
@@ -1590,6 +1421,143 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 48}
   m_SizeDelta: {x: 620, y: 82}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!1 &694292513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 694292517}
+  - component: {fileID: 694292516}
+  - component: {fileID: 694292515}
+  - component: {fileID: 694292514}
+  m_Layer: 0
+  m_Name: OfficeDesk_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &694292514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694292513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
+  objectId: office-desk-03
+  mapId: office
+  interacted: 0
+  localState: 
+--- !u!114 &694292515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694292513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
+  promptText: "\u673A\u3092\u8ABF\u3079\u308B"
+  interactable: 1
+  naninovelScriptPath: Scenario/OfficeExploration
+  naninovelScriptLabel: DeskGeneric
+  initializationTimeout: 2
+  textPrinterId: Dialogue
+  textPrinterSortingOrder: 300
+  choiceHandlerSortingOrder: 310
+  fallbackOverlay: {fileID: 1144798597}
+  dialoguePortraits: {fileID: 0}
+  showNpcPortrait: 0
+  protagonistPortrait: {fileID: 0}
+  npcPortrait: {fileID: 0}
+  protagonistPortraitVariant: player_default
+  npcPortraitVariant: npc_default
+  portraitVariants: []
+  fallbackSpeaker: Wanabi
+  fallbackLines:
+  - "\u7279\u306B\u5909\u308F\u3063\u305F\u3082\u306E\u306F\u306A\u3044\u3002"
+  outfitAnimator: {fileID: 0}
+  requireOutfit: 0
+  requiredOutfit: 1
+  unavailableNaninovelScriptPath: 
+  nextNaninovelScriptPath: 
+  nextNaninovelLabel: 
+  requiredVariableName: 
+  requiredVariableValue: 
+  completeExplorationOnDialogueEnd: 0
+  nextUnitySceneName: 
+--- !u!61 &694292516
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694292513}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.7, y: 1.6}
+  m_EdgeRadius: 0
+--- !u!4 &694292517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694292513}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.15, y: -2.65, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &753669056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1674,13 +1642,13 @@ Transform:
   m_GameObject: {fileID: 753669056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.134, y: -0.008, z: 0}
-  m_LocalScale: {x: 0.83, y: 0.8107, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1539416055}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &814235498
+--- !u!1 &804819237
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1688,49 +1656,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 814235502}
-  - component: {fileID: 814235501}
-  - component: {fileID: 814235500}
-  - component: {fileID: 814235499}
+  - component: {fileID: 804819241}
+  - component: {fileID: 804819240}
+  - component: {fileID: 804819239}
+  - component: {fileID: 804819238}
   m_Layer: 0
-  m_Name: OfficeDesk_04
+  m_Name: OfficeDesk_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &814235499
+--- !u!114 &804819238
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814235498}
+  m_GameObject: {fileID: 804819237}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
-  objectId: office-desk-04
+  objectId: office-desk-02
   mapId: office
   interacted: 0
   localState: 
---- !u!114 &814235500
+--- !u!114 &804819239
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814235498}
+  m_GameObject: {fileID: 804819237}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
+  m_Script: {fileID: 11500000, guid: 89df94eada4e24749aae4385325cfcda, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationItemPickup
   promptText: "\u673A\u3092\u8ABF\u3079\u308B"
   interactable: 1
   naninovelScriptPath: Scenario/OfficeExploration
-  naninovelScriptLabel: DeskGeneric
+  naninovelScriptLabel: Desk02
   initializationTimeout: 2
   textPrinterId: Dialogue
   textPrinterSortingOrder: 300
@@ -1740,8 +1708,8 @@ MonoBehaviour:
   showNpcPortrait: 0
   protagonistPortrait: {fileID: 0}
   npcPortrait: {fileID: 0}
-  protagonistPortraitVariant: 
-  npcPortraitVariant: 
+  protagonistPortraitVariant: player_default
+  npcPortraitVariant: npc_default
   portraitVariants: []
   fallbackSpeaker: Wanabi
   fallbackLines:
@@ -1756,13 +1724,15 @@ MonoBehaviour:
   requiredVariableValue: 
   completeExplorationOnDialogueEnd: 0
   nextUnitySceneName: 
---- !u!61 &814235501
+  inventoryDatabase: {fileID: 11400000, guid: 538b9346db7894ae8a0dd7406f64b3ef, type: 2}
+  item: {fileID: 11400000, guid: 9b8df8266d0864e21bea24c97ea6b657, type: 2}
+--- !u!61 &804819240
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814235498}
+  m_GameObject: {fileID: 804819237}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -1802,16 +1772,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.7, y: 1.6}
   m_EdgeRadius: 0
---- !u!4 &814235502
+--- !u!4 &804819241
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814235498}
+  m_GameObject: {fileID: 804819237}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.85, y: -2.65, z: 0}
+  m_LocalPosition: {x: -2.55, y: -2.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2000,8 +1970,8 @@ Transform:
   m_GameObject: {fileID: 957034761}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.8906, y: -2.65, z: 0}
-  m_LocalScale: {x: 0.811385, y: 0.757215, z: 1}
+  m_LocalPosition: {x: 8.25, y: -2.65, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2177,143 +2147,6 @@ MonoBehaviour:
     sprite: {fileID: 658297751, guid: 335651d69f188824bab2859dae040ea3, type: 3}
   - id: npc_alt
     sprite: {fileID: 1775174064, guid: 335651d69f188824bab2859dae040ea3, type: 3}
---- !u!1 &1179174926
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1179174930}
-  - component: {fileID: 1179174929}
-  - component: {fileID: 1179174928}
-  - component: {fileID: 1179174927}
-  m_Layer: 0
-  m_Name: OfficeDesk_01
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1179174927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1179174926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
-  objectId: office-desk-01
-  mapId: office
-  interacted: 0
-  localState: 
---- !u!114 &1179174928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1179174926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
-  promptText: "\u673A\u306B\u5EA7\u308B"
-  interactable: 1
-  naninovelScriptPath: Scenario/OfficeExploration
-  naninovelScriptLabel: Desk01
-  initializationTimeout: 2
-  textPrinterId: Dialogue
-  textPrinterSortingOrder: 300
-  choiceHandlerSortingOrder: 310
-  fallbackOverlay: {fileID: 1144798597}
-  dialoguePortraits: {fileID: 0}
-  showNpcPortrait: 0
-  protagonistPortrait: {fileID: 0}
-  npcPortrait: {fileID: 0}
-  protagonistPortraitVariant: 
-  npcPortraitVariant: 
-  portraitVariants: []
-  fallbackSpeaker: Wanabi
-  fallbackLines:
-  - "\u673A\u306B\u5EA7\u308B\u304B\u3001\u3082\u3046\u5C11\u3057\u6B69\u304D\u56DE\u308B\u304B\u9078\u3079\u305D\u3046\u3060\u3002"
-  outfitAnimator: {fileID: 0}
-  requireOutfit: 0
-  requiredOutfit: 1
-  unavailableNaninovelScriptPath: 
-  nextNaninovelScriptPath: 
-  nextNaninovelLabel: 
-  requiredVariableName: 
-  requiredVariableValue: 
-  completeExplorationOnDialogueEnd: 0
-  nextUnitySceneName: 
---- !u!61 &1179174929
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1179174926}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1.7, y: 1.6}
-  m_EdgeRadius: 0
---- !u!4 &1179174930
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1179174926}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.36, y: -1.843, z: 0}
-  m_LocalScale: {x: 1.0875, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1312678542
 GameObject:
   m_ObjectHideFlags: 0
@@ -2380,7 +2213,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294505199
+    rgba: 4294967295
   m_fontColor: {r: 0.9372549, g: 0.9490196, b: 0.972549, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -2393,7 +2226,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
+  m_TextStyleHashCode: 0
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -2450,6 +2283,143 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312678542}
   m_CullTransparentMesh: 1
+--- !u!1 &1359681921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1359681925}
+  - component: {fileID: 1359681924}
+  - component: {fileID: 1359681923}
+  - component: {fileID: 1359681922}
+  m_Layer: 0
+  m_Name: OfficeDesk_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1359681922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359681921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f8e1df3b1ad60498e1ddc633081e6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.State.ExplorationStatefulObject
+  objectId: office-desk-01
+  mapId: office
+  interacted: 0
+  localState: 
+--- !u!114 &1359681923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359681921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d239c44055326d4b8374224180c36af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
+  promptText: "\u673A\u306B\u5EA7\u308B"
+  interactable: 1
+  naninovelScriptPath: Scenario/OfficeExploration
+  naninovelScriptLabel: Desk01
+  initializationTimeout: 2
+  textPrinterId: Dialogue
+  textPrinterSortingOrder: 300
+  choiceHandlerSortingOrder: 310
+  fallbackOverlay: {fileID: 1144798597}
+  dialoguePortraits: {fileID: 0}
+  showNpcPortrait: 1
+  protagonistPortrait: {fileID: 0}
+  npcPortrait: {fileID: 0}
+  protagonistPortraitVariant: player_default
+  npcPortraitVariant: npc_default
+  portraitVariants: []
+  fallbackSpeaker: Wanabi
+  fallbackLines:
+  - "\u673A\u306B\u5EA7\u308B\u304B\u3001\u3082\u3046\u5C11\u3057\u6B69\u304D\u56DE\u308B\u304B\u9078\u3079\u305D\u3046\u3060\u3002"
+  outfitAnimator: {fileID: 0}
+  requireOutfit: 0
+  requiredOutfit: 1
+  unavailableNaninovelScriptPath: 
+  nextNaninovelScriptPath: 
+  nextNaninovelLabel: 
+  requiredVariableName: 
+  requiredVariableValue: 
+  completeExplorationOnDialogueEnd: 0
+  nextUnitySceneName: 
+--- !u!61 &1359681924
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359681921}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.7, y: 1.6}
+  m_EdgeRadius: 0
+--- !u!4 &1359681925
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359681921}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.55, y: -2.65, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1384712051
 GameObject:
   m_ObjectHideFlags: 0
@@ -2520,6 +2490,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: cc08ed3cf2b689642a46fdf19e11adf8, type: 3}
   - {fileID: 21300000, guid: c7e14a0b447caf2459f336f9076dbf5d, type: 3}
   - {fileID: 21300000, guid: efca71f4d8352674f99bd24d209a22a9, type: 3}
+  papaCafeBackground: {fileID: 21300000, guid: 9aa912d4c919564418d0db21a6177ae1, type: 3}
+  papaCafeMapId: papa_cafe
   initialBackgroundIndex: 0
   npcArrivalDelay: 2
   npcSlideDuration: 1.2
@@ -3412,8 +3384,8 @@ SceneRoots:
   - {fileID: 506946923}
   - {fileID: 92773868}
   - {fileID: 989084675}
-  - {fileID: 1179174930}
-  - {fileID: 465786624}
-  - {fileID: 22747211}
-  - {fileID: 814235502}
-  - {fileID: 457757653}
+  - {fileID: 1359681925}
+  - {fileID: 804819241}
+  - {fileID: 694292517}
+  - {fileID: 512697522}
+  - {fileID: 80693327}

@@ -65,6 +65,31 @@ namespace MoshiReRe.Exploration
         public event Action DialogueStarted;
         public event Action DialogueFinished;
 
+        /// <summary>
+        /// Re-targets a reusable interaction without rebuilding the scene. This is used by
+        /// authored map variants which share the same exploration geometry.
+        /// </summary>
+        public void ConfigureScenario(string scriptPath, string label)
+        {
+            naninovelScriptPath = scriptPath ?? string.Empty;
+            naninovelScriptLabel = label ?? string.Empty;
+        }
+
+        /// <summary>Configures the lightweight fallback shown when Naninovel is unavailable.</summary>
+        public void ConfigureFallback(string speaker, params string[] lines)
+        {
+            fallbackSpeaker = string.IsNullOrWhiteSpace(speaker) ? "ReRe" : speaker;
+            fallbackLines = lines ?? Array.Empty<string>();
+        }
+
+        /// <summary>Chooses shared portrait variants for this interaction.</summary>
+        public void ConfigurePortraits(bool showNpc, string protagonistVariant, string npcVariant)
+        {
+            showNpcPortrait = showNpc;
+            protagonistPortraitVariant = protagonistVariant ?? string.Empty;
+            npcPortraitVariant = npcVariant ?? string.Empty;
+        }
+
         private void Update()
         {
             if (!dialoguePlaying || (continuePulseActive || submitPulseActive) || !Engine.Initialized)

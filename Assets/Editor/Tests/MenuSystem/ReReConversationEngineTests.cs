@@ -85,6 +85,22 @@ public class ReReConversationEngineTests
     }
 
     [Test]
+    public void PapaCafeContext_PrioritizesAuthoredBriefingAndHeldKeyAdvice()
+    {
+        var engine = new ReReConversationEngine();
+        var briefing = engine.Respond("カフェでは何を見ればいい？", new ReReConversationContext(
+            activeContextId: "papa_cafe_briefing",
+            contextTags: new[] { "papa_cafe", "papa_cafe_briefing" }), 0);
+        var heldKey = engine.Respond("この鍵を見せる？", new ReReConversationContext(
+            activeContextId: "papa_cafe_negotiation",
+            contextTags: new[] { "papa_cafe" },
+            inventoryItems: new[] { "old_key" }), 0);
+
+        Assert.That(briefing.ResponseId, Is.EqualTo("papa_cafe_briefing"));
+        Assert.That(heldKey.ResponseId, Is.EqualTo("papa_cafe_key"));
+    }
+
+    [Test]
     public void ConversationUi_SubmissionPublishesResponseAndLifecycleStates()
     {
         var gameObject = new GameObject("ReReConversationTest");

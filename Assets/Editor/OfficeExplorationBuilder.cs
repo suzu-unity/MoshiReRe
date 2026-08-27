@@ -21,6 +21,9 @@ public static class OfficeExplorationBuilder
     private const string DeskItemPath = "Assets/Database/Items/ItemData/Key.asset";
     private const string PlayerPortraitStripPath = "Assets/Art/ExplorationPrototype/player_casual_strip.png";
     private const string NpcPortraitStripPath = "Assets/Art/ExplorationPrototype/npc_strip.png";
+    private const string PapaCafeBackgroundPath = BackgroundRoot + "/02_bakery_cafe.png";
+    private const string CompanySeatedCgPath = "Assets/Art/ScenarioCG/PLACEHOLDER_REPLACE_ME_company_seated.png";
+    private const string PapaCafeKeyCgPath = "Assets/Art/ScenarioCG/PLACEHOLDER_REPLACE_ME_papa_cafe_key.png";
 
     private static readonly string[] BackgroundPaths =
     {
@@ -35,9 +38,10 @@ public static class OfficeExplorationBuilder
     public static void Build()
     {
         var backgrounds = BackgroundPaths.Select(ConfigureBackground).ToArray();
+        var papaCafeBackground = ConfigureBackground(PapaCafeBackgroundPath);
         var inventoryDatabase = AssetDatabase.LoadAssetAtPath<InventoryDatabase>(InventoryDatabasePath);
         var deskItem = AssetDatabase.LoadAssetAtPath<InventoryItem>(DeskItemPath);
-        if (backgrounds.Any(background => background == null))
+        if (backgrounds.Any(background => background == null) || papaCafeBackground == null)
             throw new InvalidOperationException("One or more office backgrounds could not be imported as sprites.");
         if (inventoryDatabase == null || deskItem == null)
             throw new InvalidOperationException("The office desk pickup inventory assets are missing.");
@@ -77,13 +81,16 @@ public static class OfficeExplorationBuilder
         SetObject(officeController, "arrivingNpc", npc.transform);
         SetObject(officeController, "backgroundRenderer", background);
         SetObjectArray(officeController, "timeOfDayBackgrounds", backgrounds);
+        SetObject(officeController, "papaCafeBackground", papaCafeBackground);
         SetInt(officeController, "initialBackgroundIndex", 0);
         SetFloat(officeController, "npcArrivalDelay", 2f);
         SetFloat(officeController, "npcSlideDuration", 1.2f);
         SetVector3(officeController, "npcStartPosition", npc.transform.position);
         SetVector3(officeController, "npcArrivalPosition", new Vector3(1.45f, -2.65f, 0f));
 
-        foreach (var stateful in UnityEngine.Object.FindObjectsOfType<ExplorationStatefulObject>(true))
+        foreach (var stateful in UnityEngine.Object.FindObjectsByType<ExplorationStatefulObject>(
+                     FindObjectsInactive.Include,
+                     FindObjectsSortMode.None))
             SetString(stateful, "mapId", OfficeMapId);
 
         // The prototype wardrobe and pickup are not part of the first office beat.
@@ -100,7 +107,7 @@ public static class OfficeExplorationBuilder
         SetString(npcDialogue, "npcPortraitVariant", "npc_default");
         CreateDesks(overlay, inventoryDatabase, deskItem);
         ConfigureCamera(player.transform);
-        RegisterOfficeScriptResource();
+        RegisterScenarioResources();
         AddToBuildSettings(OfficeScenePath);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -161,7 +168,9 @@ public static class OfficeExplorationBuilder
             SetString(dialogue, "naninovelScriptLabel", i == 0 ? "Desk01" : i == 1 ? "Desk02" : "DeskGeneric");
             SetFloat(dialogue, "initializationTimeout", 2f);
             SetObject(dialogue, "fallbackOverlay", overlay);
-            SetBool(dialogue, "showNpcPortrait", false);
+            SetBool(dialogue, "showNpcPortrait", i == 0);
+            SetString(dialogue, "protagonistPortraitVariant", "player_default");
+            SetString(dialogue, "npcPortraitVariant", "npc_default");
             SetString(dialogue, "fallbackSpeaker", "Wanabi");
             SetStringArray(dialogue, "fallbackLines", new[]
             {
@@ -250,21 +259,31 @@ public static class OfficeExplorationBuilder
         EditorBuildSettings.scenes = scenes.ToArray();
     }
 
-    private static void RegisterOfficeScriptResource()
+    private static void RegisterScenarioResources()
     {
-        const string pathPrefix = "Scripts";
-        const string scriptPath = "Scenario/OfficeExploration";
-        var guid = AssetDatabase.AssetPathToGUID("Assets/Scenario/OfficeExploration.nani");
-        if (string.IsNullOrWhiteSpace(guid))
-            throw new InvalidOperationException("Office exploration script asset was not imported.");
-
         var resources = EditorResources.LoadOrDefault();
-        resources.RemoveAllRecordsWithPath(pathPrefix, "Scenario/OfficeDeskLeft");
-        resources.RemoveAllRecordsWithPath(pathPrefix, "Scenario/OfficeDeskGeneric");
-        resources.RemoveAllRecordsWithPath(pathPrefix, scriptPath);
-        resources.AddRecord(pathPrefix, pathPrefix, scriptPath, guid);
+
+        RegisterResource(resources, "Scripts", "Scenario/OfficeExploration", "Assets/Scenario/OfficeExploration.nani");
+        RegisterResource(resources, "Scripts", "Scenario/PapaCafeExploration", "Assets/Scenario/PapaCafeExploration.nani");
+        RegisterResource(resources, "Scripts", "Scenario/PapaQuestDemo", "Assets/Scenario/PapaQuestDemo.nani");
+        RegisterResource(resources, "Backgrounds/MainBackground", "ScenarioExploration/Backgrounds/02_bakery_cafe", PapaCafeBackgroundPath);
+        RegisterResource(resources, "Backgrounds/MainBackground", "ScenarioCG/company_seated_demo", CompanySeatedCgPath);
+        RegisterResource(resources, "Backgrounds/MainBackground", "ScenarioCG/papa_cafe_key_demo", PapaCafeKeyCgPath);
+
+        resources.RemoveAllRecordsWithPath("Scripts", "Scenario/OfficeDeskLeft");
+        resources.RemoveAllRecordsWithPath("Scripts", "Scenario/OfficeDeskGeneric");
         EditorUtility.SetDirty(resources);
         AssetDatabase.SaveAssets();
+    }
+
+    private static void RegisterResource(EditorResources resources, string pathPrefix, string resourcePath, string assetPath)
+    {
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        if (string.IsNullOrWhiteSpace(guid))
+            throw new InvalidOperationException($"Scenario resource was not imported: {assetPath}");
+
+        resources.RemoveAllRecordsWithPath(pathPrefix, resourcePath);
+        resources.AddRecord(pathPrefix, pathPrefix, resourcePath, guid);
     }
 
     private static void SetObject(UnityEngine.Object target, string propertyName, UnityEngine.Object value)

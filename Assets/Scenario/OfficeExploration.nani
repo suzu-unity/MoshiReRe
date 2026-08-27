@@ -11,6 +11,8 @@ Wanabi: 今日は……まず、自分の机に座ろうかな。
 @stop
 
 # Desk01Sit
+@explorationPortrait side:left id:npc_default
+@explorationPortrait side:right id:player_default
 Wanabi: ちょっとだけ休んでから仕事を始めよう……。
 @wait 1.5
 @officeNpcSlide
@@ -19,6 +21,7 @@ Wanabi: ……おはよう。今来たところ。
 Tizu: その顔、絶対もっと前から来てた人の顔ですよ。
 Wanabi: 顔で出勤時間を決めつけるな……。
 @hidePrinter Dialogue wait!
+@returnToNovel scene:CommonUIHub script:Scenario/scene02 label:OfficeAfterAdv
 @stop
 
 # Desk01Leave

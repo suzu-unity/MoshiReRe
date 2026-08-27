@@ -33,6 +33,12 @@ namespace MoshiReRe.Exploration.State
 
         public void SetLocalState(string value) => localState = value ?? string.Empty;
 
+        /// <summary>Moves this reusable scene object into the active logical map namespace.</summary>
+        public void ConfigureMapId(string value)
+        {
+            mapId = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+        }
+
         public ExplorationObjectState CaptureState()
         {
             return new ExplorationObjectState {

@@ -185,6 +185,12 @@ MonoBehaviour:
     - name: Scenario/OfficeExploration
       pathPrefix: Scripts
       guid: 75be2a09126b82742971e3c988aeeb37
+    - name: Scenario/PapaCafeExploration
+      pathPrefix: Scripts
+      guid: b6eb9dc3ae1f57443905c02e8181099c
+    - name: Scenario/PapaQuestDemo
+      pathPrefix: Scripts
+      guid: 3445cc073a22a8e40b465d55b5e4f2ad
   - Id: Characters/5a8d79b0-bc20-4931-b2a5-fa1031e1868b
     Resources:
     - name: ReRe/Default
@@ -426,3 +432,14 @@ MonoBehaviour:
     - name: "SFX/\u9769\u9774\u3067\u6B69\u304F"
       pathPrefix: Audio
       guid: 0d6b6c4492d8ceb4f92dc92782681c07
+  - Id: Backgrounds/MainBackground
+    Resources:
+    - name: ScenarioExploration/Backgrounds/02_bakery_cafe
+      pathPrefix: Backgrounds/MainBackground
+      guid: 9aa912d4c919564418d0db21a6177ae1
+    - name: ScenarioCG/company_seated_demo
+      pathPrefix: Backgrounds/MainBackground
+      guid: 1bb670f47149883469a414982d69fb9a
+    - name: ScenarioCG/papa_cafe_key_demo
+      pathPrefix: Backgrounds/MainBackground
+      guid: 965d8a50bc9e1c046a47185edcb870f2

@@ -19,6 +19,12 @@ namespace MoshiReRe.Exploration
         public string PromptText => promptText;
         public bool IsAvailable => interactable && isActiveAndEnabled;
 
+        /// <summary>Updates the prompt for reusable authored map variants.</summary>
+        public void ConfigurePrompt(string value)
+        {
+            promptText = string.IsNullOrWhiteSpace(value) ? "調べる" : value;
+        }
+
         public void Interact(ExplorationPlayerController player)
         {
             if (IsAvailable)

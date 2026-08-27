@@ -1,4 +1,5 @@
 using Naninovel;
+using MoshiReRe.Exploration.State;
 using UnityEngine;
 
 namespace MoshiReRe.Exploration
@@ -12,6 +13,9 @@ namespace MoshiReRe.Exploration
         [SerializeField] private Transform arrivingNpc;
         [SerializeField] private SpriteRenderer backgroundRenderer;
         [SerializeField] private Sprite[] timeOfDayBackgrounds;
+        [SerializeField, Tooltip("Background used when this reusable scene hosts the papa-cafe demo map.")]
+        private Sprite papaCafeBackground;
+        [SerializeField] private string papaCafeMapId = "papa_cafe";
         [SerializeField, Min(0)] private int initialBackgroundIndex;
         [SerializeField, Min(0f)] private float npcArrivalDelay = 2f;
         [SerializeField, Min(0.01f)] private float npcSlideDuration = 1.2f;
@@ -24,6 +28,7 @@ namespace MoshiReRe.Exploration
         public static OfficeExplorationController Active => active;
         public bool NpcArrived => npcArrived;
         public int CurrentBackgroundIndex { get; private set; }
+        public bool IsPapaCafeVariant { get; private set; }
 
         private void Awake()
         {
@@ -31,6 +36,7 @@ namespace MoshiReRe.Exploration
             if (arrivingNpc != null)
                 arrivingNpc.position = npcStartPosition;
             SetBackground(initialBackgroundIndex);
+            ApplyCurrentMapVariant();
         }
 
         private void OnDestroy()
@@ -59,6 +65,66 @@ namespace MoshiReRe.Exploration
             npcSliding = false;
             if (arrivingNpc != null)
                 arrivingNpc.position = npcStartPosition;
+        }
+
+        public static bool IsPapaCafeMap(string mapId, string configuredMapId = "papa_cafe")
+        {
+            return !string.IsNullOrWhiteSpace(mapId) &&
+                   string.Equals(mapId.Trim(), configuredMapId?.Trim(), System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Reuses the tested office exploration scene as the first cafe vertical slice. The
+        /// production cafe can later become its own scene without changing the scenario contract.
+        /// </summary>
+        public void ApplyCurrentMapVariant()
+        {
+            var mapId = ExplorationStateCoordinator.HasInstance
+                ? ExplorationStateCoordinator.Instance.FlowContext.mapId
+                : string.Empty;
+            IsPapaCafeVariant = IsPapaCafeMap(mapId, papaCafeMapId);
+            if (!IsPapaCafeVariant)
+                return;
+
+            GetComponent<ExplorationMapStateController>()?.ConfigureMapId(papaCafeMapId);
+            foreach (var stateful in FindObjectsByType<ExplorationStatefulObject>(
+                         FindObjectsInactive.Include,
+                         FindObjectsSortMode.None))
+                if (stateful.gameObject.scene == gameObject.scene)
+                    stateful.ConfigureMapId(papaCafeMapId);
+
+            if (backgroundRenderer != null && papaCafeBackground != null)
+                backgroundRenderer.sprite = papaCafeBackground;
+
+            if (arrivingNpc != null)
+                arrivingNpc.gameObject.SetActive(false);
+
+            ConfigureCafeInteraction("OfficeDesk_01", "PapaCafeExitTable",
+                "待ち合わせ席を確認する", "下調べを終えるなら、この席で待とう。", true);
+            ConfigureCafeInteraction("OfficeDesk_02", "PapaCafeClue",
+                "窓際の席を調べる", "ReReが気にしていた席だ。小物を確認してみよう。", false);
+
+            for (var index = 3; index <= 5; index++)
+                ConfigureCafeInteraction($"OfficeDesk_{index:00}", "PapaCafeGeneric",
+                    "店内を調べる", "待ち合わせ前なら、客の導線と席の距離を見ておける。", false);
+        }
+
+        private static void ConfigureCafeInteraction(
+            string objectName,
+            string label,
+            string prompt,
+            string fallback,
+            bool showNpcPortrait)
+        {
+            var target = GameObject.Find(objectName);
+            var interaction = target != null ? target.GetComponent<NaninovelDialogueInteractable>() : null;
+            if (interaction == null)
+                return;
+
+            interaction.ConfigurePrompt(prompt);
+            interaction.ConfigureScenario("Scenario/PapaCafeExploration", label);
+            interaction.ConfigureFallback("ReRe", fallback);
+            interaction.ConfigurePortraits(showNpcPortrait, "player_default", "npc_default");
         }
 
         public async UniTask SlideNpcAsync()

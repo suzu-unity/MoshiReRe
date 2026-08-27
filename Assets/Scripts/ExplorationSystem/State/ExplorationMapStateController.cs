@@ -16,6 +16,13 @@ namespace MoshiReRe.Exploration.State
         public string SceneName => gameObject.scene.name;
         public string CurrentSpawnId => currentSpawnPoint != null ? currentSpawnPoint.SpawnId : string.Empty;
 
+        /// <summary>Assigns the logical map represented by a reusable scene before restoration.</summary>
+        public void ConfigureMapId(string value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+                mapId = value.Trim();
+        }
+
         private void Reset()
         {
             if (player == null)

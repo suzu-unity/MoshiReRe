@@ -54,6 +54,7 @@ public sealed class MapRouteLauncher : MonoBehaviour
 
         RouteSelected?.Invoke(route);
         onRouteSelected?.Invoke(string.IsNullOrWhiteSpace(route.routeId) ? route.mapId : route.routeId);
+        GetComponentInParent<MenuRootV2UI>()?.Hide();
         LaunchRoute(route);
     }
 
