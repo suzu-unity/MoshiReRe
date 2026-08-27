@@ -125,6 +125,7 @@ public static class MenuRootV2Builder
 
         var pageTop = BuildTopHudPage(rect, out var portraitPhoneFrame, out var topMascot, out var dressTileButton, out var statusTileButton,
             out var itemsTileButton, out var charactersTileButton, out var questTileButton, out var mapTileButton);
+        BuildReReConversation(pageTop);
 
         var phone = ImageRoot("SmartphoneLayer", rect, new Color(0.13f, 0.08f, 0.17f, 0.96f));
         SetRect(phone.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1672f, 941f));
@@ -290,6 +291,68 @@ public static class MenuRootV2Builder
         // ReRe is built above the scene background but below the rim and controls, preserving the
         // intended background -> character -> HUD draw order.
         return page;
+    }
+
+    private static void BuildReReConversation(RectTransform parent)
+    {
+        var root = RectRoot("ReReConversation", parent);
+        SetRect(root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
+            new Vector2(-48f, -724f), new Vector2(650f, 236f));
+
+        var panel = ImageRoot("ConversationPanel", root, new Color(0.10f, 0.08f, 0.18f, 0.94f));
+        Stretch(panel.rectTransform, Vector2.zero, Vector2.zero);
+        PixelBorder(panel.rectTransform, "ConversationFrame", new Color(0.70f, 0.64f, 0.94f, 0.90f), 3f);
+
+        var speech = ImageRoot("ReReSpeechBubble", root, new Color(1f, 0.96f, 0.88f, 1f));
+        SetRect(speech.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(0f, -12f), new Vector2(-24f, -94f));
+        speech.raycastTarget = false;
+        var speechText = Text("ここにReReの返答が表示されるよ。", speech.rectTransform, 18f, FontStyles.Bold,
+            TextAlignmentOptions.TopLeft, Ink, new Vector2(20f, 12f), new Vector2(-20f, -12f));
+        speechText.name = "ResponseText";
+
+        var inputGo = new GameObject("ReReInput", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(TMP_InputField));
+        inputGo.transform.SetParent(root, false);
+        var inputRect = inputGo.GetComponent<RectTransform>();
+        SetRect(inputRect, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(-46f, 14f), new Vector2(-118f, 54f));
+        var inputImage = inputGo.GetComponent<Image>();
+        inputImage.sprite = GetDefaultSprite();
+        inputImage.color = new Color(0.97f, 0.94f, 1f, 1f);
+        var inputText = Text("", inputRect, 17f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+            new Vector2(14f, 8f), new Vector2(-14f, -8f));
+        inputText.name = "Text";
+        inputText.raycastTarget = false;
+        var placeholder = Text("ReReに相談… Enterで送信", inputRect, 17f, FontStyles.Normal,
+            TextAlignmentOptions.Left, new Color(0.35f, 0.29f, 0.48f, 0.65f), new Vector2(14f, 8f), new Vector2(-14f, -8f));
+        placeholder.name = "Placeholder";
+        placeholder.raycastTarget = false;
+
+        var inputField = inputGo.GetComponent<TMP_InputField>();
+        inputField.textComponent = inputText;
+        inputField.placeholder = placeholder;
+        inputField.targetGraphic = inputImage;
+        inputField.lineType = TMP_InputField.LineType.SingleLine;
+        inputField.restoreOriginalTextOnEscape = false;
+
+        var send = ButtonRoot("ReReSend", root, Mint);
+        SetRect(send.GetComponent<RectTransform>(), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f),
+            new Vector2(-14f, 14f), new Vector2(92f, 54f));
+        PixelBorder(send.GetComponent<RectTransform>(), "SendFrame", Ink, 2f);
+        Text("SEND", send.GetComponent<RectTransform>(), 15f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+
+        var controller = root.gameObject.AddComponent<ReReConversationUI>();
+        var so = new SerializedObject(controller);
+        SetObject(so, "inputField", inputField);
+        SetObject(so, "sendButton", send);
+        SetObject(so, "speechBubbleRoot", speech.gameObject);
+        SetObject(so, "speechText", speechText);
+        SetObject(so, "speechCanvasGroup", speech.gameObject.AddComponent<CanvasGroup>());
+        SetBool(so, "hideSpeechBubbleOnAwake", true);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(controller);
+
+        root.gameObject.AddComponent<ReReConversationContextProvider>();
     }
 
     private static void BuildHudPhoneRim(RectTransform parent, Color navy, Color accent, Color accentLight, Color cyanHighlight)
@@ -1661,11 +1724,30 @@ public static class MenuRootV2Builder
         SetObject(so, "hoverAudioClip", AssetDatabase.LoadAssetAtPath<AudioClip>(MapHoverAudioPath));
         SetQuestObjectArray(so, "relatedCharacterButtons", characterButtons);
         SetIntArray(so, "relatedCharacterLocationIndexes", new[] { 0, 0, 0 });
-        SetIntArray(so, "goButtonLocationIndexes", new[] { 0 });
+        SetIntArray(so, "goButtonLocationIndexes", new[] { 3 });
         SetQuestObjectArray(so, "pageNavigationButtons", shortcuts);
         so.FindProperty("fallbackHour").intValue = 12;
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
+
+        var routeLauncher = page.gameObject.AddComponent<MapRouteLauncher>();
+        var routeSo = new SerializedObject(routeLauncher);
+        SetObject(routeSo, "mapController", controller);
+        var routes = routeSo.FindProperty("routes");
+        if (routes != null)
+        {
+            routes.arraySize = 1;
+            var route = routes.GetArrayElementAtIndex(0);
+            SetChildBool(route, "enabled", true);
+            SetChildInt(route, "locationIndex", 3);
+            SetChildString(route, "routeId", "papa_cafe");
+            SetChildString(route, "sceneName", "PapaCafeExploration");
+            SetChildString(route, "mapId", "papa_cafe");
+            SetChildString(route, "entryScriptPath", "Scenario/PapaQuestDemo");
+            SetChildString(route, "entryLabel", string.Empty);
+        }
+        routeSo.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(routeLauncher);
         return page;
     }
 
