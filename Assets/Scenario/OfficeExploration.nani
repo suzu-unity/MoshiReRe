@@ -5,7 +5,7 @@
 @printer Dialogue
 @showPrinter Dialogue
 
-Wanabi: 今日は……まず、自分の机に座ろうかな。
+Wanabi: 自分の机からなら、今日を始められる。
 @choice "机に座る" goto:.Desk01Sit
 @choice "まだ歩き回る" goto:.Desk01Leave
 @stop
@@ -13,19 +13,17 @@ Wanabi: 今日は……まず、自分の机に座ろうかな。
 # Desk01Sit
 @explorationPortrait side:left id:npc_default
 @explorationPortrait side:right id:player_default
-Wanabi: ちょっとだけ休んでから仕事を始めよう……。
+Wanabi: PCを起動する。未読メールは三件。そのうち一件は、課長から「朝一で確認」とだけ届いていた。
 @wait 1.5
 @officeNpcSlide
-Tizu: 先輩、おはよっす。もう来てたんですね。
-Wanabi: ……おはよう。今来たところ。
-Tizu: その顔、絶対もっと前から来てた人の顔ですよ。
-Wanabi: 顔で出勤時間を決めつけるな……。
+Wanabi: 背後から、優良の気配が近づく。
+Wanabi: ここで話すより、まず顔を上げよう。
 @hidePrinter Dialogue wait!
 @returnToNovel scene:CommonUIHub script:Scenario/scene02 label:OfficeAfterAdv
 @stop
 
 # Desk01Leave
-Wanabi: もう少しだけ、社内を見て回ろう。
+Wanabi: 自分の机に向かう前に、もう少しだけ社内を見て回ろう。
 @hidePrinter Dialogue wait!
 @stop
 
@@ -33,9 +31,9 @@ Wanabi: もう少しだけ、社内を見て回ろう。
 @printer Dialogue
 @showPrinter Dialogue
 
-Wanabi: 引き出しの奥に、古びた鍵が入っている。
-@acquireExplorationItem id:old_key
-Wanabi: 古びた鍵を手に入れた。
+Wanabi: 隣の机には、修正指示の入った紙束が伏せて置かれている。
+Wanabi: 提出時刻だけが見える。午前中。赤字より、その時刻の方が気になった。
+Wanabi: 他人の案件だ。勝手に読むのはやめておこう。
 @hidePrinter Dialogue wait!
 @stop
 
@@ -44,6 +42,6 @@ Wanabi: 古びた鍵を手に入れた。
 @showPrinter Dialogue
 
 Wanabi: 誰かの机だ。書類がきれいに並んでいる。
-Wanabi: 今は勝手に触らない方がよさそうだ。
+Wanabi: 触った跡が残りそうだ。今は自分の席に戻ろう。
 @hidePrinter Dialogue wait!
 @stop

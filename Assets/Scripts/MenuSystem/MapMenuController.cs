@@ -59,6 +59,7 @@ public class MapMenuController : MonoBehaviour
     [SerializeField, Range(0, 23)] private int fallbackHour = 12;
     [SerializeField, Range(0, 23)] private int dayStartsAt = 6;
     [SerializeField, Range(0, 23)] private int nightStartsAt = 18;
+    [SerializeField, Min(0)] private int initialLocationIndex;
 
     [Header("Feedback")]
     [SerializeField] private AudioSource hoverAudioSource;
@@ -80,7 +81,7 @@ public class MapMenuController : MonoBehaviour
     {
         BindButtons();
         RefreshTimeAndColors();
-        SelectLocation(0);
+        SelectLocation(initialLocationIndex);
     }
 
     private void OnEnable()

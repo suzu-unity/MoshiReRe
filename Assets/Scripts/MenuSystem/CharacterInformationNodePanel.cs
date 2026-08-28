@@ -89,9 +89,7 @@ public class CharacterInformationNodePanel : MonoBehaviour
         if (!selectedCharacter || state == null) return;
 
         if (selectedCharacterText)
-            selectedCharacterText.text = string.IsNullOrWhiteSpace(selectedCharacter.displayName)
-                ? CharacterInformationNodeState.GetCharacterId(selectedCharacter)
-                : selectedCharacter.displayName;
+            selectedCharacterText.text = GetDisplayName(selectedCharacter);
 
         var nodes = state.GetNodes(CharacterInformationNodeState.GetCharacterId(selectedCharacter));
         if (emptyText) emptyText.gameObject.SetActive(nodes.Count == 0);
@@ -122,6 +120,41 @@ public class CharacterInformationNodePanel : MonoBehaviour
         foreach (var row in rows)
             if (row) Destroy(row);
         rows.Clear();
+
+        // MenuRootV2 keeps a small editor/demo snapshot in the prefab so the
+        // page is useful before play mode. Replace that snapshot with live
+        // database rows as soon as the runtime panel refreshes.
+        if (!nodeListRoot) return;
+        for (var i = nodeListRoot.childCount - 1; i >= 0; i--)
+        {
+            var child = nodeListRoot.GetChild(i);
+            if (child && child.name.StartsWith("DemoInformationNodeRow"))
+                Destroy(child.gameObject);
+        }
+    }
+
+    public static string GetDisplayName(CharacterInfo character)
+    {
+        if (!character) return string.Empty;
+
+        switch (character.id)
+        {
+            case "target_a": return "初回ターゲット";
+            case "target_b": return "元取引先担当";
+            case "target_c": return "フリーの対象";
+            case "peer_a": return "同業者アキ";
+            case "peer_b": return "情報屋B";
+        }
+
+        var displayName = character.displayName;
+        if (!string.IsNullOrWhiteSpace(displayName))
+        {
+            if (displayName.StartsWith("仮：")) return displayName.Substring(2).Trim();
+            if (displayName.StartsWith("仮:")) return displayName.Substring(2).Trim();
+            return displayName;
+        }
+
+        return !string.IsNullOrWhiteSpace(character.id) ? character.id : character.name;
     }
 
     public static string GetCategoryLabel(CharacterInformationNodeCategory category)

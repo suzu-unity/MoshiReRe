@@ -179,100 +179,147 @@ public static class MenuRootV2Builder
         out Button dressTileButton, out Button statusTileButton, out Button itemsTileButton, out Button charactersTileButton,
         out Button questTileButton, out Button mapTileButton)
     {
-        const float phoneWidth = 824f;
-        const float phoneHeight = phoneWidth / (9f / 19.5f);
-        var surface = new Color(0.94f, 0.97f, 1f, 0.97f);
-        var surfaceBright = new Color(0.985f, 0.99f, 1f, 0.98f);
+        var surface = new Color(0.96f, 0.97f, 1f, 0.98f);
+        var surfaceBright = new Color(0.99f, 0.99f, 1f, 0.99f);
         var navy = new Color(0.055f, 0.085f, 0.16f, 1f);
         var accent = new Color(0.43f, 0.38f, 0.90f, 1f);
-        var accentLight = new Color(0.70f, 0.70f, 1f, 0.82f);
-        var cyanHighlight = new Color(0.56f, 0.88f, 0.96f, 0.90f);
+        var accentLight = new Color(0.70f, 0.70f, 1f, 0.86f);
+        var cyanHighlight = new Color(0.56f, 0.88f, 0.96f, 0.95f);
         var coralAlert = new Color(0.96f, 0.34f, 0.40f, 1f);
 
         var page = RectRoot("PageTop", parent);
         Stretch(page, Vector2.zero, Vector2.zero);
         page.gameObject.AddComponent<CanvasGroup>();
 
-        // Rim only: there is no body, screen, stage, or other central panel.
-        // The tall shell continues below the 16:9 safe area instead of being shrunk to fit.
+        // The home screen is a landscape-safe dashboard. The previous portrait shell was taller
+        // than the 16:9 canvas, which made the first actionable route visually disappear off-screen.
         portraitPhoneFrame = RectRoot("PortraitPhonePresentation", page);
-        SetRect(portraitPhoneFrame, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1f),
-            new Vector2(535f, 546f), new Vector2(phoneWidth, phoneHeight));
-        // This is a clipped scene layer, not a phone body: the rim remains the only shell.
-        // It gives the transparent HUD a temporary in-world stage while leaving no opaque panel
-        // between the background and ReRe.
-        var stage = RectRoot("TopTransparentStage", portraitPhoneFrame);
-        SetRect(stage, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-            new Vector2(-42f, -218f), new Vector2(670f, 664f));
-        stage.gameObject.AddComponent<RectMask2D>();
+        SetRect(portraitPhoneFrame, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            Vector2.zero, new Vector2(1760f, 980f));
+        var dashboard = ImageRoot("TopDashboardSurface", portraitPhoneFrame, new Color(0.06f, 0.08f, 0.15f, 0.98f));
+        dashboard.raycastTarget = false;
+        Stretch(dashboard.rectTransform, new Vector2(18f, 18f), new Vector2(-18f, -18f));
+        PixelBorder(dashboard.rectTransform, "DashboardFrame", new Color(0.34f, 0.30f, 0.60f, 1f), 3f);
 
+        // A clipped scene card keeps ReRe readable while preserving a strong visual anchor.
+        var stage = RectRoot("TopTransparentStage", portraitPhoneFrame);
+        SetRect(stage, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
+            new Vector2(50f, -222f), new Vector2(665f, 610f));
+        stage.gameObject.AddComponent<RectMask2D>();
+        var stagePanel = ImageRoot("TopSceneCard", stage, new Color(0.12f, 0.15f, 0.25f, 0.86f));
+        stagePanel.raycastTarget = false;
+        Stretch(stagePanel.rectTransform, Vector2.zero, Vector2.zero);
+        PixelBorder(stagePanel.rectTransform, "SceneCardFrame", accentLight, 2f);
         var background = ImageRoot("TopPreviewBackground", stage, Color.white);
         background.sprite = LoadSprite(TopPreviewBackgroundPath);
         background.raycastTarget = false;
+        background.preserveAspect = true;
         SetRect(background.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f), Vector2.zero, stage.sizeDelta);
-        var backgroundFitter = background.gameObject.AddComponent<AspectRatioFitter>();
-        backgroundFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-        backgroundFitter.aspectRatio = background.sprite && background.sprite.texture
-            ? (float)background.sprite.texture.width / background.sprite.texture.height
-            : 1f;
-
-        // This nearly invisible target is intentionally below ReRe and every HUD action. It catches
-        // only the open stage so the visible controls continue to receive their own clicks.
+            new Vector2(0.5f, 0.5f), new Vector2(0f, -4f), new Vector2(625f, 555f));
+        var backgroundTint = ImageRoot("TopPreviewBackgroundTint", stage, new Color(0.07f, 0.09f, 0.18f, 0.34f));
+        backgroundTint.raycastTarget = false;
+        SetRect(backgroundTint.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(0.5f, 0.5f), new Vector2(0f, -4f), new Vector2(625f, 555f));
+        TextBox("NIGHT DESK  /  RERe LIVE", stage, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Cream,
+            new Vector2(20f, -18f), new Vector2(300f, 24f));
         var blankStageButton = ButtonRoot("TopStageBlankClick", stage, new Color(0.08f, 0.12f, 0.22f, 0.002f));
         Stretch(blankStageButton.GetComponent<RectTransform>(), Vector2.zero, Vector2.zero);
         blankStageButton.transition = Selectable.Transition.None;
-
-        topMascot = BuildTopReReMascot(stage, new Vector2(-54f, 6f), new Vector2(430f, 650f),
-            new Vector2(-170f, 414f), blankStageButton);
+        // This full-stage hit target should not scale the whole scene card when the pointer
+        // passes over it; keep hover feedback for the actionable dashboard controls only.
+        Object.DestroyImmediate(blankStageButton.GetComponent<MenuUIButtonHover>());
+        topMascot = BuildTopReReMascot(stage, new Vector2(-78f, 18f), new Vector2(330f, 500f),
+            new Vector2(-170f, 390f), blankStageButton);
+        TextBox("状況を読む / 情報ノードを確認", stage, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Cream,
+            new Vector2(24f, -574f), new Vector2(617f, 28f));
 
         BuildHudPhoneRim(portraitPhoneFrame, navy, accent, accentLight, cyanHighlight);
+        TextBox("ReRe // NIGHT DESK", portraitPhoneFrame, 18f, FontStyles.Bold, TextAlignmentOptions.Left, Cream,
+            new Vector2(64f, -44f), new Vector2(400f, 28f));
+        TextBox("初回デモをここから開始", portraitPhoneFrame, 15f, FontStyles.Bold, TextAlignmentOptions.Right, cyanHighlight,
+            new Vector2(1200f, -44f), new Vector2(460f, 28f));
 
-        var speaker = ImageRoot("PortraitPhoneTopSpeaker", portraitPhoneFrame, new Color(navy.r, navy.g, navy.b, 0.94f));
-        speaker.raycastTarget = false;
-        SetRect(speaker.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f),
-            new Vector2(0f, -47f), new Vector2(164f, 34f));
-        PixelBorder(speaker.rectTransform, "SpeakerFrame", new Color(accent.r, accent.g, accent.b, 0.65f), 2f);
-
-        var dayChip = HudInfoChip(portraitPhoneFrame, "HudDayChip", new Vector2(-287f, -132f), new Vector2(96f, 88f), surfaceBright, navy, accentLight);
-        var debtChip = HudInfoChip(portraitPhoneFrame, "HudDebtChip", new Vector2(-115f, -132f), new Vector2(214f, 72f), surface, navy, accentLight);
-        var moneyChip = HudInfoChip(portraitPhoneFrame, "HudMoneyChip", new Vector2(126f, -132f), new Vector2(230f, 72f), surface, navy, accentLight);
+        var dayChip = HudInfoChip(portraitPhoneFrame, "HudDayChip", new Vector2(84f, -106f), new Vector2(132f, 64f), surfaceBright, navy, accentLight);
+        var debtChip = HudInfoChip(portraitPhoneFrame, "HudDebtChip", new Vector2(254f, -106f), new Vector2(232f, 64f), surface, navy, accentLight);
+        var moneyChip = HudInfoChip(portraitPhoneFrame, "HudMoneyChip", new Vector2(520f, -106f), new Vector2(250f, 64f), surface, navy, accentLight);
         var settingsButton = HudActionButton(portraitPhoneFrame, "HudSettingsButton", string.Empty, "settings",
-            new Vector2(330f, -132f), new Vector2(76f, 76f), surfaceBright, navy, accent, cyanHighlight, false, true);
-
-        var dayText = Text("DAY\n03", dayChip.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Center, navy,
-            new Vector2(4f, 4f), new Vector2(-4f, -4f));
+            new Vector2(794f, -106f), new Vector2(62f, 62f), surfaceBright, navy, accent, cyanHighlight, false, true);
+        var dayText = Text("DAY 03", dayChip.rectTransform, 18f, FontStyles.Bold, TextAlignmentOptions.Center, navy);
         dayText.name = "DayValue";
-        var debtText = Text("7 DAYS", debtChip.rectTransform, 21f, FontStyles.Bold, TextAlignmentOptions.Center, navy,
-            new Vector2(35f, 4f), new Vector2(-10f, -4f));
+        var debtText = Text("初回入金まで 7 DAYS", debtChip.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, navy);
         debtText.name = "DebtDaysValue";
-        var moneyText = Text("¥ 145,000", moneyChip.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Center, navy,
-            new Vector2(16f, 4f), new Vector2(-8f, -4f));
+        var moneyText = Text("所持  ¥ 145,000", moneyChip.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Center, navy);
         moneyText.name = "MoneyValue";
-
         var urgencyMark = ImageRoot("DebtUrgencyMark", debtChip.rectTransform, coralAlert);
         urgencyMark.raycastTarget = false;
         SetRect(urgencyMark.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f),
-            new Vector2(24f, 0f), new Vector2(14f, 14f));
+            new Vector2(18f, 0f), new Vector2(12f, 12f));
         PixelBorder(urgencyMark.rectTransform, "UrgencyMarkFrame", navy, 1f);
 
-        // Sparse right shortcuts: MAP then QUEST, both inside the 16:9 safe area.
-        mapTileButton = HudActionButton(portraitPhoneFrame, "HudMapButton", "MAP", "map",
-            new Vector2(280f, -432f), new Vector2(130f, 126f), surfaceBright, navy, accent, cyanHighlight, false, false);
-        questTileButton = HudActionButton(portraitPhoneFrame, "HudQuestButton", "QUEST", "quest",
-            new Vector2(280f, -626f), new Vector2(130f, 126f), surfaceBright, navy, accent, cyanHighlight, false, false);
+        // The demo card is the primary home-screen affordance. It reuses mapTileButton so the
+        // existing public MenuRootV2UI binding opens PageMap without adding a new API.
+        var demoPanel = ImageRoot("FirstTargetDemoPanel", portraitPhoneFrame, new Color(0.98f, 0.94f, 0.84f, 0.98f));
+        demoPanel.raycastTarget = false;
+        SetRect(demoPanel.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
+            new Vector2(-60f, -188f), new Vector2(930f, 620f));
+        PixelBorder(demoPanel.rectTransform, "DemoPanelFrame", Ink, 4f);
+        TextBox("FIRST NIGHT / 初回ターゲット", demoPanel.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Left, Coral,
+            new Vector2(28f, -24f), new Vector2(550f, 30f));
+        TextBox("パパ活デモ", demoPanel.rectTransform, 34f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(28f, -62f), new Vector2(520f, 48f));
+        TextBox("カフェ下調べを始める", demoPanel.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(28f, -116f), new Vector2(520f, 36f));
+        var routeCard = PixelPanel(demoPanel.rectTransform, "FirstTargetRouteCard", new Vector2(28f, -168f), new Vector2(874f, 142f), new Color(0.89f, 0.94f, 0.99f, 1f));
+        PixelBorder(routeCard.rectTransform, "RouteCardFrame", new Color(0.22f, 0.20f, 0.38f, 1f), 2f);
+        TextBox("ROUTE", routeCard.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.32f, 0.28f, 0.48f, 1f),
+            new Vector2(18f, -14f), new Vector2(90f, 22f));
+        TextBox("対象を選ぶ", routeCard.rectTransform, 18f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -48f), new Vector2(190f, 28f));
+        TextBox("→", routeCard.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Coral,
+            new Vector2(204f, -48f), new Vector2(34f, 28f));
+        TextBox("カフェの下調べ", routeCard.rectTransform, 18f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(246f, -48f), new Vector2(210f, 28f));
+        TextBox("→", routeCard.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Coral,
+            new Vector2(462f, -48f), new Vector2(34f, 28f));
+        TextBox("GOで開始", routeCard.rectTransform, 18f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(504f, -48f), new Vector2(180f, 28f));
+        TextBox("必要条件: なし  /  推奨: ReRe分析を確認", routeCard.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.25f, 0.22f, 0.38f, 1f),
+            new Vector2(18f, -94f), new Vector2(760f, 24f));
 
-        // The five controls float separately over the transparent center; HOME is the selected blue-violet action.
+        mapTileButton = HudActionButton(demoPanel.rectTransform, "HudMapButton", "初回ターゲット\nカフェ下調べ", "map",
+            new Vector2(0f, -410f), new Vector2(500f, 120f), Mint, navy, accent, cyanHighlight, true, false);
+        var mapButtonLabel = mapTileButton.transform.Find("Label")?.GetComponent<TextMeshProUGUI>();
+        if (mapButtonLabel)
+        {
+            mapButtonLabel.fontSize = 15f;
+            mapButtonLabel.alignment = TextAlignmentOptions.Center;
+            SetRect(mapButtonLabel.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(6f, 8f), new Vector2(-12f, 42f));
+        }
+        var mapButtonIcon = mapTileButton.transform.Find("HudIcon") as RectTransform;
+        if (mapButtonIcon)
+        {
+            // Keep the map glyph to the left of the copy so the two-line route label remains
+            // legible at the reference resolution.
+            SetRect(mapButtonIcon, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(40f, 0f), new Vector2(36f, 36f));
+        }
+        TextBox("1操作でマップへ  /  そこで対象を選んで GO", demoPanel.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.30f, 0.27f, 0.40f, 1f),
+            new Vector2(28f, -534f), new Vector2(620f, 24f));
+        questTileButton = HudActionButton(demoPanel.rectTransform, "HudQuestButton", "QUEST", "quest",
+            new Vector2(350f, -410f), new Vector2(190f, 108f), Lavender, navy, accent, cyanHighlight, false, false);
+
+        // Compact persistent shortcuts stay within the 16:9 safe area.
         dressTileButton = HudActionButton(portraitPhoneFrame, "HudDressButton", "DRESS", "dress",
-            new Vector2(-266f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+            new Vector2(-440f, -824f), new Vector2(152f, 86f), surface, navy, accent, cyanHighlight, false, false);
         charactersTileButton = HudActionButton(portraitPhoneFrame, "HudCharactersButton", "CHAR", "char",
-            new Vector2(-133f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+            new Vector2(-272f, -824f), new Vector2(152f, 86f), surface, navy, accent, cyanHighlight, false, false);
         var homeButton = HudActionButton(portraitPhoneFrame, "HudHomeButton", "HOME", "home",
-            new Vector2(0f, -978f), new Vector2(136f, 128f), surfaceBright, navy, accent, cyanHighlight, true, false);
+            new Vector2(-104f, -824f), new Vector2(152f, 86f), surfaceBright, navy, accent, cyanHighlight, true, false);
         itemsTileButton = HudActionButton(portraitPhoneFrame, "HudItemsButton", "ITEM", "item",
-            new Vector2(137f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+            new Vector2(64f, -824f), new Vector2(152f, 86f), surface, navy, accent, cyanHighlight, false, false);
         var saveButton = HudActionButton(portraitPhoneFrame, "HudSaveButton", "SAVE", "save",
-            new Vector2(270f, -978f), new Vector2(122f, 116f), surface, navy, accent, cyanHighlight, false, false);
+            new Vector2(232f, -824f), new Vector2(152f, 86f), surface, navy, accent, cyanHighlight, false, false);
         statusTileButton = null;
 
         var dressBadge = AddDynamicNotificationBadge(dressTileButton, "DressNotificationBadge");
@@ -287,9 +334,6 @@ public static class MenuRootV2Builder
         ConfigurePageNavigation(page.gameObject, homeButton, null, null, null, null, null, saveButton, settingsButton);
         ConfigureTopHudState(page.gameObject, dayText, debtText, moneyText, urgencyMark.gameObject,
             dressBadge, charactersBadge, homeBadge, itemsBadge, saveBadge, mapBadge, questBadge, settingsBadge);
-
-        // ReRe is built above the scene background but below the rim and controls, preserving the
-        // intended background -> character -> HUD draw order.
         return page;
     }
 
@@ -297,7 +341,7 @@ public static class MenuRootV2Builder
     {
         var root = RectRoot("ReReConversation", parent);
         SetRect(root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
-            new Vector2(-48f, -724f), new Vector2(650f, 142f));
+            new Vector2(-112f, -824f), new Vector2(500f, 120f));
 
         var panel = ImageRoot("ConversationPanel", root, new Color(0.10f, 0.08f, 0.18f, 0.94f));
         Stretch(panel.rectTransform, Vector2.zero, Vector2.zero);
@@ -1088,6 +1132,8 @@ public static class MenuRootV2Builder
             new Rect(760f, 42f, 360f, 64f), artworkWidth, artworkHeight);
         TextBoxCentered("ITEM", page, 31f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Rect(134f, 166f, 280f, 44f), artworkWidth, artworkHeight);
+        TextBoxCentered("ROUTE LOADOUT  /  初回ターゲット準備", page, 16f, FontStyles.Bold, TextAlignmentOptions.Left,
+            new Color(0.36f, 0.28f, 0.46f, 1f), new Rect(134f, 198f, 560f, 24f), artworkWidth, artworkHeight);
 
         homeButton = CharacterNavButton(page, "ItemsHomeButton", "HOME", new Rect(120f, 82f, 166f, 58f), Lavender, artworkWidth, artworkHeight);
         dressButton = CharacterNavButton(page, "ItemsDressButton", "DRESS", new Rect(294f, 82f, 66f, 58f), Lavender, artworkWidth, artworkHeight);
@@ -1104,27 +1150,49 @@ public static class MenuRootV2Builder
 
         var grid = PixelPanelAt(page, "ItemInventoryGrid", new Rect(282f, 220f, 556f, 446f), new Color(0.94f, 0.98f, 0.96f, 1f), artworkWidth, artworkHeight);
         TextBox("ITEM LIST", grid.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(24f, -18f), new Vector2(260f, 34f));
+        TextBox("実データ / ルートで使う道具", grid.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right,
+            new Color(0.31f, 0.39f, 0.54f, 1f), new Vector2(258f, -20f), new Vector2(274f, 26f));
         var openBagPreview = ImageRoot("OpenBagInventoryArtwork", grid.rectTransform, Color.white);
         openBagPreview.sprite = LoadSprite(ItemBagOpenSpritePath);
         openBagPreview.preserveAspect = true;
         openBagPreview.raycastTarget = false;
         SetRect(openBagPreview.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
             new Vector2(0f, -24f), new Vector2(520f, 392f));
+        var itemDatabase = FindFirstAssetOfType<InventoryDatabase>();
+        var itemDefinitions = GetInventoryItems(itemDatabase, 8);
         for (var y = 0; y < 2; y++)
         for (var x = 0; x < 4; x++)
-            ItemDraftCard(grid.rectTransform, y * 4 + x, new Vector2(72f + x * 106f, -116f - y * 112f), new Vector2(92f, 96f),
+        {
+            var index = y * 4 + x;
+            var item = index < itemDefinitions.Length ? itemDefinitions[index] : null;
+            ItemDraftCard(grid.rectTransform, index, item, new Vector2(72f + x * 106f, -116f - y * 112f), new Vector2(92f, 96f),
                 new Color(0.96f, 0.94f, 0.99f, 0.90f));
+        }
 
         var detail = PixelPanelAt(page, "SelectedItemDetail", new Rect(878f, 220f, 372f, 300f), new Color(1f, 0.94f, 0.84f, 1f), artworkWidth, artworkHeight);
         TextBox("SELECTED ITEM", detail.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Center, Ink, new Vector2(20f, -16f), new Vector2(332f, 34f));
-        var detailIcon = ImageRoot("DetailItemIcon", detail.rectTransform, Coral);
+        var selectedItem = itemDefinitions.Length > 0 ? itemDefinitions[0] : null;
+        var selectedSprite = selectedItem ? (selectedItem.icon ? selectedItem.icon : selectedItem.detailImage) : null;
+        var detailIcon = ImageRoot("DetailItemIcon", detail.rectTransform, selectedSprite ? Color.white : DefaultItemCardColor(0));
         detailIcon.raycastTarget = false;
+        if (selectedSprite)
+        {
+            detailIcon.sprite = selectedSprite;
+            detailIcon.preserveAspect = true;
+        }
+        else
+        {
+            Text(GetInventoryMark(selectedItem, 0), detailIcon.rectTransform, 34f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+            Text("差替予定", detailIcon.rectTransform, 11f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+                new Vector2(6f, 10f), new Vector2(-6f, -76f));
+        }
         SetRect(detailIcon.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -70f), new Vector2(112f, 112f));
         PixelBorder(detailIcon.rectTransform, "DetailIconFrame", Ink, 3f);
-        var detailTitle = TextBox("Lucky Charm", detail.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(164f, -70f), new Vector2(180f, 34f));
+        var detailTitle = TextBox(GetInventoryDisplayName(selectedItem, 0), detail.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(164f, -70f), new Vector2(180f, 38f));
         detailTitle.name = "DetailTitle";
-        var detailDescription = TextBox("A small charm for uncertain conversations.", detail.rectTransform, 20f, FontStyles.Bold,
-            TextAlignmentOptions.TopLeft, new Color(0.34f, 0.27f, 0.42f, 1f), new Vector2(164f, -114f), new Vector2(174f, 104f));
+        var detailDescription = TextBox(GetInventoryDescription(selectedItem, 0), detail.rectTransform, 17f, FontStyles.Bold,
+            TextAlignmentOptions.TopLeft, new Color(0.34f, 0.27f, 0.42f, 1f), new Vector2(164f, -118f), new Vector2(174f, 106f));
         detailDescription.name = "DetailDescription";
         TextBox("RELATED", detail.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(28f, -210f), new Vector2(130f, 28f));
         for (var i = 0; i < 3; i++)
@@ -1141,7 +1209,7 @@ public static class MenuRootV2Builder
         rereBubble.raycastTarget = false;
         SetRect(rereBubble.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-10f, -120f), new Vector2(-42f, 96f));
         PixelBorder(rereBubble.rectTransform, "BubbleFrame", Ink, 3f);
-        var rereText = Text("Drag an item into the bag to carry it.", rereBubble.rectTransform, 18f, FontStyles.Bold,
+        var rereText = Text("カフェ回数券を選んでバッグへ。\n初回ターゲットの下調べで使えるよ。", rereBubble.rectTransform, 16f, FontStyles.Bold,
             TextAlignmentOptions.TopLeft, Ink, new Vector2(14f, 12f), new Vector2(-14f, -12f));
         rereText.name = "ReReCommentText";
         var addButton = LocalPixelButton(rerePanel.rectTransform, "AddToBagButton", "BAG +", new Vector2(28f, -238f), new Vector2(92f, 42f), Mint);
@@ -1155,14 +1223,14 @@ public static class MenuRootV2Builder
         statusText.name = "BagStatusText";
         for (var i = 0; i < 4; i++)
             BagSlot(bagPanel.rectTransform, i, new Vector2(260f + i * 222f, -28f), new Vector2(184f, 72f));
-        TextBox("選んだアイテムをバッグへ", bagPanel.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.42f, 0.34f, 0.52f, 1f),
+        TextBox("初回ルート用に選んだ道具をバッグへ", bagPanel.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.42f, 0.34f, 0.52f, 1f),
             new Vector2(1160f, -42f), new Vector2(198f, 42f));
 
         BuildBagZipOverlay(page, artworkWidth, artworkHeight);
 
         var controller = page.gameObject.AddComponent<ItemMenuController>();
         var so = new SerializedObject(controller);
-        SetObject(so, "inventoryDatabase", FindFirstAssetOfType<InventoryDatabase>());
+        SetObject(so, "inventoryDatabase", itemDatabase);
         SetObject(so, "bagDropArea", bagPanel.rectTransform);
         SetObject(so, "addToBagButton", addButton);
         SetObject(so, "confirmBagButton", confirmButton);
@@ -1231,28 +1299,50 @@ public static class MenuRootV2Builder
         var ojiCharacters = GetCharactersByCategory(database, CharacterCategory.Oj, 6);
         var itadakiCharacters = GetCharactersByCategory(database, CharacterCategory.Itadaki, 6);
         for (int i = 0; i < ojiCharacters.Length; i++)
-            CharacterContactRow(ojiList, i, GetContactName(ojiCharacters[i]), ojiCharacters[i] ? "OJI" : "???", false,
-                ojiCharacters[i] ? Cyan : new Color(0.76f, 0.76f, 0.78f, 1f), new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
+        {
+            var character = ojiCharacters[i];
+            var row = CharacterContactRow(ojiList, i, character, character ? GetContactName(character) : "未登録",
+                character ? "OJI" : "LOCKED", false, Cyan, new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
+            if (!character)
+            {
+                row.gameObject.SetActive(false);
+                row.GetComponent<Button>().interactable = false;
+            }
+        }
         for (int i = 0; i < itadakiCharacters.Length; i++)
-            CharacterContactRow(itadakiList, i, GetContactName(itadakiCharacters[i]), itadakiCharacters[i] ? "ITADAKI" : "???", false,
-                itadakiCharacters[i] ? Coral : new Color(0.76f, 0.76f, 0.78f, 1f), new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
+        {
+            var character = itadakiCharacters[i];
+            var row = CharacterContactRow(itadakiList, i, character, character ? GetContactName(character) : "未登録",
+                character ? "ITADAKI" : "LOCKED", false, Coral, new Rect(10f, 10f + i * 106f, 500f, 92f), 536f, 744f);
+            if (!character)
+            {
+                row.gameObject.SetActive(false);
+                row.GetComponent<Button>().interactable = false;
+            }
+        }
 
         var detail = PixelPanelAt(contactsPage, "SelectedCharacterDetail", new Rect(724f, 224f, 794f, 410f), new Color(1f, 0.94f, 0.86f, 1f), artworkWidth, artworkHeight);
-        CircleAt(detail.rectTransform, "SelectedPortrait", new Rect(34f, 34f, 188f, 188f), Lavender);
-        TextBox("GRANDPA HIKO", detail.rectTransform, 31f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(246f, -34f), new Vector2(508f, 42f));
-        AttributeChip(detail.rectTransform, "GIVER", new Vector2(250f, -86f), new Color(0.42f, 0.74f, 0.45f, 1f));
-        TextBox("RELATIONSHIP\nGood friends. He cares deeply about everyone in town.", detail.rectTransform, 21f, FontStyles.Bold, TextAlignmentOptions.TopLeft,
+        var firstTarget = ojiCharacters.Length > 0 ? ojiCharacters[0] : null;
+        var selectedPortrait = CircleAt(detail.rectTransform, "SelectedPortrait", new Rect(34f, 34f, 188f, 188f), firstTarget && firstTarget.icon ? Color.white : Lavender);
+        if (firstTarget && firstTarget.icon)
+        {
+            selectedPortrait.sprite = firstTarget.icon;
+            selectedPortrait.preserveAspect = true;
+        }
+        TextBox("初回ターゲット", detail.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(246f, -34f), new Vector2(508f, 42f));
+        AttributeChip(detail.rectTransform, "MATCH", new Vector2(250f, -86f), AttributeColor("MATCH"));
+        TextBox("接触状況  未接触\nカフェで席と持ち物を確認してから会話へ。", detail.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.TopLeft,
             new Color(0.30f, 0.25f, 0.38f, 1f), new Vector2(250f, -142f), new Vector2(492f, 110f));
-        TextBox("AREA    Moshi Village", detail.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(38f, -274f), new Vector2(514f, 42f));
-        LocalPixelButton(detail.rectTransform, "GoAreaButton", "GO >", new Vector2(620f, -292f), new Vector2(120f, 48f), Lavender);
+        TextBox("AREA    カフェ下調べ", detail.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(38f, -274f), new Vector2(514f, 42f));
+        LocalPixelButton(detail.rectTransform, "GoAreaButton", "GO MAP", new Vector2(620f, -292f), new Vector2(120f, 48f), Lavender);
 
         var nodePanel = PixelPanelAt(contactsPage, "CharacterInformationNodes", new Rect(724f, 224f, 794f, 410f), new Color(0.92f, 0.96f, 1f, 1f), artworkWidth, artworkHeight);
-        var selectedNodeCharacterText = TextBox("CHARACTER INTEL", nodePanel.rectTransform, 27f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+        var selectedNodeCharacterText = TextBox("初回ターゲット", nodePanel.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(28f, -24f), new Vector2(724f, 38f));
-        TextBox("RE: INFORMATION NODES", nodePanel.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.31f, 0.39f, 0.54f, 1f),
+        TextBox("RE: INFORMATION NODES  /  4 nodes", nodePanel.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.31f, 0.39f, 0.54f, 1f),
             new Vector2(28f, -68f), new Vector2(460f, 30f));
-        var emptyNodeText = TextBox("NO INTEL NODES REGISTERED", nodePanel.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.42f, 0.42f, 0.50f, 1f),
-            new Vector2(40f, -192f), new Vector2(714f, 46f));
+        var emptyNodeText = TextBox("接触前メモ\nカフェの席・持ち物を確認  /  次: MAP → GO", nodePanel.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.31f, 0.39f, 0.54f, 1f),
+            new Vector2(40f, -174f), new Vector2(714f, 74f));
         var nodeListRoot = RectRoot("InformationNodeList", nodePanel.rectTransform);
         SetRect(nodeListRoot, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(28f, -108f), new Vector2(738f, 272f));
         var nodeTemplate = Panel(nodeListRoot, "InformationNodeRowTemplate", Vector2.zero, new Vector2(738f, 76f), new Color(0.68f, 0.70f, 0.76f, 1f));
@@ -1261,12 +1351,17 @@ public static class MenuRootV2Builder
         TextBox("CATEGORY  CONFIDENCE", nodeTemplate.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Right, Ink, new Vector2(304f, -10f), new Vector2(416f, 24f));
         TextBox("CONTENT", nodeTemplate.rectTransform, 16f, FontStyles.Normal, TextAlignmentOptions.Left, Ink, new Vector2(14f, -38f), new Vector2(708f, 28f));
         nodeTemplate.gameObject.SetActive(false);
+        emptyNodeText.gameObject.SetActive(false);
+        CharacterDemoNode(nodeListRoot, 0, "呼称", "基本情報", "先生", "確認済み", false);
+        CharacterDemoNode(nodeListRoot, 1, "行きつけ", "資源", "カフェ", "確認済み", false);
+        CharacterDemoNode(nodeListRoot, 2, "承認欲求", "欲望", "本人の評価を気にする", "推測", false);
+        CharacterDemoNode(nodeListRoot, 3, "未確認", "危険性", "17番席", "ロック", true);
 
         var memo = PixelPanelAt(contactsPage, "ReReMemo", new Rect(760f, 660f, 700f, 112f), new Color(1f, 0.98f, 0.90f, 1f), artworkWidth, artworkHeight);
         var memoFace = CircleAt(memo.rectTransform, "ReReFace", new Rect(20f, 18f, 76f, 76f), Color.white);
         memoFace.sprite = LoadSprite(CommonUiCropFolder + "/rere_happy.png");
         memoFace.preserveAspect = true;
-        TextBox("ReRe COMMENT\nこの人はクエストに関係してそう。話しかけに行く？", memo.rectTransform, 20f, FontStyles.Bold,
+        TextBox("ReRe COMMENT\n初回ターゲットを選択中。カフェ下調べ → MAPのGOで開始。", memo.rectTransform, 18f, FontStyles.Bold,
             TextAlignmentOptions.TopLeft, new Color(0.32f, 0.25f, 0.45f, 1f), new Vector2(116f, -18f), new Vector2(548f, 74f));
 
         var relationPage = RectRoot("RelationSubPage", page);
@@ -1282,14 +1377,14 @@ public static class MenuRootV2Builder
         CharacterRelationNode(relationBoard.rectTransform, "Yui", new Vector2(236f, -164f), Coral, "G", "Yui has a quest flag. Her links look active.");
         CharacterRelationNode(relationBoard.rectTransform, "Uma", new Vector2(650f, -164f), Peach, "T", "Uma may pull resources from nearby contacts.");
         CharacterRelationNode(relationBoard.rectTransform, "Hiko", new Vector2(250f, -390f), Cyan, "M", "Hiko is a useful bridge to this area.");
-        CharacterRelationNode(relationBoard.rectTransform, "???", new Vector2(662f, -392f), new Color(0.72f, 0.72f, 0.76f, 1f), "?", "Unknown contact. ReRe needs more story clues.");
+        CharacterRelationNode(relationBoard.rectTransform, "情報屋B", new Vector2(662f, -392f), new Color(0.72f, 0.72f, 0.76f, 1f), "B", "図書館の資料と会社パートをつなぐ情報屋。手掛かりが揃えば接触できる。");
         var relationDetail = PixelPanelAt(relationPage, "RelationDetail", new Rect(1090f, 226f, 386f, 544f), new Color(0.92f, 0.96f, 1f, 1f), artworkWidth, artworkHeight);
-        TextBox("SELECTED\nGRANDPA HIKO", relationDetail.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.TopLeft, Ink,
+        TextBox("SELECTED\n初回ターゲット", relationDetail.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.TopLeft, Ink,
             new Vector2(28f, -28f), new Vector2(330f, 80f));
-        AttributeChip(relationDetail.rectTransform, "QUEST!", new Vector2(30f, -132f), Coral);
-        TextBox("関連人物と現在クエストのつながりをReReが解析中。", relationDetail.rectTransform, 21f, FontStyles.Bold,
+        AttributeChip(relationDetail.rectTransform, "MATCH", new Vector2(30f, -132f), AttributeColor("MATCH"));
+        TextBox("カフェ下調べの対象。\n席・持ち物を確認してから会話へ。\n昼は会社街の元担当へつながる。", relationDetail.rectTransform, 19f, FontStyles.Bold,
             TextAlignmentOptions.TopLeft, Ink, new Vector2(30f, -196f), new Vector2(326f, 150f));
-        LocalPixelButton(relationDetail.rectTransform, "RelationGoAreaButton", "GO AREA", new Vector2(32f, -424f), new Vector2(322f, 64f), Lavender);
+        LocalPixelButton(relationDetail.rectTransform, "RelationGoAreaButton", "GO MAP / CAFE", new Vector2(32f, -424f), new Vector2(322f, 64f), Lavender);
         var hintBubble = PixelPanelAt(relationPage, "RelationHintBubble", new Rect(690f, 636f, 360f, 118f), new Color(1f, 0.98f, 0.90f, 1f), artworkWidth, artworkHeight);
         hintBubble.gameObject.SetActive(false);
         var hintText = TextBox("ReRe memo", hintBubble.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.TopLeft, Ink,
@@ -1395,7 +1490,7 @@ public static class MenuRootV2Builder
             new Vector2(18f, -16f), new Vector2(258f, 34f));
         AddNotificationBadge(list.rectTransform, "!");
 
-        var names = new[] { "メインクエスト" };
+        var names = new[] { "初回ターゲット" };
         var marks = new[] { "!", "?", "♥", "→" };
         var colors = new[] { Coral };
         for (var i = 0; i < cards.Length; i++)
@@ -1410,23 +1505,23 @@ public static class MenuRootV2Builder
         TextBox("★", detail.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Right, Yellow,
             new Vector2(18f, -16f), new Vector2(456f, 34f));
 
-        var activeCard = Panel(detail.rectTransform, "ActiveQuestSummary", new Vector2(18f, -62f), new Vector2(456f, 148f), new Color(1f, 0.90f, 0.88f, 1f));
+        var activeCard = Panel(detail.rectTransform, "ActiveQuestSummary", new Vector2(18f, -62f), new Vector2(456f, 170f), new Color(1f, 0.90f, 0.88f, 1f));
         Circle(activeCard.rectTransform, "QuestIcon", new Vector2(18f, -26f), 74f, Coral);
         Text("!", activeCard.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white,
             new Vector2(18f, -26f), new Vector2(92f, 48f));
-        titleText = TextBox("メインクエストはありません", activeCard.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
-            new Vector2(112f, -22f), new Vector2(326f, 34f));
+        titleText = TextBox("初回ターゲット", activeCard.rectTransform, 23f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(112f, -22f), new Vector2(326f, 38f));
         TextBox("OBJECTIVE", activeCard.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.38f, 0.28f, 0.42f, 1f),
             new Vector2(112f, -60f), new Vector2(326f, 22f));
-        objectiveText = TextBox("シナリオ中にクエストが設定されます", activeCard.rectTransform, 17f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
-            new Vector2(112f, -86f), new Vector2(326f, 28f));
-        progressText = TextBox("期限: --", activeCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Right, Coral,
-            new Vector2(112f, -116f), new Vector2(326f, 24f));
+        objectiveText = TextBox("カフェ下調べ：席と持ち物を確認", activeCard.rectTransform, 16f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+            new Vector2(112f, -86f), new Vector2(326f, 32f));
+        progressText = TextBox("進行 0/3  /  MAP → GO", activeCard.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Right, Coral,
+            new Vector2(112f, -122f), new Vector2(326f, 24f));
 
-        var hint = PixelPanel(detail.rectTransform, "QuestHintPanel", new Vector2(18f, -224f), new Vector2(456f, 74f), new Color(0.70f, 0.92f, 0.89f, 1f));
+        var hint = PixelPanel(detail.rectTransform, "QuestHintPanel", new Vector2(18f, -246f), new Vector2(456f, 74f), new Color(0.70f, 0.92f, 0.89f, 1f));
         TextBox("HINT", hint.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(16f, -14f), new Vector2(94f, 26f));
-        hintText = TextBox("現在のクエストを確認しよう", hint.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
+        hintText = TextBox("条件: なし  /  ここから開始", hint.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Left, Ink,
             new Vector2(90f, -14f), new Vector2(348f, 26f));
         var questReRe = ImageRoot("QuestReReIdea", hint.rectTransform, Color.white);
         questReRe.sprite = LoadSprite(CommonUiCropFolder + "/rere_idea.png");
@@ -1436,28 +1531,32 @@ public static class MenuRootV2Builder
         TextBox("›", hint.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Right, Ink,
             new Vector2(16f, -14f), new Vector2(424f, 26f));
 
-        QuestRouteStrip(detail.rectTransform, new Vector2(18f, -314f), new Vector2(456f, 126f));
+        QuestRouteStrip(detail.rectTransform, new Vector2(18f, -336f), new Vector2(456f, 126f));
 
         var action = PixelPanel(parent, "QuestActionPanel", new Vector2(852f, -132f), new Vector2(246f, 554f), new Color(0.91f, 0.87f, 0.98f, 1f));
-        TextBox("GO?", action.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+        TextBox("START DEMO", action.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(16f, -16f), new Vector2(214f, 32f));
         var go = ButtonRoot("GoToAreaButton", action.rectTransform, Mint);
         SetRect(go.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(16f, -58f), new Vector2(-32f, 64f));
         PixelBorder(go.GetComponent<RectTransform>(), "GoFrame", Ink, 3f);
-        Text("YES", go.GetComponent<RectTransform>(), 24f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        Text("GO  CAFE", go.GetComponent<RectTransform>(), 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+
+        var condition = PixelPanel(action.rectTransform, "StartCondition", new Vector2(16f, -138f), new Vector2(214f, 86f), new Color(0.70f, 0.92f, 0.89f, 1f));
+        TextBox("条件: なし\n対象を選ぶ → カフェへ", condition.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(10f, -18f), new Vector2(194f, 56f));
 
         TextBox("RELATED", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
-            new Vector2(18f, -148f), new Vector2(210f, 22f));
-        QuestCharacterChip(action.rectTransform, "ReRe", "R", new Vector2(18f, -184f), Coral);
-        QuestCharacterChip(action.rectTransform, "Yui", "Y", new Vector2(88f, -184f), Lavender);
-        QuestCharacterChip(action.rectTransform, "OJI", "O", new Vector2(158f, -184f), Yellow);
+            new Vector2(18f, -250f), new Vector2(210f, 22f));
+        QuestCharacterChip(action.rectTransform, "ReRe", "R", new Vector2(18f, -286f), Coral);
+        QuestCharacterChip(action.rectTransform, "対象A", "A", new Vector2(88f, -286f), Lavender);
+        QuestCharacterChip(action.rectTransform, "元担当", "昼", new Vector2(158f, -286f), Yellow);
 
         TextBox("REWARD", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
-            new Vector2(18f, -278f), new Vector2(210f, 22f));
-        var reward = PixelPanel(action.rectTransform, "QuestReward", new Vector2(18f, -310f), new Vector2(210f, 78f), new Color(1f, 0.91f, 0.69f, 1f));
-        rewardText = Text("★ 200", reward.rectTransform, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
-        TextBox("carry bag", action.rectTransform, 13f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
-            new Vector2(18f, -416f), new Vector2(210f, 22f));
+            new Vector2(18f, -370f), new Vector2(210f, 22f));
+        var reward = PixelPanel(action.rectTransform, "QuestReward", new Vector2(18f, -400f), new Vector2(210f, 78f), new Color(1f, 0.91f, 0.69f, 1f));
+        rewardText = Text("★ 200  +  NODE", reward.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        TextBox("NEXT  MAP → カフェ下調べ", action.rectTransform, 12f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(18f, -500f), new Vector2(210f, 24f));
 
         return cards;
     }
@@ -1476,8 +1575,8 @@ public static class MenuRootV2Builder
         var list = PixelPanel(parent, "QuestCaseList", new Vector2(32f, -132f), new Vector2(294f, 554f), new Color(0.91f, 0.88f, 0.98f, 1f));
         TextBox("CASE", list.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(18f, -16f), new Vector2(258f, 34f));
-        var names = new[] { "AI WHISPER", "SMILE CODE", "FAKE FRIEND", "MEMORIES" };
-        var marks = new[] { "▣", "♥", "☺", "▤" };
+        var names = new[] { "初回ターゲット", "会社の接点", "情報屋の手掛かり", "持ち物チェック" };
+        var marks = new[] { "★", "昼", "?", "▣" };
         var colors = new[] { Lavender, Mint, Coral, new Color(0.72f, 0.68f, 0.88f, 1f) };
         for (var i = 0; i < names.Length; i++)
         {
@@ -1489,7 +1588,7 @@ public static class MenuRootV2Builder
             TextBox(names[i], card.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
                 new Vector2(84f, -18f), new Vector2(166f, 24f));
             AddMiniBars(card.rectTransform, new Vector2(86f, -54f), 3);
-            TextBox((i + 1) + "/6", card.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right, Ink,
+            TextBox(i == 0 ? "0/3  START" : (i + 1) + "/6", card.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right, Ink,
                 new Vector2(84f, -54f), new Vector2(166f, 22f));
         }
 
@@ -1509,25 +1608,25 @@ public static class MenuRootV2Builder
         QuestCaseNode(board.rectTransform, "MAP", "M", new Vector2(204f, -252f), Mint);
         QuestCaseNode(board.rectTransform, "?", "?", new Vector2(324f, -312f), new Color(0.60f, 0.58f, 0.72f, 1f));
         var note = PixelPanel(board.rectTransform, "CaseNote", new Vector2(18f, -432f), new Vector2(456f, 74f), new Color(0.96f, 0.94f, 0.82f, 1f));
-        TextBox("ReRe is connecting the clues...", note.rectTransform, 15f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
-            new Vector2(14f, -20f), new Vector2(428f, 34f));
+        TextBox("夜: カフェ下調べ → 昼: 会社パートへ\n証拠と情報ノードを集めると次のケースが開く。", note.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(14f, -12f), new Vector2(428f, 54f));
 
         var action = PixelPanel(parent, "QuestCaseAction", new Vector2(852f, -132f), new Vector2(246f, 554f), new Color(0.98f, 0.86f, 0.90f, 1f));
         TextBox("HINT", action.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(16f, -16f), new Vector2(214f, 32f));
         var hint = PixelPanel(action.rectTransform, "CaseHint", new Vector2(16f, -62f), new Vector2(214f, 126f), new Color(0.70f, 0.92f, 0.89f, 1f));
-        TextBox("The clue is near\nthe next route.", hint.rectTransform, 16f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+        TextBox("① カフェ下調べ\n② 会社街で証拠を集める", hint.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(12f, -28f), new Vector2(190f, 56f));
         TextBox("RELATED", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(18f, -224f), new Vector2(210f, 22f));
-        QuestCharacterChip(action.rectTransform, "Yui", "Y", new Vector2(18f, -260f), Coral);
-        QuestCharacterChip(action.rectTransform, "OJI", "O", new Vector2(88f, -260f), Yellow);
+        QuestCharacterChip(action.rectTransform, "対象A", "A", new Vector2(18f, -260f), Coral);
+        QuestCharacterChip(action.rectTransform, "元担当", "昼", new Vector2(88f, -260f), Yellow);
         TextBox("REWARD", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(18f, -352f), new Vector2(210f, 22f));
         var go = ButtonRoot("CaseGoToAreaButton", action.rectTransform, Mint);
         SetRect(go.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(16f, -416f), new Vector2(-32f, 60f));
         PixelBorder(go.GetComponent<RectTransform>(), "GoFrame", Ink, 3f);
-        Text("GO?", go.GetComponent<RectTransform>(), 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        Text("GO  NEXT", go.GetComponent<RectTransform>(), 19f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
     }
 
     private static RectTransform BuildSavePage(RectTransform parent)
@@ -1608,7 +1707,7 @@ public static class MenuRootV2Builder
     {
         var page = RectRoot("PageMap", parent);
         Stretch(page, Vector2.zero, Vector2.zero);
-        AddHeader(page, "MAP", "day / night city guide");
+        AddHeader(page, "MAP", "初回ターゲットを選んで、カフェ下調べへ");
 
         var shortcuts = new Button[6];
         var shortcutLabels = new[] { "H", "D", "I", "C", "Q", "M" };
@@ -1618,7 +1717,16 @@ public static class MenuRootV2Builder
             shortcuts[i] = QuestTabButton(page, "MapShortcut" + i, shortcutLabels[i], new Vector2(30f + i * 48f, -72f), new Vector2(40f, 38f), shortcutColors[i]);
         }
 
-        var mapFrame = PixelPanel(page, "IsometricMapFrame", new Vector2(32f, -120f), new Vector2(756f, 568f), new Color(0.80f, 0.90f, 0.92f, 1f));
+        var demoBanner = PixelPanel(page, "MapDemoBanner", new Vector2(32f, -122f), new Vector2(1066f, 76f), new Color(1f, 0.91f, 0.69f, 1f));
+        PixelBorder(demoBanner.rectTransform, "DemoBannerFrame", Ink, 3f);
+        TextBox("初回デモ  /  カフェ下調べ", demoBanner.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(20f, -14f), new Vector2(390f, 30f));
+        TextBox("対象を選択  →  条件を確認  →  GO で開始", demoBanner.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.30f, 0.24f, 0.38f, 1f),
+            new Vector2(410f, -17f), new Vector2(450f, 26f));
+        var ready = PixelPanel(demoBanner.rectTransform, "DemoReadyPill", new Vector2(878f, -14f), new Vector2(164f, 46f), Mint);
+        Text("ROUTE READY", ready.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+
+        var mapFrame = PixelPanel(page, "IsometricMapFrame", new Vector2(32f, -214f), new Vector2(756f, 528f), new Color(0.80f, 0.90f, 0.92f, 1f));
         var viewport = ImageRoot("MapViewport", mapFrame.rectTransform, new Color(1f, 1f, 1f, 0.02f));
         SetRect(viewport.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(-8f, -8f));
         viewport.gameObject.AddComponent<RectMask2D>();
@@ -1671,38 +1779,62 @@ public static class MenuRootV2Builder
             locationPolygons[i] = zone;
         }
 
-        var detail = PixelPanel(page, "MapLocationDetail", new Vector2(808f, -120f), new Vector2(290f, 568f), new Color(0.98f, 0.94f, 0.88f, 1f));
-        var detailTitle = TextBox("駅前", detail.rectTransform, 25f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
-            new Vector2(16f, -16f), new Vector2(258f, 38f));
-        var rere = PixelPanel(detail.rectTransform, "ReReHint", new Vector2(16f, -72f), new Vector2(258f, 92f), new Color(0.90f, 0.84f, 0.98f, 1f));
+        MapLabel(mapContent, "STATION", new Vector2(214f, -286f), new Vector2(190f, 28f), Cream);
+        MapLabel(mapContent, "LIBRARY", new Vector2(584f, -232f), new Vector2(170f, 28f), Cream);
+        MapLabel(mapContent, "OFFICE", new Vector2(902f, -264f), new Vector2(170f, 28f), Cream);
+        MapLabel(mapContent, "PARK", new Vector2(252f, -534f), new Vector2(170f, 28f), Cream);
+        MapLabel(mapContent, "HOTEL", new Vector2(930f, -526f), new Vector2(170f, 28f), Cream);
+        var cafeMarker = Circle(mapContent, "CafeTargetMarker", new Vector2(304f, -496f), 48f, Coral);
+        cafeMarker.raycastTarget = false;
+        PixelBorder(cafeMarker.rectTransform, "TargetMarkerFrame", Ink, 3f);
+        Text("!", cafeMarker.rectTransform, 24f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        MapLabel(mapContent, "カフェ下調べ", new Vector2(356f, -500f), new Vector2(230f, 34f), Coral);
+
+        var detail = PixelPanel(page, "MapLocationDetail", new Vector2(808f, -214f), new Vector2(290f, 528f), new Color(0.98f, 0.94f, 0.88f, 1f));
+        var detailContent = RectRoot("MapDetailContent", detail.rectTransform);
+        SetRect(detailContent, Vector2.zero, Vector2.one, new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+        detailContent.localScale = new Vector3(1f, 0.84f, 1f);
+        var detailParent = detailContent;
+        var detailTitle = TextBox("カフェ下調べ", detailParent, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(16f, -14f), new Vector2(258f, 34f));
+        var targetCard = PixelPanel(detailParent, "MapDemoTargetCard", new Vector2(16f, -56f), new Vector2(258f, 68f), new Color(1f, 0.91f, 0.69f, 1f));
+        PixelBorder(targetCard.rectTransform, "TargetCardFrame", Ink, 2f);
+        TextBox("初回ターゲット", targetCard.rectTransform, 12f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.38f, 0.28f, 0.42f, 1f),
+            new Vector2(12f, -8f), new Vector2(220f, 18f));
+        TextBox("カフェ下調べ", targetCard.rectTransform, 17f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(12f, -30f), new Vector2(220f, 24f));
+        var rere = PixelPanel(detailParent, "ReReHint", new Vector2(16f, -136f), new Vector2(258f, 84f), new Color(0.90f, 0.84f, 0.98f, 1f));
         TextBox("ReRe HINT", rere.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(12f, -10f), new Vector2(234f, 20f));
-        var hintText = TextBox("乗り換え前なら、少しだけ話を聞けそう。", rere.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
-            new Vector2(12f, -34f), new Vector2(234f, 48f));
+        var hintText = TextBox("対象Aはカフェで下調べ中。店内の席と持ち物を確認してね。", rere.rectTransform, 13f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
+            new Vector2(12f, -32f), new Vector2(234f, 44f));
         var mapReRe = ImageRoot("MapReReGuide", rere.rectTransform, Color.white);
         mapReRe.sprite = LoadSprite(CommonUiCropFolder + "/rere_worried.png");
         mapReRe.preserveAspect = true;
         mapReRe.raycastTarget = false;
         SetRect(mapReRe.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-8f, 2f), new Vector2(62f, 62f));
-        var descriptionText = TextBox("待ち合わせと移動の起点。夕方は帰宅客で混み合う。", detail.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
-            new Vector2(18f, -180f), new Vector2(254f, 42f));
+        var descriptionText = TextBox("対象を選んで、店内の情報を集める夜パート。", detailParent, 13f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Ink,
+            new Vector2(18f, -232f), new Vector2(254f, 42f));
 
-        TextBox("RELATED ITEM", detail.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
-            new Vector2(18f, -236f), new Vector2(254f, 20f));
-        var itemCard = PixelPanel(detail.rectTransform, "RelatedItemCard", new Vector2(18f, -264f), new Vector2(254f, 54f), new Color(1f, 0.91f, 0.69f, 1f));
-        var itemText = Text("交通ICカード", itemCard.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+        TextBox("RELATED ITEM", detailParent, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -286f), new Vector2(254f, 20f));
+        var itemCard = PixelPanel(detailParent, "RelatedItemCard", new Vector2(18f, -312f), new Vector2(254f, 48f), new Color(1f, 0.91f, 0.69f, 1f));
+        var itemText = Text("交通ICカード", itemCard.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
 
-        TextBox("HERE NOW", detail.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
-            new Vector2(18f, -332f), new Vector2(254f, 20f));
+        TextBox("HERE NOW", detailParent, 13f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(18f, -378f), new Vector2(254f, 20f));
         var characterButtons = new Button[3];
         for (var i = 0; i < characterButtons.Length; i++)
         {
-            characterButtons[i] = LocalPixelButton(detail.rectTransform, "MapCharacter" + i, i == 0 ? "R" : i == 1 ? "Y" : "O",
-                new Vector2(20f + i * 82f, -364f), new Vector2(66f, 58f), i == 0 ? Lavender : i == 1 ? Coral : Yellow);
+            characterButtons[i] = LocalPixelButton(detailParent, "MapCharacter" + i, i == 0 ? "R" : i == 1 ? "Y" : "O",
+                new Vector2(20f + i * 82f, -410f), new Vector2(66f, 52f), i == 0 ? Lavender : i == 1 ? Coral : Yellow);
         }
-        var characterText = TextBox("ReRe / 対象A", detail.rectTransform, 12f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
-            new Vector2(18f, -430f), new Vector2(254f, 20f));
-        var goButton = LocalPixelButton(detail.rectTransform, "MapGoButton", "GO?  YES", new Vector2(18f, -470f), new Vector2(254f, 72f), Mint);
+        var characterText = TextBox("ReRe / 対象A", detailParent, 12f, FontStyles.Normal, TextAlignmentOptions.Center, Ink,
+            new Vector2(18f, -468f), new Vector2(254f, 20f));
+        var conditionCard = PixelPanel(detailParent, "MapGoConditions", new Vector2(18f, -500f), new Vector2(254f, 50f), new Color(0.86f, 0.94f, 0.90f, 1f));
+        TextBox("条件: なし  /  GOで探索開始", conditionCard.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(8f, -14f), new Vector2(238f, 24f));
+        var goButton = LocalPixelButton(detailParent, "MapGoButton", "GO  カフェ下調べ", new Vector2(18f, -558f), new Vector2(254f, 58f), Mint);
 
         var controller = page.gameObject.AddComponent<MapMenuController>();
         var so = new SerializedObject(controller);
@@ -1730,6 +1862,7 @@ public static class MenuRootV2Builder
         SetIntArray(so, "relatedCharacterLocationIndexes", new[] { 0, 0, 0 });
         SetIntArray(so, "goButtonLocationIndexes", new[] { 3 });
         SetQuestObjectArray(so, "pageNavigationButtons", shortcuts);
+        SetInt(so, "initialLocationIndex", 3);
         so.FindProperty("fallbackHour").intValue = 12;
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(controller);
@@ -1938,8 +2071,11 @@ public static class MenuRootV2Builder
         colors.normalColor = Color.white;
         colors.highlightedColor = new Color(1f, 1f, 1f, 0.88f);
         colors.pressedColor = new Color(0.82f, 0.82f, 0.82f, 1f);
+        colors.selectedColor = new Color(0.92f, 0.94f, 1f, 1f);
         button.colors = colors;
         button.targetGraphic = target;
+        if (!target.GetComponent<MenuUIButtonHover>())
+            target.gameObject.AddComponent<MenuUIButtonHover>();
         return button;
     }
 
@@ -2246,7 +2382,7 @@ public static class MenuRootV2Builder
         return button;
     }
 
-    private static void ItemDraftCard(RectTransform parent, int index, Vector2 pos, Vector2 size, Color color)
+    private static void ItemDraftCard(RectTransform parent, int index, InventoryItem item, Vector2 pos, Vector2 size, Color color)
     {
         var button = ButtonRoot("ItemCard" + index, parent, color);
         var rt = button.GetComponent<RectTransform>();
@@ -2264,13 +2400,60 @@ public static class MenuRootV2Builder
         BorderPart(highlight, "SelectedRight", Yellow, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), Vector2.zero, new Vector2(6f, 0f));
         highlight.gameObject.SetActive(index == 0);
 
-        var icon = ImageRoot("ItemIcon" + index, rt, index % 2 == 0 ? Coral : Cyan);
+        var itemSprite = item ? (item.icon ? item.icon : item.detailImage) : null;
+        var icon = ImageRoot("ItemIcon" + index, rt, itemSprite ? Color.white : DefaultItemCardColor(index));
         icon.raycastTarget = false;
+        if (itemSprite)
+        {
+            icon.sprite = itemSprite;
+            icon.preserveAspect = true;
+        }
+        else
+        {
+            Text(GetInventoryMark(item, index), icon.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+            Text("差替予定", icon.rectTransform, 8f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+                new Vector2(4f, 8f), new Vector2(-4f, -42f));
+        }
         SetRect(icon.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -18f), new Vector2(56f, 56f));
         PixelBorder(icon.rectTransform, "IconFrame", new Color(1f, 1f, 1f, 0.55f), 2f);
 
-        var nameText = Text("Item", rt, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Ink, new Vector2(6f, 8f), new Vector2(-6f, -86f));
+        var nameText = Text(GetInventoryDisplayName(item, index), rt, 11f, FontStyles.Bold, TextAlignmentOptions.Center, Ink, new Vector2(4f, 7f), new Vector2(-4f, -84f));
         nameText.name = "ItemName" + index;
+        var status = Text(item ? (index == 0 ? "NEXT" : "READY") : "LOCKED", rt, 9f, FontStyles.Bold,
+            TextAlignmentOptions.Center, item ? new Color(0.20f, 0.48f, 0.42f, 1f) : new Color(0.42f, 0.42f, 0.50f, 1f),
+            new Vector2(4f, 38f), new Vector2(-4f, -52f));
+        status.name = "ItemStatus" + index;
+    }
+
+    private static Color DefaultItemCardColor(int index)
+    {
+        switch (index % 8)
+        {
+            case 0: return Coral;
+            case 1: return Yellow;
+            case 2: return Mint;
+            case 3: return Lavender;
+            case 4: return Cyan;
+            case 5: return Peach;
+            case 6: return new Color(0.72f, 0.68f, 0.88f, 1f);
+            default: return new Color(1f, 0.72f, 0.82f, 1f);
+        }
+    }
+
+    private static string GetInventoryMark(InventoryItem item, int index)
+    {
+        if (item)
+        {
+            switch (item.id)
+            {
+                case "cafe_ticket": return "券";
+                case "old_key": return "鍵";
+                case "indulgence": return "札";
+            }
+        }
+
+        var marks = new[] { "券", "鍵", "札", "IC", "社", "メ", "手", "電" };
+        return marks[Mathf.Clamp(index, 0, marks.Length - 1)];
     }
 
     private static void BagSlot(RectTransform parent, int index, Vector2 pos, Vector2 size)
@@ -2373,17 +2556,40 @@ public static class MenuRootV2Builder
         return image;
     }
 
-    private static void CharacterContactRow(RectTransform parent, int index, string name, string attribute, bool quest, Color color, Rect sourceRect, float artworkWidth, float artworkHeight)
+    private static RectTransform CharacterContactRow(RectTransform parent, int index, CharacterInfo character, string name, string attribute, bool quest, Color color, Rect sourceRect, float artworkWidth, float artworkHeight)
     {
         var card = Panel(parent, "CharacterContact" + index, new Vector2(sourceRect.x, -sourceRect.y), new Vector2(sourceRect.width, sourceRect.height), color);
         PixelBorder(card.rectTransform, "PanelFrame", new Color(0.42f, 0.36f, 0.55f, 1f), 4f);
         EnsureButton(card);
         var rt = card.rectTransform;
-        CircleAt(rt, "Icon", new Rect(24f, 16f, 62f, 62f), index == 3 ? new Color(0.45f, 0.45f, 0.50f, 1f) : Lavender);
+        var icon = CircleAt(rt, "Icon", new Rect(24f, 16f, 62f, 62f), character && character.icon ? Color.white : Lavender);
+        if (character && character.icon)
+        {
+            icon.sprite = character.icon;
+            icon.preserveAspect = true;
+        }
         TextBox(name, rt, 24f, FontStyles.Bold, TextAlignmentOptions.Left, Ink, new Vector2(106f, -16f), new Vector2(312f, 32f));
         AttributeChip(rt, attribute, new Vector2(108f, -54f), AttributeColor(attribute));
         if (quest)
             QuestBadge(rt, new Vector2(454f, -18f));
+        return rt;
+    }
+
+    private static void CharacterDemoNode(RectTransform parent, int index, string title, string category, string content, string confidence, bool locked)
+    {
+        var rowColor = locked ? new Color(0.80f, 0.80f, 0.86f, 1f) : new Color(0.88f, 0.95f, 1f, 1f);
+        var row = Panel(parent, "DemoInformationNodeRow" + index, new Vector2(0f, -index * 64f), new Vector2(738f, 58f), rowColor);
+        PixelBorder(row.rectTransform, "DemoNodeFrame", locked ? new Color(0.46f, 0.46f, 0.56f, 1f) : Ink, 2f);
+        TextBox(title, row.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
+            new Vector2(14f, -8f), new Vector2(164f, 24f));
+        TextBox(category, row.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.31f, 0.39f, 0.54f, 1f),
+            new Vector2(178f, -8f), new Vector2(126f, 24f));
+        TextBox(content, row.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Left,
+            locked ? new Color(0.42f, 0.42f, 0.50f, 1f) : Ink,
+            new Vector2(316f, -8f), new Vector2(282f, 24f));
+        TextBox(confidence, row.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right,
+            locked ? new Color(0.42f, 0.42f, 0.50f, 1f) : AttributeColor(confidence),
+            new Vector2(600f, -8f), new Vector2(122f, 24f));
     }
 
     private static RectTransform CharacterScrollList(RectTransform parent, string name, Rect sourceRect, float artworkWidth, float artworkHeight, out RectTransform content)
@@ -2423,6 +2629,8 @@ public static class MenuRootV2Builder
             case "GIVER": return new Color(0.42f, 0.74f, 0.45f, 1f);
             case "MATCH": return new Color(0.92f, 0.66f, 0.22f, 1f);
             case "TAKER": return new Color(0.86f, 0.34f, 0.36f, 1f);
+            case "OJI": return Cyan;
+            case "ITADAKI": return Coral;
             default: return new Color(0.62f, 0.62f, 0.66f, 1f);
         }
     }
@@ -2491,9 +2699,10 @@ public static class MenuRootV2Builder
         Text(mark, icon.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
         TextBox(title, card.rectTransform, 16f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(82f, -18f), new Vector2(166f, 24f));
-        AddMiniBars(card.rectTransform, new Vector2(84f, -54f), 2);
-        TextBox(index == 0 ? "NEW" : (index + 1) + "/6", card.rectTransform, 13f, FontStyles.Bold, TextAlignmentOptions.Right,
-            index == 0 ? Coral : Ink, new Vector2(82f, -54f), new Vector2(166f, 22f));
+        TextBox(index == 0 ? "FIRST NIGHT  /  READY" : (index + 1) + "/6", card.rectTransform, 11f, FontStyles.Bold, TextAlignmentOptions.Left,
+            index == 0 ? Coral : Ink, new Vector2(82f, -54f), new Vector2(166f, 18f));
+        TextBox(index == 0 ? "MAP → カフェ下調べ" : "次のノードを確認", card.rectTransform, 10f, FontStyles.Bold, TextAlignmentOptions.Left,
+            new Color(0.31f, 0.39f, 0.54f, 1f), new Vector2(82f, -74f), new Vector2(166f, 16f));
         return button;
     }
 
@@ -2502,13 +2711,15 @@ public static class MenuRootV2Builder
         var route = PixelPanel(parent, "QuestRoutePanel", pos, size, new Color(0.86f, 0.93f, 0.99f, 1f));
         TextBox("ROUTE", route.rectTransform, 15f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(16f, -12f), new Vector2(258f, 22f));
-        RelationLine(route.rectTransform, new Vector2(92f, -76f), new Vector2(194f, -76f), Lavender);
-        RelationLine(route.rectTransform, new Vector2(194f, -76f), new Vector2(296f, -76f), Lavender);
-        RelationLine(route.rectTransform, new Vector2(296f, -76f), new Vector2(398f, -76f), Lavender);
-        QuestCaseNode(route.rectTransform, "Start", "★", new Vector2(50f, -50f), Coral);
-        QuestCaseNode(route.rectTransform, "Yui", "Y", new Vector2(152f, -50f), Lavender);
-        QuestCaseNode(route.rectTransform, "Map", "M", new Vector2(254f, -50f), Mint);
-        QuestCaseNode(route.rectTransform, "Goal", "!", new Vector2(356f, -50f), Yellow);
+        RelationLine(route.rectTransform, new Vector2(92f, -88f), new Vector2(194f, -88f), Lavender);
+        RelationLine(route.rectTransform, new Vector2(194f, -88f), new Vector2(296f, -88f), Lavender);
+        RelationLine(route.rectTransform, new Vector2(296f, -88f), new Vector2(398f, -88f), Lavender);
+        QuestCaseNode(route.rectTransform, "Start", "★", new Vector2(50f, -58f), Coral);
+        QuestCaseNode(route.rectTransform, "Yui", "Y", new Vector2(152f, -58f), Lavender);
+        QuestCaseNode(route.rectTransform, "Map", "M", new Vector2(254f, -58f), Mint);
+        QuestCaseNode(route.rectTransform, "Goal", "!", new Vector2(356f, -58f), Yellow);
+        TextBox("対象選択  →  MAP  →  カフェ GO", route.rectTransform, 11f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
+            new Vector2(16f, -36f), new Vector2(424f, 18f));
     }
 
     private static void QuestCharacterChip(RectTransform parent, string name, string mark, Vector2 pos, Color color)
@@ -2535,6 +2746,12 @@ public static class MenuRootV2Builder
         var pin = Circle(zone.rectTransform, "Pin", new Vector2(size.x * 0.5f - 18f, -size.y * 0.5f + 18f), 36f, selected ? Coral : Cream);
         pin.raycastTarget = false;
         Text(selected ? "!" : "?", pin.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
+    }
+
+    private static void MapLabel(RectTransform parent, string value, Vector2 position, Vector2 size, Color color)
+    {
+        var label = TextBox(value, parent, 16f, FontStyles.Bold, TextAlignmentOptions.Center, color, position, size);
+        label.raycastTarget = false;
     }
 
     private static RawImage RawImageRoot(string name, RectTransform parent, string texturePath, Rect uvRect)
@@ -2575,13 +2792,13 @@ public static class MenuRootV2Builder
 
     private static void ConfigureMapLocations(SerializedObject so)
     {
-        var names = new[] { "駅前", "市立図書館", "オフィス街", "繁華街", "中央公園", "シティホテル" };
+        var names = new[] { "駅前", "市立図書館", "オフィス街", "カフェ下調べ", "中央公園", "シティホテル" };
         var descriptions = new[]
         {
             "待ち合わせと移動の起点。夕方は帰宅客で混み合う。",
             "新聞・業界誌・過去資料を静かに調べられる公共施設。",
             "昼は会社パートの中心。退勤前後には対象と接触しやすい。",
-            "飲食店や遊技施設が集まる夜の情報交換エリア。",
+            "初回ターゲットが待つカフェ。店内を下調べしてから GO。",
             "人目を避けて話せる場所が多い、街の中央にある公園。",
             "夜になると人の流れが変わる、格式の高い宿泊施設。"
         };
@@ -2590,13 +2807,13 @@ public static class MenuRootV2Builder
             "乗り換え前なら、少しだけ話を聞けそう。",
             "過去の記事を調べるなら、ここがいちばん確実。",
             "昼休みか退勤直後を狙うのが安全そう。",
-            "夜は出会いが増えるけど、出費にも注意してね。",
+            "対象Aは店内にいるみたい。席と持ち物を確認しよう。",
             "噴水の近くなら、落ち着いて話せるかも。",
             "ロビーの顔ぶれは日没後に変わるみたい。"
         };
         var safety = new[] { 0.86f, 0.94f, 0.68f, 0.56f, 0.91f, 0.74f };
         var items = new[] { "交通ICカード", "図書館利用証", "社員証", "ゲームコイン", "テイクアウトコーヒー", "ルームキー" };
-        var characters = new[] { "ReRe / 対象A", "情報屋B / 司書", "取引先の元担当 / ReRe", "同業者A / ReRe", "対象A / ReRe", "ReRe / ホテルスタッフ" };
+        var characters = new[] { "ReRe / 対象A", "情報屋B / 司書", "取引先の元担当 / ReRe", "対象A / ReRe", "対象A / ReRe", "ReRe / ホテルスタッフ" };
         var dayColors = new[] { Cyan, Lavender, new Color(0.62f, 0.82f, 0.94f, 1f), Coral, Mint, Yellow };
         var nightColors = new[]
         {
@@ -2696,7 +2913,10 @@ public static class MenuRootV2Builder
         colors.normalColor = Color.white;
         colors.highlightedColor = new Color(1f, 1f, 1f, 0.85f);
         colors.pressedColor = new Color(0.78f, 0.78f, 0.78f, 1f);
+        colors.selectedColor = new Color(0.92f, 0.94f, 1f, 1f);
         button.colors = colors;
+        button.targetGraphic = image;
+        go.AddComponent<MenuUIButtonHover>();
         return button;
     }
 
@@ -2875,6 +3095,13 @@ public static class MenuRootV2Builder
         var prop = so.FindProperty(name);
         if (prop != null)
             prop.floatValue = value;
+    }
+
+    private static void SetInt(SerializedObject so, string name, int value)
+    {
+        var prop = so.FindProperty(name);
+        if (prop != null)
+            prop.intValue = value;
     }
 
     private static void SetVector2(SerializedObject so, string name, Vector2 value)
@@ -3141,9 +3368,77 @@ public static class MenuRootV2Builder
         return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
     }
 
+    private static InventoryItem[] GetInventoryItems(InventoryDatabase database, int capacity)
+    {
+        var result = new InventoryItem[Mathf.Max(0, capacity)];
+        if (!database) return result;
+
+        var source = database.GetAll();
+        var writeIndex = 0;
+        for (var i = 0; i < source.Count && writeIndex < result.Length; i++)
+        {
+            if (!source[i]) continue;
+            result[writeIndex++] = source[i];
+        }
+
+        // Keep the first preview slot aligned with the demo's first route while
+        // leaving InventoryDatabase ordering and acquisition semantics untouched.
+        for (var i = 1; i < result.Length; i++)
+        {
+            if (!result[i] || result[i].id != "cafe_ticket") continue;
+            var first = result[0];
+            result[0] = result[i];
+            result[i] = first;
+            break;
+        }
+
+        return result;
+    }
+
+    private static string GetInventoryDisplayName(InventoryItem item, int index)
+    {
+        if (item) return item.GetDisplayName();
+
+        var fallbackNames = new[]
+        {
+            "カフェ回数券", "古びた鍵", "免罪符", "交通ICカード",
+            "社員証", "連絡メモ", "手土産", "予備バッテリー"
+        };
+        return fallbackNames[Mathf.Clamp(index, 0, fallbackNames.Length - 1)];
+    }
+
+    private static string GetInventoryDescription(InventoryItem item, int index)
+    {
+        if (item)
+        {
+            switch (item.id)
+            {
+                case "cafe_ticket": return "カフェで使える回数券。会話と下調べの導入に使う。";
+                case "old_key": return "青い石の古びた鍵。未解放の場所や証拠箱を開く。";
+                case "indulgence": return "金銭と引き換えに噂を止めるための札。";
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.description)) return item.description;
+            if (!string.IsNullOrWhiteSpace(item.summary)) return item.summary;
+        }
+
+        var fallbackDescriptions = new[]
+        {
+            "カフェで使える回数券。会話と下調べの導入に使う。",
+            "未解放の場所や証拠箱に関わる鍵。",
+            "会社パートの噂を整理するための札。",
+            "移動の起点を増やすための交通カード。",
+            "会社街で身分を示すためのカード。",
+            "会話で得た手掛かりを書き留めたメモ。",
+            "相手との距離を縮める小さな手土産。",
+            "長い探索でも切れない予備の電源。"
+        };
+        return fallbackDescriptions[Mathf.Clamp(index, 0, fallbackDescriptions.Length - 1)];
+    }
+
     private static CharacterInfo[] GetCharactersByCategory(CharacterDatabase database, CharacterCategory category, int capacity)
     {
-        var result = new CharacterInfo[capacity];
+        var result = new CharacterInfo[Mathf.Max(0, capacity)];
         if (!database) return result;
 
         var writeIndex = 0;
@@ -3169,6 +3464,16 @@ public static class MenuRootV2Builder
     private static string GetContactName(CharacterInfo character)
     {
         if (!character) return "???";
+
+        switch (character.id)
+        {
+            case "target_a": return "初回ターゲット";
+            case "target_b": return "元取引先担当";
+            case "target_c": return "フリーの対象";
+            case "peer_a": return "同業者アキ";
+            case "peer_b": return "情報屋B";
+        }
+
         if (!string.IsNullOrWhiteSpace(character.displayName)) return character.displayName;
         if (!string.IsNullOrWhiteSpace(character.id)) return character.id;
         return character.name;

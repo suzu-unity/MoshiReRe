@@ -118,9 +118,7 @@ public class CharacterInformationNodeStateEditModeTests
 
             var labels = rowButtons[i].GetComponentsInChildren<TMP_Text>(true);
             Assert.That(labels, Is.Not.Empty);
-            var expectedName = string.IsNullOrWhiteSpace(character.displayName)
-                ? CharacterInformationNodeState.GetCharacterId(character)
-                : character.displayName;
+            var expectedName = CharacterInformationNodePanel.GetDisplayName(character);
             Assert.That(labels[0].text, Is.EqualTo(expectedName));
         }
     }

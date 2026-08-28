@@ -1,3 +1,4 @@
+using System.IO;
 using MoshiReRe.Exploration;
 using Naninovel;
 using NUnit.Framework;
@@ -36,6 +37,16 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
 
             var actualGuid = EditorResources.LoadOrDefault().GetGuidByPath($"{pathPrefix}/{resourcePath}");
             Assert.That(actualGuid, Is.EqualTo(expectedGuid));
+        }
+
+        [Test]
+        public void OldKey_IsAwardedOnlyByCafeExploration()
+        {
+            var office = File.ReadAllText("Assets/Scenario/OfficeExploration.nani");
+            var cafe = File.ReadAllText("Assets/Scenario/PapaCafeExploration.nani");
+
+            Assert.That(office, Does.Not.Contain("@acquireExplorationItem id:old_key"));
+            Assert.That(cafe, Does.Contain("@acquireExplorationItem id:old_key"));
         }
     }
 }

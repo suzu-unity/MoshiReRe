@@ -103,11 +103,14 @@ public class QuestMenuController : MonoBehaviour
     private void Refresh(MainQuestState.Data quest)
     {
         var assigned = quest.IsAssigned;
-        SetText(activeQuestTitleText, assigned ? quest.Title : "メインクエストはありません");
-        SetText(activeQuestObjectiveText, assigned ? quest.Objective : "シナリオ中にクエストが設定されます");
-        SetText(activeQuestProgressText, assigned ? MainQuestState.FormatDeadline(quest.DeadlineDays) : "期限: --");
-        SetText(activeQuestHintText, assigned ? "期限までに進めよう" : "現在のクエストを確認しよう");
-        SetText(activeQuestRewardText, assigned ? "メインクエスト" : string.Empty);
+        // The generated MenuRootV2 is also used as a standalone product demo
+        // before Naninovel assigns its first quest. Keep that state actionable
+        // without changing the live scenario values once a quest is assigned.
+        SetText(activeQuestTitleText, assigned ? quest.Title : "初回ターゲット");
+        SetText(activeQuestObjectiveText, assigned ? quest.Objective : "カフェ下調べ：席と持ち物を確認");
+        SetText(activeQuestProgressText, assigned ? MainQuestState.FormatDeadline(quest.DeadlineDays) : "進行 0/3  /  MAP → GO");
+        SetText(activeQuestHintText, assigned ? "期限までに進めよう" : "条件: なし  /  ここから開始");
+        SetText(activeQuestRewardText, assigned ? "メインクエスト" : "★ 200  +  NODE");
     }
 
     private static void SetText(TMP_Text text, string value)
