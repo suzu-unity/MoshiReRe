@@ -30,10 +30,14 @@ namespace MoshiReRe.Exploration
             if (!Engine.Initialized)
                 return;
 
+            // Loading an interaction script can restore Naninovel's background actor after
+            // the scene-start race guard has elapsed. Exploration owns its world background
+            // with a SpriteRenderer, so keep novel backgrounds suppressed for the full scene.
+            HideNaninovelBackgrounds();
+
             if (hideFramesRemaining > 0)
             {
                 Engine.GetService<IUIManager>()?.GetUI<ITitleUI>()?.Hide();
-                HideNaninovelBackgrounds();
                 hideFramesRemaining--;
             }
         }
@@ -51,7 +55,8 @@ namespace MoshiReRe.Exploration
                 return;
 
             foreach (var background in backgroundManager.Actors)
-                background.Visible = false;
+                if (background.Visible)
+                    background.Visible = false;
         }
     }
 }
