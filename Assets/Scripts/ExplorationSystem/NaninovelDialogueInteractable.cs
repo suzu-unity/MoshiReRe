@@ -61,6 +61,8 @@ namespace MoshiReRe.Exploration
         private int dialogueOpenedFrame;
         private ExplorationDialoguePortraits activePortraitPresenter;
         private int portraitPresentationId;
+        private SpriteRenderer backgroundSnapshot;
+        private Material backgroundSnapshotMaterial;
 
         public event Action DialogueStarted;
         public event Action DialogueFinished;
@@ -147,6 +149,7 @@ namespace MoshiReRe.Exploration
             var transitioningToNovel = false;
             player?.SetMovementEnabled(false);
             SuppressToggleUiInput();
+            BeginBackgroundSnapshot();
             BeginPortraitPresentation(player);
             DialogueStarted?.Invoke();
 
@@ -257,6 +260,7 @@ namespace MoshiReRe.Exploration
                     coordinator.ClearReturnToNovelRequest();
                     ReleaseContinueInput();
                     RestoreToggleUiInput();
+                    EndBackgroundSnapshot();
                     EndPortraitPresentation();
                     if (restoreMovement)
                         player?.SetMovementEnabled(true);
@@ -271,6 +275,7 @@ namespace MoshiReRe.Exploration
         {
             ReleaseContinueInput();
             RestoreToggleUiInput();
+            EndBackgroundSnapshot();
             EndPortraitPresentation();
             dialoguePlaying = false;
             DialogueFinished?.Invoke();
@@ -569,6 +574,68 @@ namespace MoshiReRe.Exploration
                 protagonistPortraitVariant,
                 npcPortraitVariant,
                 portraitVariants);
+        }
+
+        private void BeginBackgroundSnapshot()
+        {
+            EndBackgroundSnapshot();
+
+            var backgroundObject = GameObject.Find("RoomBackground");
+            var source = backgroundObject != null
+                ? backgroundObject.GetComponent<SpriteRenderer>()
+                : null;
+            if (source == null || source.sprite == null)
+                return;
+
+            backgroundSnapshot = CreateBackgroundSnapshot(source, out backgroundSnapshotMaterial);
+        }
+
+        private void EndBackgroundSnapshot()
+        {
+            if (backgroundSnapshot != null)
+                Destroy(backgroundSnapshot.gameObject);
+            if (backgroundSnapshotMaterial != null)
+                Destroy(backgroundSnapshotMaterial);
+            backgroundSnapshot = null;
+            backgroundSnapshotMaterial = null;
+        }
+
+        /// <summary>
+        /// Creates an independent renderer for the current exploration background. Starting a
+        /// Naninovel script can invalidate an already-batched scene SpriteRenderer even though
+        /// its public state remains enabled; a fresh unlit renderer keeps the authored backdrop
+        /// visible for the lifetime of the dialogue.
+        /// </summary>
+        public static SpriteRenderer CreateBackgroundSnapshot(
+            SpriteRenderer source,
+            out Material snapshotMaterial)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            var snapshotObject = new GameObject("ExplorationDialogueBackgroundSnapshot");
+            snapshotObject.layer = source.gameObject.layer;
+            snapshotObject.transform.SetParent(source.transform, false);
+
+            var snapshot = snapshotObject.AddComponent<SpriteRenderer>();
+            snapshot.sprite = source.sprite;
+            snapshot.color = source.color;
+            snapshot.flipX = source.flipX;
+            snapshot.flipY = source.flipY;
+            snapshot.drawMode = source.drawMode;
+            snapshot.size = source.size;
+            snapshot.maskInteraction = source.maskInteraction;
+            snapshot.spriteSortPoint = source.spriteSortPoint;
+            snapshot.sortingLayerID = source.sortingLayerID;
+            snapshot.sortingOrder = source.sortingOrder;
+            snapshot.renderingLayerMask = source.renderingLayerMask;
+
+            var shader = Shader.Find("Sprites/Default");
+            snapshotMaterial = shader != null ? new Material(shader) : null;
+            snapshot.sharedMaterial = snapshotMaterial != null
+                ? snapshotMaterial
+                : source.sharedMaterial;
+            return snapshot;
         }
 
         private void EndPortraitPresentation()

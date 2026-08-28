@@ -206,6 +206,51 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
+        public void CreateBackgroundSnapshot_CopiesBackdropPresentationToIndependentRenderer()
+        {
+            var sourceObject = new GameObject("RoomBackground");
+            Material snapshotMaterial = null;
+            Texture2D texture = null;
+            Sprite sprite = null;
+            GameObject snapshotObject = null;
+            try
+            {
+                texture = new Texture2D(4, 4);
+                sprite = Sprite.Create(texture, new Rect(0, 0, 4, 4), Vector2.one * 0.5f);
+                var source = sourceObject.AddComponent<SpriteRenderer>();
+                source.sprite = sprite;
+                source.color = new Color(0.8f, 0.7f, 0.6f, 1f);
+                source.flipX = true;
+                source.sortingOrder = -20;
+
+                var snapshot = NaninovelDialogueInteractable.CreateBackgroundSnapshot(
+                    source,
+                    out snapshotMaterial);
+                snapshotObject = snapshot.gameObject;
+
+                Assert.That(snapshot, Is.Not.SameAs(source));
+                Assert.That(snapshot.transform.parent, Is.EqualTo(source.transform));
+                Assert.That(snapshot.sprite, Is.SameAs(source.sprite));
+                Assert.That(snapshot.color, Is.EqualTo(source.color));
+                Assert.That(snapshot.flipX, Is.True);
+                Assert.That(snapshot.sortingOrder, Is.EqualTo(source.sortingOrder));
+                Assert.That(snapshot.sharedMaterial, Is.Not.Null);
+            }
+            finally
+            {
+                if (snapshotObject != null)
+                    Object.DestroyImmediate(snapshotObject);
+                if (snapshotMaterial != null)
+                    Object.DestroyImmediate(snapshotMaterial);
+                if (sprite != null)
+                    Object.DestroyImmediate(sprite);
+                if (texture != null)
+                    Object.DestroyImmediate(texture);
+                Object.DestroyImmediate(sourceObject);
+            }
+        }
+
+        [Test]
         public void PrototypePickup_HasPersistentInventoryAndSpriteReferences()
         {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
