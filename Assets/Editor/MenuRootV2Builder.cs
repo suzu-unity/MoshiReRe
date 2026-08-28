@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEditor;
+using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -148,7 +149,7 @@ public static class MenuRootV2Builder
         var pageCharacters = BuildCharactersPage(rect, out var charactersHomeButton, out var charactersDressButton,
             out var charactersItemsButton, out var charactersCharactersButton, out var charactersQuestButton,
             out var charactersMapButton);
-        var pageQuest = BuildQuestPage(content);
+        var pageQuest = BuildQuestPage(content, out var questDemoStartButton, out var questCaseStartButton);
         var pageMap = BuildMapPage(content);
         var pageSave = BuildSavePage(content);
         var pageSettings = BuildSettingsPage(content);
@@ -169,6 +170,9 @@ public static class MenuRootV2Builder
             dressItemsButton, dressMapButton, charactersHomeButton, charactersDressButton, charactersItemsButton,
             charactersCharactersButton, charactersQuestButton, charactersMapButton, itemsHomeButton, itemsDressButton,
             itemsItemsButton, itemsCharactersButton, itemsQuestButton, itemsMapButton);
+        var rootUi = root.GetComponent<MenuRootV2UI>();
+        UnityEventTools.AddPersistentListener(questDemoStartButton.onClick, rootUi.ShowMap);
+        UnityEventTools.AddPersistentListener(questCaseStartButton.onClick, rootUi.ShowMap);
         ConfigureOrientation(root.GetComponent<MenuRootV2OrientationTransition>(), portraitPhoneFrame, phone.rectTransform,
             pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject);
 
@@ -1432,7 +1436,7 @@ public static class MenuRootV2Builder
         return page;
     }
 
-    private static RectTransform BuildQuestPage(RectTransform parent)
+    private static RectTransform BuildQuestPage(RectTransform parent, out Button demoStartButton, out Button caseStartButton)
     {
         var page = RectRoot("PageQuest", parent);
         Stretch(page, Vector2.zero, Vector2.zero);
@@ -1454,11 +1458,12 @@ public static class MenuRootV2Builder
         TextMeshProUGUI activeQuestRewardText;
         Image[] inboxCardImages;
         var inboxCards = BuildQuestInbox(inboxRoot, out inboxCardImages, out activeQuestTitleText,
-            out activeQuestObjectiveText, out activeQuestProgressText, out activeQuestHintText, out activeQuestRewardText);
+            out activeQuestObjectiveText, out activeQuestProgressText, out activeQuestHintText, out activeQuestRewardText,
+            out demoStartButton);
 
         var caseBoardRoot = RectRoot("QuestCaseBoardRoot", page);
         Stretch(caseBoardRoot, Vector2.zero, Vector2.zero);
-        BuildQuestCaseBoard(caseBoardRoot);
+        BuildQuestCaseBoard(caseBoardRoot, out caseStartButton);
         caseBoardRoot.gameObject.SetActive(false);
 
         var controller = page.gameObject.AddComponent<QuestMenuController>();
@@ -1481,7 +1486,7 @@ public static class MenuRootV2Builder
 
     private static Button[] BuildQuestInbox(RectTransform parent, out Image[] cardImages,
         out TextMeshProUGUI titleText, out TextMeshProUGUI objectiveText, out TextMeshProUGUI progressText,
-        out TextMeshProUGUI hintText, out TextMeshProUGUI rewardText)
+        out TextMeshProUGUI hintText, out TextMeshProUGUI rewardText, out Button demoStartButton)
     {
         var cards = new Button[1];
         cardImages = new Image[cards.Length];
@@ -1537,6 +1542,7 @@ public static class MenuRootV2Builder
         TextBox("START DEMO", action.rectTransform, 19f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
             new Vector2(16f, -16f), new Vector2(214f, 32f));
         var go = ButtonRoot("GoToAreaButton", action.rectTransform, Mint);
+        demoStartButton = go.GetComponent<Button>();
         SetRect(go.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(16f, -58f), new Vector2(-32f, 64f));
         PixelBorder(go.GetComponent<RectTransform>(), "GoFrame", Ink, 3f);
         Text("GO  CAFE", go.GetComponent<RectTransform>(), 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);
@@ -1570,7 +1576,7 @@ public static class MenuRootV2Builder
             property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
     }
 
-    private static void BuildQuestCaseBoard(RectTransform parent)
+    private static void BuildQuestCaseBoard(RectTransform parent, out Button caseStartButton)
     {
         var list = PixelPanel(parent, "QuestCaseList", new Vector2(32f, -132f), new Vector2(294f, 554f), new Color(0.91f, 0.88f, 0.98f, 1f));
         TextBox("CASE", list.rectTransform, 20f, FontStyles.Bold, TextAlignmentOptions.Center, Ink,
@@ -1624,6 +1630,7 @@ public static class MenuRootV2Builder
         TextBox("REWARD", action.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, Ink,
             new Vector2(18f, -352f), new Vector2(210f, 22f));
         var go = ButtonRoot("CaseGoToAreaButton", action.rectTransform, Mint);
+        caseStartButton = go.GetComponent<Button>();
         SetRect(go.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(16f, -416f), new Vector2(-32f, 60f));
         PixelBorder(go.GetComponent<RectTransform>(), "GoFrame", Ink, 3f);
         Text("GO  NEXT", go.GetComponent<RectTransform>(), 19f, FontStyles.Bold, TextAlignmentOptions.Center, Ink);

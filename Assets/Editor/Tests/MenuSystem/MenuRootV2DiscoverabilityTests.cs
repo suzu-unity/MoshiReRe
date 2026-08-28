@@ -96,6 +96,50 @@ public class MenuRootV2DiscoverabilityTests
         Assert.That(goButton, Is.Not.Null);
         Assert.That(FindText(goButton), Does.Contain("GO").And.Contain("CAFE"));
         Assert.That(goButton.GetComponent<MenuUIButtonHover>(), Is.Not.Null);
+
+        var go = goButton.GetComponent<Button>();
+        Assert.That(go.onClick.GetPersistentEventCount(), Is.GreaterThan(0));
+        Assert.That(go.onClick.GetPersistentMethodName(0), Is.EqualTo(nameof(MenuRootV2UI.ShowMap)));
+
+        var caseGo = FindChild(quest, "CaseGoToAreaButton").GetComponent<Button>();
+        Assert.That(caseGo.onClick.GetPersistentEventCount(), Is.GreaterThan(0));
+        Assert.That(caseGo.onClick.GetPersistentMethodName(0), Is.EqualTo(nameof(MenuRootV2UI.ShowMap)));
+    }
+
+    [Test]
+    public void QuestStartButton_TargetsMapPage()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        Assert.That(prefab, Is.Not.Null);
+
+        var instance = Object.Instantiate(prefab);
+        try
+        {
+            var ui = instance.GetComponent<MenuRootV2UI>();
+            Assert.That(ui, Is.Not.Null);
+            // Coroutines don't advance in a plain EditMode test. Disable only
+            // the visual transition so the persistent click route can be
+            // asserted synchronously; animation behavior is covered separately.
+            Object.DestroyImmediate(instance.GetComponent<MenuRootV2OrientationTransition>());
+            ui.ShowQuest();
+
+            var quest = FindChild(instance.transform, "PageQuest");
+            var map = FindChild(instance.transform, "PageMap");
+            Assert.That(quest.gameObject.activeSelf, Is.True);
+            Assert.That(map.gameObject.activeSelf, Is.False);
+
+            var click = FindChild(quest, "GoToAreaButton").GetComponent<Button>().onClick;
+            Assert.That(click.GetPersistentTarget(0), Is.EqualTo(ui));
+            Assert.That(click.GetPersistentMethodName(0), Is.EqualTo(nameof(MenuRootV2UI.ShowMap)));
+            ui.ShowMap();
+
+            Assert.That(quest.gameObject.activeSelf, Is.False);
+            Assert.That(map.gameObject.activeSelf, Is.True);
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]
