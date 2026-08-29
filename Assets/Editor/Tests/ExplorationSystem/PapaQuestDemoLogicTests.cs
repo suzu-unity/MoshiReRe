@@ -48,5 +48,19 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             Assert.That(office, Does.Not.Contain("@acquireExplorationItem id:old_key"));
             Assert.That(cafe, Does.Contain("@acquireExplorationItem id:old_key"));
         }
+
+        [Test]
+        public void CafeExploration_UsesCafeSpecificReRePortraitInsteadOfOfficeNpc()
+        {
+            var cafe = File.ReadAllText("Assets/Scenario/PapaCafeExploration.nani");
+            var scene = File.ReadAllText("Assets/Scenes/OfficeExploration.unity");
+            var rereGuid = AssetDatabase.AssetPathToGUID(
+                "Assets/Art/ReReSprites/rere_chibi_idle.png");
+
+            Assert.That(cafe, Does.Contain("@explorationPortrait side:left id:rere_default"));
+            Assert.That(cafe, Does.Not.Contain("@explorationPortrait side:left id:npc_default"));
+            Assert.That(scene, Does.Contain("- id: rere_default"));
+            Assert.That(scene, Does.Contain($"guid: {rereGuid}"));
+        }
     }
 }

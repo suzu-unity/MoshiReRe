@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Naninovel;
 using Naninovel.UI;
@@ -17,6 +18,7 @@ public class TitleSceneController : MonoBehaviour
     private bool routing;
     private bool startingGame;
     private TitleScreenPresentation presentation;
+    private EventSystem[] disabledTitleEventSystems = Array.Empty<EventSystem>();
 
     private void Awake()
     {
@@ -71,6 +73,15 @@ public class TitleSceneController : MonoBehaviour
         startingGame = true;
         try
         {
+            DisableTitleEventSystems();
+
+            // The project keeps Naninovel's runtime independent from scene loads.  Start it
+            // explicitly from the title flow instead of waiting for the package's automatic
+            // application-load initializer, which can race the RuntimeInitializer component
+            // on CommonUIHub and create a second runtime hierarchy during the route.
+            if (!Engine.Initialized)
+                await RuntimeInitializer.Initialize();
+
             while (!Engine.Initialized)
                 await AsyncUtils.WaitEndOfFrame();
 
@@ -91,6 +102,7 @@ public class TitleSceneController : MonoBehaviour
         catch (Exception exception)
         {
             routing = false;
+            RestoreTitleEventSystems();
             Debug.LogException(exception);
         }
         finally
@@ -123,5 +135,25 @@ public class TitleSceneController : MonoBehaviour
 
         routing = true;
         SceneManager.LoadScene(gameplaySceneName, LoadSceneMode.Single);
+    }
+
+    private void DisableTitleEventSystems()
+    {
+        var eventSystems = FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        disabledTitleEventSystems = Array.FindAll(
+            eventSystems,
+            eventSystem => eventSystem != null &&
+                           eventSystem.enabled &&
+                           eventSystem.gameObject.scene == gameObject.scene);
+        foreach (var eventSystem in disabledTitleEventSystems)
+            eventSystem.enabled = false;
+    }
+
+    private void RestoreTitleEventSystems()
+    {
+        foreach (var eventSystem in disabledTitleEventSystems)
+            if (eventSystem != null)
+                eventSystem.enabled = true;
+        disabledTitleEventSystems = Array.Empty<EventSystem>();
     }
 }

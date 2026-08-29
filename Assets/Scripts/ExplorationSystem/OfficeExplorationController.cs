@@ -100,13 +100,16 @@ namespace MoshiReRe.Exploration
                 arrivingNpc.gameObject.SetActive(false);
 
             ConfigureCafeInteraction("OfficeDesk_01", "PapaCafeExitTable",
-                "待ち合わせ席を確認する", "下調べを終えるなら、この席で待とう。", true);
+                "待ち合わせ席を確認する", "下調べを終えるなら、この席で待とう。", true,
+                "rere_default");
             ConfigureCafeInteraction("OfficeDesk_02", "PapaCafeClue",
-                "窓際の席を調べる", "ReReが気にしていた席だ。小物を確認してみよう。", false);
+                "窓際の席を調べる", "ReReが気にしていた席だ。小物を確認してみよう。", false,
+                string.Empty);
 
             for (var index = 3; index <= 5; index++)
                 ConfigureCafeInteraction($"OfficeDesk_{index:00}", "PapaCafeGeneric",
-                    "店内を調べる", "待ち合わせ前なら、客の導線と席の距離を見ておける。", false);
+                    "店内を調べる", "待ち合わせ前なら、客の導線と席の距離を見ておける。", false,
+                    string.Empty);
         }
 
         private static void ConfigureCafeInteraction(
@@ -114,7 +117,8 @@ namespace MoshiReRe.Exploration
             string label,
             string prompt,
             string fallback,
-            bool showNpcPortrait)
+            bool showNpcPortrait,
+            string npcPortraitVariant)
         {
             var target = GameObject.Find(objectName);
             var interaction = target != null ? target.GetComponent<NaninovelDialogueInteractable>() : null;
@@ -124,7 +128,7 @@ namespace MoshiReRe.Exploration
             interaction.ConfigurePrompt(prompt);
             interaction.ConfigureScenario("Scenario/PapaCafeExploration", label);
             interaction.ConfigureFallback("ReRe", fallback);
-            interaction.ConfigurePortraits(showNpcPortrait, "player_default", "npc_default");
+            interaction.ConfigurePortraits(showNpcPortrait, "player_default", npcPortraitVariant);
         }
 
         public async UniTask SlideNpcAsync()

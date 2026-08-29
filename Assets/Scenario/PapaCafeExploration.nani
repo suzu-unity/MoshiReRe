@@ -20,7 +20,7 @@ Wanabi: 席番号17の真鍮タグを手に入れた。
 # PapaCafeExitTable
 @printer Dialogue
 @showPrinter Dialogue
-@explorationPortrait side:left id:npc_default
+@explorationPortrait side:left id:rere_default
 @explorationPortrait side:right id:player_default
 
 ReRe: 「下調べは、もう十分ですか？」

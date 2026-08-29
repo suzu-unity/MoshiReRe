@@ -5,6 +5,7 @@ using MoshiReRe.Exploration.State;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace MoshiReRe.Exploration
 {
@@ -61,8 +62,9 @@ namespace MoshiReRe.Exploration
         private int dialogueOpenedFrame;
         private ExplorationDialoguePortraits activePortraitPresenter;
         private int portraitPresentationId;
-        private SpriteRenderer backgroundSnapshot;
-        private Material backgroundSnapshotMaterial;
+        private Canvas backgroundOverlay;
+        private SpriteRenderer[] hiddenPlayerRenderers = Array.Empty<SpriteRenderer>();
+        private bool[] hiddenPlayerRendererStates = Array.Empty<bool>();
 
         public event Action DialogueStarted;
         public event Action DialogueFinished;
@@ -151,6 +153,7 @@ namespace MoshiReRe.Exploration
             SuppressToggleUiInput();
             BeginBackgroundSnapshot();
             BeginPortraitPresentation(player);
+            HideWorldPlayer(player);
             DialogueStarted?.Invoke();
 
             try
@@ -260,8 +263,8 @@ namespace MoshiReRe.Exploration
                     coordinator.ClearReturnToNovelRequest();
                     ReleaseContinueInput();
                     RestoreToggleUiInput();
-                    EndBackgroundSnapshot();
                     EndPortraitPresentation();
+                    RestoreWorldPlayer();
                     if (restoreMovement)
                         player?.SetMovementEnabled(true);
 
@@ -275,8 +278,8 @@ namespace MoshiReRe.Exploration
         {
             ReleaseContinueInput();
             RestoreToggleUiInput();
-            EndBackgroundSnapshot();
             EndPortraitPresentation();
+            RestoreWorldPlayer();
             dialoguePlaying = false;
             DialogueFinished?.Invoke();
         }
@@ -578,8 +581,6 @@ namespace MoshiReRe.Exploration
 
         private void BeginBackgroundSnapshot()
         {
-            EndBackgroundSnapshot();
-
             var backgroundObject = GameObject.Find("RoomBackground");
             var source = backgroundObject != null
                 ? backgroundObject.GetComponent<SpriteRenderer>()
@@ -587,55 +588,117 @@ namespace MoshiReRe.Exploration
             if (source == null || source.sprite == null)
                 return;
 
-            backgroundSnapshot = CreateBackgroundSnapshot(source, out backgroundSnapshotMaterial);
-        }
+            if (backgroundOverlay == null)
+            {
+                var sceneCamera = FindSceneCamera(source.gameObject.scene);
+                backgroundOverlay = CreateBackgroundOverlay(source, sceneCamera);
+            }
 
-        private void EndBackgroundSnapshot()
-        {
-            if (backgroundSnapshot != null)
-                Destroy(backgroundSnapshot.gameObject);
-            if (backgroundSnapshotMaterial != null)
-                Destroy(backgroundSnapshotMaterial);
-            backgroundSnapshot = null;
-            backgroundSnapshotMaterial = null;
+            // Once Naninovel has loaded an exploration dialogue, the scene's Sprite-Lit
+            // backdrop can render as opaque white. The camera-space UI copy becomes the
+            // authoritative backdrop for the remainder of this exploration scene.
+            source.enabled = false;
         }
 
         /// <summary>
-        /// Creates an independent renderer for the current exploration background. Starting a
-        /// Naninovel script can invalidate an already-batched scene SpriteRenderer even though
-        /// its public state remains enabled; a fresh unlit renderer keeps the authored backdrop
-        /// visible for the lifetime of the dialogue.
+        /// Creates a screen-space copy of the exploration backdrop below the portrait and
+        /// dialogue canvases. Naninovel changes the 2D renderer state while loading a script;
+        /// keeping this copy in UI space avoids both the white Sprite-Lit result and the world
+        /// player remaining visible between the two ADV portraits.
         /// </summary>
-        public static SpriteRenderer CreateBackgroundSnapshot(
-            SpriteRenderer source,
-            out Material snapshotMaterial)
+        public static Canvas CreateBackgroundOverlay(SpriteRenderer source, Camera sceneCamera)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            var snapshotObject = new GameObject("ExplorationDialogueBackgroundSnapshot");
-            snapshotObject.layer = source.gameObject.layer;
-            snapshotObject.transform.SetParent(source.transform, false);
+            var overlayObject = new GameObject(
+                "ExplorationDialogueBackgroundOverlay",
+                typeof(RectTransform),
+                typeof(Canvas));
+            SceneManager.MoveGameObjectToScene(overlayObject, source.gameObject.scene);
 
-            var snapshot = snapshotObject.AddComponent<SpriteRenderer>();
-            snapshot.sprite = source.sprite;
-            snapshot.color = source.color;
-            snapshot.flipX = source.flipX;
-            snapshot.flipY = source.flipY;
-            snapshot.drawMode = source.drawMode;
-            snapshot.size = source.size;
-            snapshot.maskInteraction = source.maskInteraction;
-            snapshot.spriteSortPoint = source.spriteSortPoint;
-            snapshot.sortingLayerID = source.sortingLayerID;
-            snapshot.sortingOrder = source.sortingOrder;
-            snapshot.renderingLayerMask = source.renderingLayerMask;
+            var canvas = overlayObject.GetComponent<Canvas>();
+            if (sceneCamera != null)
+            {
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.worldCamera = sceneCamera;
+                canvas.planeDistance = 100f;
+                canvas.sortingOrder = -100;
+            }
+            else
+            {
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 190;
+            }
 
-            var shader = Shader.Find("Sprites/Default");
-            snapshotMaterial = shader != null ? new Material(shader) : null;
-            snapshot.sharedMaterial = snapshotMaterial != null
-                ? snapshotMaterial
-                : source.sharedMaterial;
-            return snapshot;
+            var imageObject = new GameObject(
+                "Backdrop",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Image));
+            var imageRect = imageObject.GetComponent<RectTransform>();
+            imageRect.SetParent(canvas.transform, false);
+            imageRect.anchorMin = Vector2.zero;
+            imageRect.anchorMax = Vector2.zero;
+            imageRect.pivot = Vector2.zero;
+
+            var image = imageObject.GetComponent<Image>();
+            image.sprite = source.sprite;
+            image.color = source.color;
+            image.preserveAspect = false;
+            image.raycastTarget = false;
+
+            if (sceneCamera != null)
+            {
+                var bounds = source.bounds;
+                var screenMin = sceneCamera.WorldToScreenPoint(bounds.min);
+                var screenMax = sceneCamera.WorldToScreenPoint(bounds.max);
+                imageRect.anchoredPosition = new Vector2(screenMin.x, screenMin.y);
+                imageRect.sizeDelta = new Vector2(
+                    Mathf.Abs(screenMax.x - screenMin.x),
+                    Mathf.Abs(screenMax.y - screenMin.y));
+            }
+            else
+            {
+                imageRect.anchorMax = Vector2.one;
+                imageRect.offsetMin = Vector2.zero;
+                imageRect.offsetMax = Vector2.zero;
+            }
+
+            return canvas;
+        }
+
+        private static Camera FindSceneCamera(Scene scene)
+        {
+            var cameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < cameras.Length; i++)
+                if (cameras[i].gameObject.scene == scene && cameras[i].enabled)
+                    return cameras[i];
+            return null;
+        }
+
+        private void HideWorldPlayer(ExplorationPlayerController player)
+        {
+            RestoreWorldPlayer();
+            if (player == null)
+                return;
+
+            hiddenPlayerRenderers = player.GetComponentsInChildren<SpriteRenderer>(true);
+            hiddenPlayerRendererStates = new bool[hiddenPlayerRenderers.Length];
+            for (var i = 0; i < hiddenPlayerRenderers.Length; i++)
+            {
+                hiddenPlayerRendererStates[i] = hiddenPlayerRenderers[i].enabled;
+                hiddenPlayerRenderers[i].enabled = false;
+            }
+        }
+
+        private void RestoreWorldPlayer()
+        {
+            for (var i = 0; i < hiddenPlayerRenderers.Length; i++)
+                if (hiddenPlayerRenderers[i] != null)
+                    hiddenPlayerRenderers[i].enabled = hiddenPlayerRendererStates[i];
+            hiddenPlayerRenderers = Array.Empty<SpriteRenderer>();
+            hiddenPlayerRendererStates = Array.Empty<bool>();
         }
 
         private void EndPortraitPresentation()

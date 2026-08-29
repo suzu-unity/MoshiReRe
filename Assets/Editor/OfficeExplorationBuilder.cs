@@ -24,6 +24,7 @@ public static class OfficeExplorationBuilder
     private const string PapaCafeBackgroundPath = BackgroundRoot + "/02_bakery_cafe.png";
     private const string CompanySeatedCgPath = "Assets/Art/ScenarioCG/PLACEHOLDER_REPLACE_ME_company_seated.png";
     private const string PapaCafeKeyCgPath = "Assets/Art/ScenarioCG/PLACEHOLDER_REPLACE_ME_papa_cafe_key.png";
+    private const string ReRePortraitPath = "Assets/Art/ReReSprites/rere_chibi_idle.png";
 
     private static readonly string[] BackgroundPaths =
     {
@@ -133,7 +134,8 @@ public static class OfficeExplorationBuilder
             ("player_default", LoadSpriteFrame(PlayerPortraitStripPath, "PlayerCasual_01")),
             ("player_alt", LoadSpriteFrame(PlayerPortraitStripPath, "PlayerCasual_02")),
             ("npc_default", LoadSpriteFrame(NpcPortraitStripPath, "Npc_01")),
-            ("npc_alt", LoadSpriteFrame(NpcPortraitStripPath, "Npc_02"))
+            ("npc_alt", LoadSpriteFrame(NpcPortraitStripPath, "Npc_02")),
+            ("rere_default", AssetDatabase.LoadAssetAtPath<Sprite>(ReRePortraitPath))
         });
     }
 

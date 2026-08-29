@@ -206,13 +206,13 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
         }
 
         [Test]
-        public void CreateBackgroundSnapshot_CopiesBackdropPresentationToIndependentRenderer()
+        public void CreateBackgroundOverlay_CopiesBackdropBelowPortraitCanvas()
         {
             var sourceObject = new GameObject("RoomBackground");
-            Material snapshotMaterial = null;
             Texture2D texture = null;
             Sprite sprite = null;
-            GameObject snapshotObject = null;
+            Canvas overlay = null;
+            var cameraObject = new GameObject("ExplorationCamera", typeof(Camera));
             try
             {
                 texture = new Texture2D(4, 4);
@@ -223,29 +223,28 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
                 source.flipX = true;
                 source.sortingOrder = -20;
 
-                var snapshot = NaninovelDialogueInteractable.CreateBackgroundSnapshot(
-                    source,
-                    out snapshotMaterial);
-                snapshotObject = snapshot.gameObject;
+                var camera = cameraObject.GetComponent<Camera>();
+                camera.orthographic = true;
+                overlay = NaninovelDialogueInteractable.CreateBackgroundOverlay(source, camera);
+                var image = overlay.GetComponentInChildren<UnityEngine.UI.Image>();
 
-                Assert.That(snapshot, Is.Not.SameAs(source));
-                Assert.That(snapshot.transform.parent, Is.EqualTo(source.transform));
-                Assert.That(snapshot.sprite, Is.SameAs(source.sprite));
-                Assert.That(snapshot.color, Is.EqualTo(source.color));
-                Assert.That(snapshot.flipX, Is.True);
-                Assert.That(snapshot.sortingOrder, Is.EqualTo(source.sortingOrder));
-                Assert.That(snapshot.sharedMaterial, Is.Not.Null);
+                Assert.That(overlay.renderMode, Is.EqualTo(RenderMode.ScreenSpaceCamera));
+                Assert.That(overlay.worldCamera, Is.SameAs(camera));
+                Assert.That(overlay.sortingOrder, Is.EqualTo(-100));
+                Assert.That(image, Is.Not.Null);
+                Assert.That(image.sprite, Is.SameAs(source.sprite));
+                Assert.That(image.color, Is.EqualTo(source.color));
+                Assert.That(image.raycastTarget, Is.False);
             }
             finally
             {
-                if (snapshotObject != null)
-                    Object.DestroyImmediate(snapshotObject);
-                if (snapshotMaterial != null)
-                    Object.DestroyImmediate(snapshotMaterial);
+                if (overlay != null)
+                    Object.DestroyImmediate(overlay.gameObject);
                 if (sprite != null)
                     Object.DestroyImmediate(sprite);
                 if (texture != null)
                     Object.DestroyImmediate(texture);
+                Object.DestroyImmediate(cameraObject);
                 Object.DestroyImmediate(sourceObject);
             }
         }
