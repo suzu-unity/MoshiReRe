@@ -103,6 +103,13 @@ public class CharacterInformationNodePanel : MonoBehaviour
         row.SetActive(true);
         rows.Add(row);
 
+        var suppliedCard = row.GetComponent<MenuInformationNodeCard>();
+        if (suppliedCard)
+        {
+            suppliedCard.Bind(node);
+            return;
+        }
+
         var rowRect = row.GetComponent<RectTransform>();
         if (rowRect) rowRect.anchoredPosition = new Vector2(0f, -(rows.Count - 1) * 82f);
 

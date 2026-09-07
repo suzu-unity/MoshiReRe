@@ -50,6 +50,13 @@ public sealed class MenuRootV2OrientationTransition : MonoBehaviour
         if (targetPage == currentPage)
             return true;
 
+        if (currentPageIsPortrait == targetIsPortrait)
+        {
+            applyPageState?.Invoke();
+            currentPage = targetPage;
+            return true;
+        }
+
         transitionRoutine = StartCoroutine(TransitionRoutine(targetPage, targetIsPortrait, applyPageState));
         return true;
     }

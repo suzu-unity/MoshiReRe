@@ -96,7 +96,8 @@ public class MenuTopReReMascot : MonoBehaviour
     public void PlaceForMenuOpen()
     {
         basePosition = fixedBottomRightPosition;
-        StartMotion(PickMotionSet(), true);
+        clickBubbleTimer = 0f;
+        StartMotion(FindMotion("read_book") ?? PickMotionSet(), true);
     }
 
     private void StartMotion(MotionSet motion, bool resetPosition)
@@ -114,7 +115,7 @@ public class MenuTopReReMascot : MonoBehaviour
         if (resetPosition || currentMotion == null || !currentMotion.walkMotion)
             mascot.anchoredPosition = basePosition;
 
-        mascot.localScale = Vector3.one;
+        mascot.localScale = Vector3.one * (currentMotion != null && currentMotion.id == "read_book" ? .82f : 1f);
 
         if (currentMotion != null && currentMotion.walkMotion)
         {

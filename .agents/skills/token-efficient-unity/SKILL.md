@@ -133,29 +133,30 @@ Preserve pre-existing enabled groups and restore only changes made by this task.
 If the current environment does not expose that control, do not simulate it or
 modify configuration in its place.
 
-## Model and delegation discipline
+## Single-agent execution discipline
 
-Respect the model selected by the parent task. When GPT-6 Astra is available,
-use it for task decomposition, cross-system design, MCP planning, difficult or
-unclear debugging, and the final integration review. Assign substantial,
-well-scoped implementation and verification work directly to Luna max when
-delegation is available. Keep trivial edits, renames, routine one-file fixes,
-and simple GameObject operations with the current agent.
+Complete the task in the current agent by default. Treat single-agent execution
+as the normal path for discovery, planning, implementation, file editing, Unity
+MCP operations, compilation, runtime testing, debugging, and visual QA.
 
-Pass only the objective, acceptance criteria, owned files, relevant references,
-and verification commands; do not fork full history. Keep asset generation,
-implementation, and Unity integration separately owned when practical; reuse
-the returned artifact. Escalate ambiguity, unexpected cross-system impact,
-unsafe operations, or repeated verification failures to the parent. Lower
-Luna workers are optional for bounded independent work only when the handoff
-cost is justified; Luna max integrates and verifies their results.
+Do not create, route work to, or coordinate subagents, workers, or alternate
+models merely because a task can be decomposed or parallelized. Do not delegate
+separate implementation, inspection, screenshot, hierarchy, console, test, or
+verification steps. Avoid multi-agent orchestration instructions and model-
+specific routing rules; let the current agent perform the coherent workflow
+directly so context and evidence stay in one place.
 
-Avoid duplicate reviews and unnecessary multi-stage delegation. Use one clear owner for a
-work unit and at most one focused implementation/verification handoff plus the
-parent's final review when that adds evidence. Do not delegate merely to repeat
-the same inspection, screenshot, hierarchy query, or console query. If model
-switching or delegation is unavailable, follow the same bounded workflow in
-the current model.
+An exception is allowed for one independent final review after implementation
+and required verification are complete. Use that review only when the change is
+large, risky, cross-system, or otherwise benefits from genuinely independent
+inspection. The reviewer must not redo routine implementation or repeat broad
+Unity exploration. Pass only the changed diff, acceptance criteria, relevant
+files or references, and focused review questions. Do not chain reviews or
+spawn additional reviewers.
+
+If no independent review is needed, finish in the current agent. The absence of
+delegation is not a verification shortcut: all required structural, runtime,
+and visual checks defined by this skill still apply.
 
 ## Handoff and completion
 

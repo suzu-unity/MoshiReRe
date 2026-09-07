@@ -12,9 +12,9 @@ public class MenuUIButtonHoverTests
             button.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
             var hover = button.AddComponent<MenuUIButtonHover>();
             // Plain EditMode tests do not run MonoBehaviour.Awake automatically.
-            hover.SendMessage("Awake");
+            InvokeLifecycle(hover, "Awake");
             button.transform.localScale *= 1.06f;
-            hover.SendMessage("OnDisable");
+            InvokeLifecycle(hover, "OnDisable");
             Assert.That(button.transform.localScale, Is.EqualTo(new Vector3(0.9f, 0.9f, 1f)));
         }
         finally { Object.DestroyImmediate(button); }
@@ -27,9 +27,14 @@ public class MenuUIButtonHoverTests
         try
         {
             var hover = button.AddComponent<MenuUIButtonHover>();
-            hover.SendMessage("OnDisable");
+            InvokeLifecycle(hover, "OnDisable");
             Assert.That(button.transform.localScale, Is.EqualTo(Vector3.one));
         }
         finally { Object.DestroyImmediate(button); }
+    }
+
+    private static void InvokeLifecycle(MenuUIButtonHover hover, string method)
+    {
+        typeof(MenuUIButtonHover).GetMethod(method, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(hover, null);
     }
 }

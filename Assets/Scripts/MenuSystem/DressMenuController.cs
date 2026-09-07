@@ -61,6 +61,10 @@ public class DressMenuController : MonoBehaviour
     [SerializeField] private float outfitFrameInterval = 0.13f;
     [SerializeField] private Image fittingSpriteTint;
     [SerializeField] private OutfitData[] outfits;
+    [SerializeField] private Sprite[] suppliedStandingSprites;
+    [SerializeField] private Sprite[] suppliedClosetSprites;
+    [SerializeField] private bool equipOnSelection;
+    private bool selectionInitialized;
 
     private int selectedIndex;
     private int appliedIndex = -1;
@@ -293,14 +297,29 @@ public class DressMenuController : MonoBehaviour
         if (noButton) noButton.onClick.RemoveListener(CancelSelection);
     }
 
-    private void SelectOutfit(int index)
+    public void SelectOutfit(int index)
     {
         if (outfits == null || outfits.Length == 0)
             return;
 
         selectedIndex = Mathf.Clamp(index, 0, outfits.Length - 1);
+        for (var i = 0; i < outfits.Length; i++)
+        {
+            if (suppliedStandingSprites != null && i < suppliedStandingSprites.Length && suppliedStandingSprites[i]) outfits[i].standingSprite = suppliedStandingSprites[i];
+            if (suppliedClosetSprites != null && i < suppliedClosetSprites.Length && suppliedClosetSprites[i]) outfits[i].closetIcon = suppliedClosetSprites[i];
+        }
         RefreshOutfitPreview();
+        if (equipOnSelection)
+        {
+            displayedOutfitIndex = selectedIndex;
+            RefreshAppliedOutfitSprite();
+            if (selectionInitialized) ApplyBonusToStatus();
+        }
+        selectionInitialized = true;
     }
+
+    public void SelectPreviousOutfit() => SelectOutfit((selectedIndex + outfits.Length - 1) % outfits.Length);
+    public void SelectNextOutfit() => SelectOutfit((selectedIndex + 1) % outfits.Length);
 
     private void RefreshOutfitPreview()
     {

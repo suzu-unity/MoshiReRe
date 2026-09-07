@@ -123,8 +123,11 @@ public class MenuRootV2UI : CustomUI
 
     private void ApplyPage(GameObject target)
     {
+        var suppliedNavigation = GetComponent<MenuPhoneNavigation>();
+        if (suppliedNavigation)
+            suppliedNavigation.Select(target == pageTop ? 0 : target == pageStatus ? 1 : target == pageItems ? 2 : target == pageCharacters ? 3 : target == pageQuest ? 4 : target == pageMap ? 5 : target == pageSave ? 6 : 7);
         if (standardPhoneLayer)
-            standardPhoneLayer.SetActive(target != pageTop && target != pageStatus && target != pageItems && target != pageCharacters);
+            standardPhoneLayer.SetActive(target != pageTop);
 
         SetActive(pageTop, target);
         SetActive(pageStatus, target);

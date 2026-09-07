@@ -15,13 +15,13 @@ public class MenuRootV2DiscoverabilityTests
         Assert.That(prefab, Is.Not.Null, "MenuRootV2 prefab should be generated before running this test.");
 
         var top = FindChild(prefab.transform, "PageTop");
-        var mapButton = FindChild(top, "HudMapButton");
+        var mapButton = FindChild(top, "MapTileHitbox");
         Assert.That(mapButton, Is.Not.Null);
         var mapButtonComponent = mapButton.GetComponent<Button>();
         Assert.That(mapButtonComponent, Is.Not.Null);
         Assert.That(mapButton.GetComponent<MenuUIButtonHover>(), Is.Not.Null);
         Assert.That(mapButtonComponent.colors.pressedColor, Is.Not.EqualTo(mapButtonComponent.colors.normalColor));
-        Assert.That(FindText(mapButton), Does.Contain("初回ターゲット").And.Contain("カフェ下調べ"));
+        Assert.That(FindText(mapButton), Does.Contain("MAP"));
 
         var ui = prefab.GetComponent<MenuRootV2UI>();
         var serialized = new SerializedObject(ui);
@@ -63,19 +63,66 @@ public class MenuRootV2DiscoverabilityTests
     }
 
     [Test]
-    public void DashboardAndConversationStayInsideReferenceFrame()
+    public void PhoneFramesReplaceDashboardAndFreeInput()
     {
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         Assert.That(prefab, Is.Not.Null);
 
-        var frame = FindChild(prefab.transform, "PortraitPhonePresentation").GetComponent<RectTransform>();
-        var demo = FindChild(prefab.transform, "FirstTargetDemoPanel").GetComponent<RectTransform>();
-        var conversation = FindChild(prefab.transform, "ReReConversation").GetComponent<RectTransform>();
-        Assert.That(frame.sizeDelta.x, Is.LessThanOrEqualTo(1760f));
-        Assert.That(frame.sizeDelta.y, Is.LessThanOrEqualTo(980f));
-        Assert.That(demo.sizeDelta.x, Is.LessThanOrEqualTo(frame.sizeDelta.x));
-        Assert.That(conversation.sizeDelta.x, Is.EqualTo(500f));
-        Assert.That(conversation.anchoredPosition.x, Is.EqualTo(-112f));
+        var shell = FindChild(prefab.transform, "SharedLandscapeShell").GetComponent<RectTransform>();
+        var portrait = FindChild(prefab.transform, "PortraitPhonePresentation").GetComponent<RectTransform>();
+        Assert.That(shell.sizeDelta.x, Is.LessThanOrEqualTo(1920f));
+        Assert.That(shell.sizeDelta.y, Is.LessThanOrEqualTo(1080f));
+        Assert.That(portrait.anchoredPosition.x, Is.GreaterThan(400f));
+        Assert.That(portrait.sizeDelta.y, Is.GreaterThan(portrait.sizeDelta.x));
+        Assert.That(FindChild(shell, "OuterPhoneBezel"), Is.Not.Null);
+        foreach (var bezel in prefab.GetComponentsInChildren<MenuPhoneBezel>(true))
+            Assert.That(bezel.GetComponent<CanvasRenderer>(), Is.Not.Null);
+        Assert.That(prefab.GetComponentInChildren<TMP_InputField>(true), Is.Null);
+        Assert.That(prefab.GetComponentInChildren<ReReConversationUI>(true), Is.Null);
+    }
+
+    [Test]
+    public void LandscapeNavigation_DoesNotStartTransition()
+    {
+        var host = new GameObject("PhoneTransitionTest");
+        var first = new GameObject("First", typeof(RectTransform));
+        var next = new GameObject("Next", typeof(RectTransform));
+        try
+        {
+            var transition = host.AddComponent<MenuRootV2OrientationTransition>();
+            transition.SetInitialPage(first, false);
+            var applied = false;
+            Assert.That(transition.RequestPage(next, false, () => applied = true), Is.True);
+            Assert.That(applied, Is.True);
+            Assert.That(transition.IsTransitioning, Is.False);
+        }
+        finally
+        {
+            Object.DestroyImmediate(host);
+            Object.DestroyImmediate(first);
+            Object.DestroyImmediate(next);
+        }
+    }
+
+    [Test]
+    public void NavigationMarker_FollowsEveryPage()
+    {
+        var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath));
+        try
+        {
+            var ui = instance.GetComponent<MenuRootV2UI>();
+            Object.DestroyImmediate(instance.GetComponent<MenuRootV2OrientationTransition>());
+            var actions = new System.Action[] { ui.ShowTop, ui.ShowStatus, ui.ShowItems, ui.ShowCharacters, ui.ShowQuest, ui.ShowMap, ui.ShowSave, ui.ShowSettings };
+            var names = new[] { "TopButton", "StatusButton", "ItemsButton", "CharactersButton", "QuestButton", "MapButton", "SaveButton", "SettingsButton" };
+            var nav = FindChild(instance.transform, "PersistentNav");
+            for (var index = 0; index < actions.Length; index++)
+            {
+                actions[index]();
+                for (var other = 0; other < names.Length; other++)
+                    Assert.That(FindChild(FindChild(nav, names[other]), "MenuPageActiveMark").gameObject.activeSelf, Is.EqualTo(index == other));
+            }
+        }
+        finally { Object.DestroyImmediate(instance); }
     }
 
     [Test]

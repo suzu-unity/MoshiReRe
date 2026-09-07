@@ -191,6 +191,12 @@ public sealed class ReReConversationUI : MonoBehaviour
 
         if (speechText)
             speechText.text = message ?? string.Empty;
+        var scroll = speechBubbleRoot ? speechBubbleRoot.GetComponent<ScrollRect>() : null;
+        if (scroll)
+        {
+            Canvas.ForceUpdateCanvases();
+            scroll.verticalNormalizedPosition = 1f;
+        }
         if (speechBubbleRoot)
             speechBubbleRoot.SetActive(true);
         if (speechCanvasGroup)

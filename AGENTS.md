@@ -46,8 +46,11 @@ Typical entry points are `MenuRootUI`, `MoneyManager`, `AdviceTrigger`, and
 For Unity Editor or Unity MCP work, or whenever hierarchy, console, screenshots,
 domain reloads, or repeated tool verification are involved, load and follow
 `.agents/skills/token-efficient-unity/SKILL.md`. It contains the detailed
-cost-aware workflow, capability checks, delegation guidance, and verification
-requirements; it does not authorize changing game settings or content merely
-to reduce tool usage.
-For substantial implementation delegated to Luna max, also read that skill's
-model/delegation and handoff sections. Keep trivial work with the current agent.
+cost-aware workflow, capability checks, and verification requirements; it does
+not authorize changing game settings or content merely to reduce tool usage.
+
+Complete the requested work in the current agent by default. Do not introduce
+subagents, workers, model routing, or multi-agent orchestration for
+implementation, investigation, Unity operations, testing, debugging, or visual
+QA. A single independent review may be used only after the implementation is
+complete, and only when that review provides meaningful additional assurance.

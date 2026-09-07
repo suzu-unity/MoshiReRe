@@ -55,6 +55,7 @@ public class ItemMenuController : MonoBehaviour
     [SerializeField] private Vector2 zipperPathHalfSize = new Vector2(232f, 160f);
     [SerializeField] private int maxCarryItems = 4;
     [SerializeField] private InventoryDatabase inventoryDatabase;
+    [SerializeField] private Sprite[] suppliedItemIcons;
     [SerializeField] private ItemDraft[] items;
 
     private readonly int[] carryIndexes = new int[8];
@@ -225,14 +226,16 @@ public class ItemMenuController : MonoBehaviour
 
             var displayName = item.GetDisplayName();
             var id = string.IsNullOrWhiteSpace(item.id) ? item.name : item.id;
+            var sourceIndex = inventoryDatabase.items.IndexOf(item);
+            var supplied = suppliedItemIcons != null && sourceIndex >= 0 && sourceIndex < suppliedItemIcons.Length ? suppliedItemIcons[sourceIndex] : null;
             loadedItems.Add(new ItemDraft
             {
                 id = id,
                 displayName = displayName,
                 summary = item.summary,
                 description = item.description,
-                icon = item.icon,
-                detailImage = item.detailImage,
+                icon = supplied ? supplied : item.icon,
+                detailImage = supplied ? supplied : item.detailImage,
                 color = DefaultItemColor(loadedItems.Count)
             });
         }

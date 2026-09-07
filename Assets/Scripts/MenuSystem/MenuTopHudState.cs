@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Keeps the portrait home HUD readable while allowing live game state and
@@ -32,6 +33,10 @@ public sealed class MenuTopHudState : MonoBehaviour
     [SerializeField] private TextMeshProUGUI debtDaysText;
     [SerializeField] private TextMeshProUGUI moneyText;
     [SerializeField] private GameObject debtUrgencyMark;
+    [SerializeField] private TMP_Text staminaText;
+    [SerializeField] private Image staminaFill;
+    [SerializeField] private int initialStamina = 85;
+    [SerializeField] private int maximumStamina = 100;
 
     [Header("Fallback Values")]
     [SerializeField, Min(0)] private int initialDay = 3;
@@ -51,6 +56,7 @@ public sealed class MenuTopHudState : MonoBehaviour
         SetDay(initialDay);
         SetDebtDays(initialDebtDays);
         SetMoney(initialMoney);
+        SetStamina(initialStamina, maximumStamina);
     }
 
     private void OnEnable()
@@ -76,7 +82,7 @@ public sealed class MenuTopHudState : MonoBehaviour
     {
         initialDebtDays = Mathf.Max(0, days);
         if (debtDaysText)
-            debtDaysText.text = $"{initialDebtDays} DAYS";
+            debtDaysText.text = $"返済期限\nあと{initialDebtDays}日";
         if (debtUrgencyMark)
             debtUrgencyMark.SetActive(initialDebtDays <= urgentDebtDays);
     }
@@ -87,6 +93,14 @@ public sealed class MenuTopHudState : MonoBehaviour
         initialMoney = money;
         if (moneyText)
             moneyText.text = $"¥ {FormatMoney(money)}";
+    }
+
+    public void SetStamina(int current, int maximum)
+    {
+        maximumStamina = Mathf.Max(1, maximum);
+        initialStamina = Mathf.Clamp(current, 0, maximumStamina);
+        if (staminaText) staminaText.text = $"{initialStamina}/{maximumStamina}";
+        if (staminaFill) staminaFill.fillAmount = (float)initialStamina / maximumStamina;
     }
 
     /// <summary>Sets a notification count for one independently addressable HUD action.</summary>
