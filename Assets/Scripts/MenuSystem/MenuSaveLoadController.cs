@@ -100,7 +100,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private async UniTask Refresh()
     {
-        if (modeLabel) modeLabel.text = saveMode ? "SAVE" : "LOAD";
+        if (modeLabel) modeLabel.text = saveMode ? "セーブ / 記録する" : "ロード / 記録から再開";
         if (!TryGetStateManager()) return;
         for (var i = 0; i < slots.Length; i++)
         {
@@ -109,12 +109,12 @@ public sealed class MenuSaveLoadController : MonoBehaviour
             var label = slots[i].DetailLabel;
             if (label)
             {
-                if (!exists) label.text = $"SLOT {i + 1:00}\nEMPTY";
+                if (!exists) label.text = $"SLOT {i + 1:00}\n空きスロット";
                 else
                 {
                     var state = await stateManager.GameSlotManager.Load(slotId);
                     var progress = state == null ? null : state.PlaybackSpot.ScriptPath;
-                    label.text = $"SLOT {i + 1:00}\n{state?.SaveDateTime:yyyy/MM/dd HH:mm}\n{(string.IsNullOrEmpty(progress) ? "PROGRESS" : progress)}";
+                    label.text = $"SLOT {i + 1:00}\n{state?.SaveDateTime:yyyy/MM/dd HH:mm}\n{(string.IsNullOrEmpty(progress) ? "進行状況の記録" : progress)}";
                 }
             }
             if (slots[i].DeleteButton) slots[i].DeleteButton.gameObject.SetActive(exists);
@@ -127,7 +127,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
         var slotId = stateManager.Configuration.IndexToSaveSlotId(index + 1);
         if (!saveMode && !stateManager.GameSlotManager.SaveSlotExists(slotId)) return;
         if (saveMode && stateManager.GameSlotManager.SaveSlotExists(slotId))
-            ShowConfirmation(index, false, "OVERWRITE THIS SAVE?");
+            ShowConfirmation(index, false, $"スロット {index + 1:00} に上書きしますか？\n元の記録は戻せません。");
         else Execute(index, false).Forget();
     }
 
@@ -135,7 +135,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
     {
         if (!TryGetStateManager()) return;
         var slotId = stateManager.Configuration.IndexToSaveSlotId(index + 1);
-        if (stateManager.GameSlotManager.SaveSlotExists(slotId)) ShowConfirmation(index, true, "DELETE THIS SAVE?");
+        if (stateManager.GameSlotManager.SaveSlotExists(slotId)) ShowConfirmation(index, true, $"スロット {index + 1:00} を削除しますか？\n削除した記録は戻せません。");
     }
 
     private void ShowConfirmation(int index, bool delete, string message)

@@ -134,6 +134,22 @@ public class MenuRootV2UI : CustomUI
         SetActive(pageMap, target);
         SetActive(pageSave, target);
         SetActive(pageSettings, target);
+
+        SetNavigationMarker(topButton, target == pageTop);
+        SetNavigationMarker(statusButton, target == pageStatus);
+        SetNavigationMarker(itemsButton, target == pageItems);
+        SetNavigationMarker(charactersButton, target == pageCharacters);
+        SetNavigationMarker(questButton, target == pageQuest);
+        SetNavigationMarker(mapButton, target == pageMap);
+        SetNavigationMarker(saveButton, target == pageSave);
+        SetNavigationMarker(settingsButton, target == pageSettings);
+    }
+
+    private static void SetNavigationMarker(Button button, bool selected)
+    {
+        if (!button) return;
+        var marker = button.transform.Find("MenuPageActiveMark");
+        if (marker) marker.gameObject.SetActive(selected);
     }
 
     private static void SetActive(GameObject page, GameObject target)

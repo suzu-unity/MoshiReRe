@@ -9,10 +9,21 @@ public class MenuUIButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [SerializeField] private float dur = 0.12f;
 
     Vector3 baseScale;
+    bool initialized;
 
     void Awake()
     {
         baseScale = transform.localScale;
+        initialized = true;
+    }
+
+    void OnDisable()
+    {
+        // Page changes can disable a hovered button before PointerExit arrives.
+        // Never carry its enlarged/pressed scale into the next menu visit.
+        transform.DOKill();
+        if (initialized)
+            transform.localScale = baseScale;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

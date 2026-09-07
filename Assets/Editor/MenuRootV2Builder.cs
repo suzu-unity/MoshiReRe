@@ -48,6 +48,7 @@ public static class MenuRootV2Builder
     private const string ItemBagReReZipFolder = "Assets/Art/UIConcepts/ItemBag/ZipReReAction/frames";
     private const string MapWideArtworkPath = "Assets/Art/UI/Map/menu_city_wide.png";
     private const string MapHoverAudioPath = "Assets/Audio/SFX/Title/title_cursor_move.mp3";
+    private const string EscapeGlyphPath = "Assets/Art/UI/KenneyInputPrompts/key_escape.png";
 
     private static readonly Color Cream = new Color(0.98f, 0.94f, 0.84f, 1f);
     private static readonly Color Ink = new Color(0.18f, 0.12f, 0.20f, 1f);
@@ -57,6 +58,16 @@ public static class MenuRootV2Builder
     private static readonly Color Yellow = new Color(0.98f, 0.81f, 0.31f, 1f);
     private static readonly Color Cyan = new Color(0.45f, 0.78f, 0.92f, 1f);
     private static readonly Color Peach = new Color(0.98f, 0.68f, 0.52f, 1f);
+    // Shared visual language for the rebuilt shell: warm paper, plum ink, and
+    // small lavender/cyan signals keep dense information readable without a
+    // glossy phone mock-up or an arcade-bright palette.
+    private static readonly Color ModernInk = new Color(0.12f, 0.10f, 0.17f, 1f);
+    private static readonly Color ModernPaper = new Color(0.96f, 0.93f, 0.86f, 1f);
+    private static readonly Color ModernPaperLight = new Color(0.985f, 0.975f, 0.94f, 1f);
+    private static readonly Color ModernLavender = new Color(0.68f, 0.62f, 0.84f, 1f);
+    private static readonly Color ModernCyan = new Color(0.46f, 0.79f, 0.82f, 1f);
+    private static readonly Color ModernRose = new Color(0.89f, 0.45f, 0.47f, 1f);
+    private static readonly Color ModernMuted = new Color(0.36f, 0.32f, 0.43f, 1f);
 
     [MenuItem("Tools/MoshiReRe/Build MenuRoot V2 Preview")]
     public static void BuildPreview()
@@ -96,7 +107,9 @@ public static class MenuRootV2Builder
         {
             if (child.name == "SmartphoneLayer")
                 child.gameObject.SetActive(pageName != "PageTop");
-            else if (child.name.StartsWith("Page"))
+            else if (child.name == "PageTop" || child.name == "PageDressStatus" || child.name == "PageItems"
+                || child.name == "PageCharacters" || child.name == "PageQuest" || child.name == "PageMap"
+                || child.name == "PageSave" || child.name == "PageSettings")
                 child.gameObject.SetActive(child.name == pageName);
         }
     }
@@ -120,39 +133,46 @@ public static class MenuRootV2Builder
         scaler.referenceResolution = new Vector2(1920f, 1080f);
         scaler.matchWidthOrHeight = 0.5f;
 
-        var dim = ImageRoot("SceneDim", rect, new Color(0.08f, 0.07f, 0.10f, 0f));
+        var dim = ImageRoot("SceneDim", rect, ModernInk);
         Stretch(dim.rectTransform, Vector2.zero, Vector2.zero);
         dim.raycastTarget = false;
 
-        var pageTop = BuildTopHudPage(rect, out var portraitPhoneFrame, out var topMascot, out var dressTileButton, out var statusTileButton,
-            out var itemsTileButton, out var charactersTileButton, out var questTileButton, out var mapTileButton);
-        BuildReReConversation(pageTop);
+        // The chrome is shared by every page.  This keeps navigation, status, and
+        // the Escape hint in one stable place at both 16:9 reference sizes.
+        var shell = RectRoot("SharedLandscapeShell", rect);
+        SetRect(shell, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1780f, 1000f));
+        BuildModernShell(shell);
+        var host = RectRoot("PageHost", shell);
+        Stretch(host, new Vector2(252f, 72f), new Vector2(-28f, -112f));
 
-        var phone = ImageRoot("SmartphoneLayer", rect, new Color(0.13f, 0.08f, 0.17f, 0.96f));
-        SetRect(phone.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1672f, 941f));
-        PixelBorder(phone.rectTransform, "PhonePixelFrame", new Color(0.05f, 0.03f, 0.07f, 1f), 8f);
-        var phoneBody = ImageRoot("SharedPhoneBody", phone.rectTransform, new Color(1f, 0.97f, 0.91f, 1f));
-        phoneBody.raycastTarget = false;
-        Stretch(phoneBody.rectTransform, new Vector2(48f, 48f), new Vector2(-48f, -48f));
-        PixelBorder(phoneBody.rectTransform, "BodyPixelFrame", new Color(0.46f, 0.42f, 0.58f, 1f), 4f);
+        // Kept as a real object because existing scenes and serialized references
+        // use this name.  It deliberately has no phone-shaped visual treatment.
+        var phoneCompatibility = RectRoot("SmartphoneLayer", rect);
+        phoneCompatibility.gameObject.SetActive(true);
 
-        var nav = BuildNavigation(phone.rectTransform, out var topButton, out var statusButton, out var itemsButton,
+        var pageTop = BuildModernTopPage(host, out var portraitPhoneFrame, out var topMascot, out var dressTileButton,
+            out var statusTileButton, out var itemsTileButton, out var charactersTileButton, out var questTileButton, out var mapTileButton);
+        BuildModernConversation(pageTop);
+
+        var nav = BuildModernNavigation(shell, out var topButton, out var statusButton, out var itemsButton,
             out var charactersButton, out var questButton, out var mapButton, out var saveButton, out var settingsButton);
 
-        var content = RectRoot("Content", phone.rectTransform);
-        Stretch(content, new Vector2(273f, 54f), new Vector2(-273f, -135f));
-
-        var pageStatus = BuildDressArtworkPage(rect, out var dressHomeButton, out var dressDressButton,
+        var pageStatus = BuildDressArtworkPage(host, out var dressHomeButton, out var dressDressButton,
             out var dressStatusButton, out var dressItemsButton, out var dressMapButton);
-        var pageItems = BuildItemsPage(rect, out var itemsHomeButton, out var itemsDressButton,
+        var pageItems = BuildItemsPage(host, out var itemsHomeButton, out var itemsDressButton,
             out var itemsItemsButton, out var itemsCharactersButton, out var itemsQuestButton, out var itemsMapButton);
-        var pageCharacters = BuildCharactersPage(rect, out var charactersHomeButton, out var charactersDressButton,
+        var pageCharacters = BuildCharactersPage(host, out var charactersHomeButton, out var charactersDressButton,
             out var charactersItemsButton, out var charactersCharactersButton, out var charactersQuestButton,
             out var charactersMapButton);
-        var pageQuest = BuildQuestPage(content, out var questDemoStartButton, out var questCaseStartButton);
-        var pageMap = BuildMapPage(content);
-        var pageSave = BuildSavePage(content);
-        var pageSettings = BuildSettingsPage(content);
+        var pageQuest = BuildQuestPage(host, out var questDemoStartButton, out var questCaseStartButton);
+        var pageMap = BuildMapPage(host);
+        var pageSave = BuildSavePage(host);
+        var pageSettings = BuildSettingsPage(host);
+        foreach (var legacy in new[] { pageStatus, pageItems, pageCharacters })
+        {
+            SetRect(legacy, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(1672f, 941f));
+            legacy.localScale = Vector3.one * .86f;
+        }
 
         pageStatus.gameObject.SetActive(false);
         pageItems.gameObject.SetActive(false);
@@ -161,22 +181,303 @@ public static class MenuRootV2Builder
         pageMap.gameObject.SetActive(false);
         pageSave.gameObject.SetActive(false);
         pageSettings.gameObject.SetActive(false);
-        phone.gameObject.SetActive(false);
 
-        ConfigureRoot(root.GetComponent<MenuRootV2UI>(), root.GetComponent<MenuRootV2OrientationTransition>(), phone.gameObject, pageTop.gameObject, pageStatus.gameObject, pageItems.gameObject,
+        var rootUi = root.GetComponent<MenuRootV2UI>();
+        ConfigureRoot(rootUi, root.GetComponent<MenuRootV2OrientationTransition>(), phoneCompatibility.gameObject, pageTop.gameObject, pageStatus.gameObject, pageItems.gameObject,
             pageCharacters.gameObject, pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject, topButton, statusButton, itemsButton,
             charactersButton, questButton, mapButton, saveButton, settingsButton, topMascot, dressTileButton, statusTileButton, itemsTileButton,
             charactersTileButton, questTileButton, mapTileButton, dressHomeButton, dressDressButton, dressStatusButton,
             dressItemsButton, dressMapButton, charactersHomeButton, charactersDressButton, charactersItemsButton,
             charactersCharactersButton, charactersQuestButton, charactersMapButton, itemsHomeButton, itemsDressButton,
             itemsItemsButton, itemsCharactersButton, itemsQuestButton, itemsMapButton);
-        var rootUi = root.GetComponent<MenuRootV2UI>();
         UnityEventTools.AddPersistentListener(questDemoStartButton.onClick, rootUi.ShowMap);
         UnityEventTools.AddPersistentListener(questCaseStartButton.onClick, rootUi.ShowMap);
-        ConfigureOrientation(root.GetComponent<MenuRootV2OrientationTransition>(), portraitPhoneFrame, phone.rectTransform,
-            pageQuest.gameObject, pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject);
+        ConfigureOrientation(root.GetComponent<MenuRootV2OrientationTransition>(), portraitPhoneFrame, shell,
+            pageStatus.gameObject, pageItems.gameObject, pageCharacters.gameObject, pageQuest.gameObject,
+            pageMap.gameObject, pageSave.gameObject, pageSettings.gameObject);
 
         return root;
+    }
+
+    private static void BuildModernShell(RectTransform shell)
+    {
+        var surface = ImageRoot("ShellSurface", shell, ModernPaper);
+        surface.raycastTarget = false;
+        Stretch(surface.rectTransform, Vector2.zero, Vector2.zero);
+        PixelBorder(surface.rectTransform, "ShellFrame", ModernInk, 6f);
+
+        var inner = ImageRoot("ShellInnerPaper", shell, new Color(1f, 1f, 1f, 0.08f));
+        inner.raycastTarget = false;
+        Stretch(inner.rectTransform, new Vector2(12f, 12f), new Vector2(-12f, -12f));
+        PixelBorder(inner.rectTransform, "InnerFrame", new Color(0.58f, 0.51f, 0.69f, 0.72f), 2f);
+
+        var header = ImageRoot("AppHeader", shell, ModernInk);
+        header.raycastTarget = false;
+        SetRect(header.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), Vector2.zero, new Vector2(-12f, 96f));
+        PixelBorder(header.rectTransform, "HeaderFrame", ModernLavender, 2f);
+        TextBox("MoshiReRe", header.rectTransform, 28f, FontStyles.Bold, TextAlignmentOptions.Left, ModernPaperLight,
+            new Vector2(28f, -22f), new Vector2(250f, 34f));
+        TextBox("NIGHT DESK  /  RERe OPERATING FILE", header.rectTransform, 14f, FontStyles.Bold,
+            TextAlignmentOptions.Left, new Color(0.78f, 0.73f, 0.88f, 1f), new Vector2(28f, -59f), new Vector2(440f, 22f));
+        TextBox("期限と情報ノードを、ひとつの画面で整理する", header.rectTransform, 15f, FontStyles.Normal,
+            TextAlignmentOptions.Left, new Color(0.85f, 0.82f, 0.91f, 1f), new Vector2(490f, -38f), new Vector2(520f, 30f));
+
+        var day = ModernChip(header.rectTransform, "HeaderDayChip", "DAY 03", new Vector2(-420f, -18f), new Vector2(112f, 52f), ModernCyan);
+        var debt = ModernChip(header.rectTransform, "HeaderDebtChip", "返済まで\n7 DAYS", new Vector2(-294f, -18f), new Vector2(156f, 52f), ModernRose);
+        var money = ModernChip(header.rectTransform, "HeaderMoneyChip", "所持  ¥145,000", new Vector2(-126f, -18f), new Vector2(166f, 52f), ModernLavender);
+        day.transform.SetAsLastSibling();
+        debt.transform.SetAsLastSibling();
+        money.transform.SetAsLastSibling();
+
+        AddModernPaperMarks(shell);
+        AddModernFooter(shell);
+    }
+
+    private static Image ModernChip(RectTransform parent, string name, string value, Vector2 position, Vector2 size, Color accent)
+    {
+        var chip = ImageRoot(name, parent, new Color(0.98f, 0.96f, 0.90f, 1f));
+        chip.raycastTarget = false;
+        SetRect(chip.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f), position, size);
+        PixelBorder(chip.rectTransform, "Frame", accent, 2f);
+        var mark = ImageRoot("Mark", chip.rectTransform, accent);
+        mark.raycastTarget = false;
+        SetRect(mark.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(10f, 0f), new Vector2(5f, 26f));
+        Text(value, chip.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Center, ModernInk,
+            new Vector2(18f, 4f), new Vector2(-10f, -4f));
+        return chip;
+    }
+
+    private static void AddModernPaperMarks(RectTransform shell)
+    {
+        for (var i = 0; i < 14; i++)
+        {
+            var tint = i % 3 == 0 ? ModernLavender : i % 3 == 1 ? ModernCyan : ModernRose;
+            var mark = ImageRoot("PaperMark" + i, shell, new Color(tint.r, tint.g, tint.b, 0.08f));
+            mark.raycastTarget = false;
+            var x = 276f + (i * 137f) % 1390f;
+            var y = -144f - (i * 59f) % 756f;
+            SetRect(mark.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
+                new Vector2(x, y), new Vector2(7f + i % 3 * 5f, 7f + i % 2 * 6f));
+        }
+    }
+
+    private static void AddModernFooter(RectTransform shell)
+    {
+        var footer = RectRoot("MenuFooter", shell);
+        SetRect(footer, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-26f, 22f), new Vector2(340f, 40f));
+        var glyph = ImageRoot("EscapeGlyph", footer, Color.white);
+        glyph.sprite = LoadSprite(EscapeGlyphPath);
+        glyph.preserveAspect = true;
+        glyph.raycastTarget = false;
+        SetRect(glyph.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(32f, 32f));
+        PixelBorder(glyph.rectTransform, "GlyphFrame", new Color(0.43f, 0.37f, 0.52f, 0.8f), 1f);
+        TextBox("ESC", footer, 13f, FontStyles.Bold, TextAlignmentOptions.Left, ModernInk, new Vector2(42f, 9f), new Vector2(48f, 22f));
+        TextBox("メニューを閉じる / 戻る", footer, 13f, FontStyles.Normal, TextAlignmentOptions.Left, ModernMuted,
+            new Vector2(92f, 9f), new Vector2(236f, 22f));
+    }
+
+    private static RectTransform BuildModernNavigation(RectTransform shell, out Button top, out Button status, out Button items,
+        out Button characters, out Button quest, out Button map, out Button save, out Button settings)
+    {
+        var rail = ImageRoot("PersistentNav", shell, new Color(0.18f, 0.14f, 0.24f, 0.98f));
+        rail.raycastTarget = false;
+        SetRect(rail.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(22f, -26f), new Vector2(208f, -148f));
+        PixelBorder(rail.rectTransform, "NavFrame", ModernLavender, 3f);
+        TextBox("MENU", rail.rectTransform, 14f, FontStyles.Bold, TextAlignmentOptions.Left, ModernCyan,
+            new Vector2(18f, -20f), new Vector2(168f, 22f));
+        TextBox("選ぶ / 戻る", rail.rectTransform, 13f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.82f, 0.78f, 0.88f, 1f),
+            new Vector2(18f, -44f), new Vector2(168f, 20f));
+
+        var labels = new[] { "ホーム\nHOME", "着替え\nDRESS", "持ち物\nITEMS", "人物\nCONTACTS", "クエスト\nQUEST", "マップ\nMAP", "セーブ\nSAVE", "設定\nSETTINGS" };
+        var names = new[] { "TopButton", "StatusButton", "ItemsButton", "CharactersButton", "QuestButton", "MapButton", "SaveButton", "SettingsButton" };
+        var colors = new[] { ModernPaperLight, ModernLavender, new Color(0.90f, 0.79f, 0.42f, 1f), ModernRose, new Color(0.90f, 0.67f, 0.54f, 1f), ModernCyan, new Color(0.62f, 0.70f, 0.91f, 1f), new Color(0.72f, 0.70f, 0.80f, 1f) };
+        var buttons = new Button[labels.Length];
+        for (var i = 0; i < buttons.Length; i++)
+        {
+            buttons[i] = ButtonRoot(names[i], rail.rectTransform, colors[i]);
+            SetRect(buttons[i].GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
+                new Vector2(14f, -78f - i * 70f), new Vector2(180f, 58f));
+            PixelBorder(buttons[i].GetComponent<RectTransform>(), "Frame", ModernInk, 2f);
+            var key = Text("0" + (i + 1), buttons[i].GetComponent<RectTransform>(), 11f, FontStyles.Bold,
+                TextAlignmentOptions.Left, ModernMuted, new Vector2(12f, 7f), new Vector2(36f, -7f));
+            key.name = "NavKey";
+            var label = Text(labels[i], buttons[i].GetComponent<RectTransform>(), 15f, FontStyles.Bold,
+                TextAlignmentOptions.Center, ModernInk, new Vector2(36f, 5f), new Vector2(-8f, -5f));
+            label.name = "NavLabel";
+            var active = ImageRoot("MenuPageActiveMark", buttons[i].GetComponent<RectTransform>(), ModernCyan);
+            active.raycastTarget = false;
+            SetRect(active.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(4f, 4f), new Vector2(8f, 50f));
+            active.gameObject.SetActive(i == 0);
+        }
+
+        top = buttons[0];
+        status = buttons[1];
+        items = buttons[2];
+        characters = buttons[3];
+        quest = buttons[4];
+        map = buttons[5];
+        save = buttons[6];
+        settings = buttons[7];
+        AddDynamicNotificationBadge(items, "ItemNotificationBadge");
+        AddDynamicNotificationBadge(quest, "QuestNotificationBadge", 1);
+        return rail.rectTransform;
+    }
+
+    private static RectTransform ModernPageBase(RectTransform parent, string name, string title, string subtitle, Color accent)
+    {
+        var page = RectRoot(name, parent);
+        Stretch(page, Vector2.zero, Vector2.zero);
+        var pagePaper = ImageRoot("PagePaper", page, new Color(0.99f, 0.975f, 0.93f, 0.96f));
+        pagePaper.raycastTarget = false;
+        Stretch(pagePaper.rectTransform, Vector2.zero, Vector2.zero);
+        PixelBorder(pagePaper.rectTransform, "PageFrame", new Color(0.28f, 0.23f, 0.34f, 0.9f), 3f);
+        var band = ImageRoot("PageHeader", page, new Color(1f, 1f, 1f, 0.5f));
+        band.raycastTarget = false;
+        SetRect(band.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), Vector2.zero, new Vector2(0f, 78f));
+        var accentBar = ImageRoot("PageAccentBar", band.rectTransform, accent);
+        accentBar.raycastTarget = false;
+        SetRect(accentBar.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(0f, 0f), new Vector2(8f, 0f));
+        var titleText = TextBox(title, band.rectTransform, 26f, FontStyles.Bold, TextAlignmentOptions.Left, ModernInk,
+            new Vector2(28f, -18f), new Vector2(430f, 32f));
+        titleText.name = "PageTitle";
+        var subtitleText = TextBox(subtitle, band.rectTransform, 14f, FontStyles.Normal, TextAlignmentOptions.Left, ModernMuted,
+            new Vector2(30f, -51f), new Vector2(760f, 20f));
+        subtitleText.name = "PageSubtitle";
+        TextBox("ReRe / ACTIVE FILE", band.rectTransform, 12f, FontStyles.Bold, TextAlignmentOptions.Right, ModernMuted,
+            new Vector2(900f, -33f), new Vector2(-28f, 22f));
+        return page;
+    }
+
+    private static Image ModernPanel(RectTransform parent, string name, Vector2 position, Vector2 size, Color color, Color accent = default(Color))
+    {
+        var panel = ImageRoot(name, parent, color);
+        SetRect(panel.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), position, size);
+        PixelBorder(panel.rectTransform, "PanelFrame", accent == default(Color) ? new Color(0.30f, 0.25f, 0.36f, 0.88f) : accent, 2f);
+        var top = ImageRoot("PanelTopLight", panel.rectTransform, new Color(1f, 1f, 1f, 0.18f));
+        top.raycastTarget = false;
+        SetRect(top.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -5f), new Vector2(0f, 5f));
+        return panel;
+    }
+
+    private static Button ModernButton(RectTransform parent, string name, string label, Vector2 position, Vector2 size, Color color)
+    {
+        var button = ButtonRoot(name, parent, color);
+        SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), position, size);
+        PixelBorder(button.GetComponent<RectTransform>(), "Frame", ModernInk, 2f);
+        Text(label, button.GetComponent<RectTransform>(), 16f, FontStyles.Bold, TextAlignmentOptions.Center, ModernInk,
+            new Vector2(8f, 6f), new Vector2(-8f, -6f));
+        return button;
+    }
+
+    private static TextMeshProUGUI ModernText(string value, RectTransform parent, float size, Vector2 position, Vector2 boxSize,
+        Color color = default(Color), FontStyles style = FontStyles.Normal, TextAlignmentOptions alignment = TextAlignmentOptions.TopLeft)
+    {
+        return TextBox(value, parent, size, style, alignment, color == default(Color) ? ModernInk : color, position, boxSize);
+    }
+
+    private static RectTransform BuildModernTopPage(RectTransform parent, out RectTransform portraitPhoneFrame, out MenuTopReReMascot topMascot,
+        out Button dressTileButton, out Button statusTileButton, out Button itemsTileButton, out Button charactersTileButton,
+        out Button questTileButton, out Button mapTileButton)
+    {
+        var page = ModernPageBase(parent, "PageTop", "ホーム / NIGHT DESK", "今夜の行動をひとつ選ぶ。期限と情報ノードは常にここから確認。", ModernCyan);
+        page.gameObject.AddComponent<CanvasGroup>();
+        portraitPhoneFrame = RectRoot("PortraitPhonePresentation", page);
+        Stretch(portraitPhoneFrame, new Vector2(18f, 18f), new Vector2(-18f, -92f));
+
+        var stage = ModernPanel(portraitPhoneFrame, "TopSceneCard", new Vector2(20f, -22f), new Vector2(420f, 286f), new Color(0.17f, 0.15f, 0.25f, 1f), ModernLavender);
+        var stageImage = ImageRoot("TopPreviewBackground", stage.rectTransform, Color.white);
+        stageImage.sprite = LoadSprite(TopPreviewBackgroundPath);
+        stageImage.preserveAspect = true;
+        stageImage.raycastTarget = false;
+        SetRect(stageImage.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(404f, 270f));
+        var tint = ImageRoot("TopPreviewTint", stage.rectTransform, new Color(0.08f, 0.07f, 0.15f, 0.32f));
+        tint.raycastTarget = false;
+        Stretch(tint.rectTransform, new Vector2(2f, 2f), new Vector2(-2f, -2f));
+        ModernText("NIGHT DESK / RERe LIVE", stage.rectTransform, 13f, new Vector2(16f, -16f), new Vector2(270f, 22f), ModernPaperLight, FontStyles.Bold);
+        ModernText("状況を読む\n情報ノードを確認", stage.rectTransform, 20f, new Vector2(16f, -208f), new Vector2(250f, 58f), ModernPaperLight, FontStyles.Bold);
+        var stageButton = ButtonRoot("TopStageBlankClick", stage.rectTransform, new Color(1f, 1f, 1f, 0.002f));
+        Stretch(stageButton.GetComponent<RectTransform>(), Vector2.zero, Vector2.zero);
+        stageButton.transition = Selectable.Transition.None;
+        Object.DestroyImmediate(stageButton.GetComponent<MenuUIButtonHover>());
+        topMascot = BuildTopReReMascot(stage.rectTransform, new Vector2(126f, 12f), new Vector2(180f, 260f), new Vector2(-124f, 192f), stageButton);
+
+        var route = ModernPanel(portraitPhoneFrame, "FirstTargetDemoPanel", new Vector2(466f, -22f), new Vector2(654f, 286f), ModernPaperLight, ModernRose);
+        ModernText("FIRST NIGHT  /  初回ターゲット", route.rectTransform, 14f, new Vector2(24f, -18f), new Vector2(430f, 22f), ModernRose, FontStyles.Bold);
+        ModernText("パパ活デモ", route.rectTransform, 30f, new Vector2(24f, -48f), new Vector2(430f, 42f), ModernInk, FontStyles.Bold);
+        ModernText("カフェ下調べから、夜と昼をつなぐ。", route.rectTransform, 17f, new Vector2(24f, -94f), new Vector2(560f, 28f), ModernMuted);
+        var pathStrip = ModernPanel(route.rectTransform, "FirstTargetRouteCard", new Vector2(24f, -136f), new Vector2(606f, 72f), new Color(0.92f, 0.96f, 0.94f, 1f), ModernCyan);
+        ModernText("対象を選ぶ   →   カフェ下調べ   →   GOで開始", pathStrip.rectTransform, 16f, new Vector2(18f, -17f), new Vector2(570f, 26f), ModernInk, FontStyles.Bold, TextAlignmentOptions.Center);
+        ModernText("条件: なし  /  推奨: ReRe分析を確認", pathStrip.rectTransform, 13f, new Vector2(18f, -45f), new Vector2(570f, 18f), ModernMuted, FontStyles.Normal, TextAlignmentOptions.Center);
+        mapTileButton = ModernButton(route.rectTransform, "HudMapButton", "GO  初回ターゲット / カフェ下調べ", new Vector2(24f, -220f), new Vector2(360f, 48f), ModernCyan);
+        questTileButton = ModernButton(route.rectTransform, "HudQuestButton", "QUEST  進行を見る", new Vector2(398f, -220f), new Vector2(232f, 48f), ModernLavender);
+
+        var status = ModernPanel(portraitPhoneFrame, "TopStatusPanel", new Vector2(20f, -332f), new Vector2(1100f, 154f), new Color(0.94f, 0.91f, 0.86f, 1f), new Color(0.46f, 0.40f, 0.55f, 1f));
+        ModernText("TODAY / きょうの確認", status.rectTransform, 14f, new Vector2(22f, -16f), new Vector2(320f, 22f), ModernMuted, FontStyles.Bold);
+        ModernText("初回入金まで 7日", status.rectTransform, 21f, new Vector2(22f, -48f), new Vector2(270f, 32f), ModernInk, FontStyles.Bold);
+        ModernText("返済期限と会社事件の締切を同じ残り日数で追う", status.rectTransform, 14f, new Vector2(22f, -88f), new Vector2(420f, 24f), ModernMuted);
+        var statusNote = ModernPanel(status.rectTransform, "TopStatusNote", new Vector2(492f, -18f), new Vector2(580f, 112f), new Color(0.85f, 0.91f, 0.94f, 1f), ModernCyan);
+        ModernText("ReRe NOTE", statusNote.rectTransform, 12f, new Vector2(16f, -14f), new Vector2(170f, 18f), ModernMuted, FontStyles.Bold);
+        ModernText("夜に得た情報は、昼の正式な証拠へ変換できるよ。", statusNote.rectTransform, 16f, new Vector2(16f, -40f), new Vector2(540f, 48f), ModernInk, FontStyles.Bold);
+
+        var shortcuts = ModernPanel(portraitPhoneFrame, "TopShortcutPanel", new Vector2(20f, -506f), new Vector2(1100f, 112f), new Color(0.98f, 0.96f, 0.91f, 1f), ModernLavender);
+        ModernText("SHORTCUTS", shortcuts.rectTransform, 12f, new Vector2(18f, -14f), new Vector2(120f, 18f), ModernMuted, FontStyles.Bold);
+        dressTileButton = ModernButton(shortcuts.rectTransform, "HudDressButton", "着替え", new Vector2(18f, -42f), new Vector2(132f, 48f), ModernLavender);
+        statusTileButton = ModernButton(shortcuts.rectTransform, "HudStatusButton", "装備確認", new Vector2(162f, -42f), new Vector2(132f, 48f), ModernPaperLight);
+        itemsTileButton = ModernButton(shortcuts.rectTransform, "HudItemsButton", "持ち物", new Vector2(306f, -42f), new Vector2(132f, 48f), new Color(0.90f, 0.79f, 0.42f, 1f));
+        charactersTileButton = ModernButton(shortcuts.rectTransform, "HudCharactersButton", "人物", new Vector2(450f, -42f), new Vector2(132f, 48f), ModernRose);
+        ModernText("メニュー rail からも各ページへ移動できます", shortcuts.rectTransform, 13f, new Vector2(620f, -54f), new Vector2(440f, 24f), ModernMuted, FontStyles.Normal, TextAlignmentOptions.Center);
+        return page;
+    }
+
+    private static void BuildModernConversation(RectTransform parent)
+    {
+        var root = RectRoot("ReReConversation", parent);
+        SetRect(root, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(1160f, -114f), new Vector2(320f, 618f));
+        var panel = ModernPanel(root, "ConversationPanel", Vector2.zero, new Vector2(320f, 618f), new Color(0.18f, 0.14f, 0.24f, 1f), ModernLavender);
+        panel.raycastTarget = false;
+        var speech = ImageRoot("ReReSpeechBubble", root, new Color(0.99f, 0.96f, 0.88f, 1f));
+        SetRect(speech.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(12f, -12f), new Vector2(296f, 480f));
+        speech.raycastTarget = false;
+        var speechText = Text("ReReに相談\n\n気になることを下の入力欄に書いてね。", speech.rectTransform, 24f, FontStyles.Normal,
+            TextAlignmentOptions.Left, ModernInk, new Vector2(14f, 8f), new Vector2(-14f, -8f));
+        speechText.name = "ResponseText";
+        var inputGo = new GameObject("ReReInput", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(TMP_InputField));
+        inputGo.transform.SetParent(root, false);
+        var inputRect = inputGo.GetComponent<RectTransform>();
+        SetRect(inputRect, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(12f, 66f), new Vector2(296f, 48f));
+        var inputImage = inputGo.GetComponent<Image>();
+        inputImage.sprite = GetDefaultSprite();
+        inputImage.color = new Color(0.98f, 0.97f, 0.94f, 1f);
+        PixelBorder(inputRect, "InputFrame", ModernCyan, 2f);
+        var inputText = Text("", inputRect, 15f, FontStyles.Normal, TextAlignmentOptions.Left, ModernInk, new Vector2(12f, 6f), new Vector2(-12f, -6f));
+        inputText.name = "Text";
+        inputText.raycastTarget = false;
+        var placeholder = Text("ReReに相談… Enterで送信", inputRect, 15f, FontStyles.Normal, TextAlignmentOptions.Left,
+            new Color(0.42f, 0.38f, 0.49f, 0.72f), new Vector2(12f, 6f), new Vector2(-12f, -6f));
+        placeholder.name = "Placeholder";
+        placeholder.raycastTarget = false;
+        var inputField = inputGo.GetComponent<TMP_InputField>();
+        inputField.textComponent = inputText;
+        inputField.placeholder = placeholder;
+        inputField.targetGraphic = inputImage;
+        inputField.lineType = TMP_InputField.LineType.SingleLine;
+        inputField.restoreOriginalTextOnEscape = false;
+        var send = ModernButton(root, "ReReSend", "送信 / Enter", new Vector2(12f, -566f), new Vector2(296f, 40f), ModernCyan);
+        var controller = root.gameObject.AddComponent<ReReConversationUI>();
+        var so = new SerializedObject(controller);
+        SetObject(so, "inputField", inputField);
+        SetObject(so, "sendButton", send);
+        SetObject(so, "speechBubbleRoot", speech.gameObject);
+        SetObject(so, "speechText", speechText);
+        SetObject(so, "speechCanvasGroup", speech.gameObject.AddComponent<CanvasGroup>());
+        SetBool(so, "hideSpeechBubbleOnAwake", false);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(controller);
+        var contextProvider = root.gameObject.AddComponent<ReReConversationContextProvider>();
+        var contextSo = new SerializedObject(contextProvider);
+        SetObject(contextSo, "inventoryDatabase", FindFirstAssetOfType<InventoryDatabase>());
+        contextSo.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(contextProvider);
     }
 
     private static RectTransform BuildTopHudPage(RectTransform parent, out RectTransform portraitPhoneFrame, out MenuTopReReMascot topMascot,
@@ -3056,6 +3357,9 @@ public static class MenuRootV2Builder
 
         var so = new SerializedObject(controller);
         SetObject(so, "portraitPhoneFrame", portraitPhoneFrame);
+        SetFloat(so, "portraitRestingRotation", 0f);
+        SetFloat(so, "tiltDegrees", 1f);
+        SetFloat(so, "transitionScale", .99f);
         SetObject(so, "sharedLandscapePhoneFrame", sharedLandscapePhoneFrame);
         var pages = so.FindProperty("sharedLandscapePages");
         if (pages != null)
