@@ -15,6 +15,7 @@ public sealed class CharacterInformationNodeState
         public readonly CharacterInformationNodeCategory Category;
         public readonly CharacterInformationConfidence Confidence;
         public readonly string Content;
+        public readonly UnityEngine.Sprite Image;
 
         public bool IsHidden => Confidence == CharacterInformationConfidence.Unknown;
 
@@ -26,6 +27,7 @@ public sealed class CharacterInformationNodeState
             Category = definition.category;
             Confidence = confidence;
             Content = confidence == CharacterInformationConfidence.Unknown ? string.Empty : displayContent;
+            Image = confidence == CharacterInformationConfidence.Unknown ? null : definition.image;
         }
     }
 

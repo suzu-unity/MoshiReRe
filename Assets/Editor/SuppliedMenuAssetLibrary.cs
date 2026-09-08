@@ -25,7 +25,7 @@ public static class SuppliedMenuAssetLibrary
         return sprite;
     }
 
-    public static Sprite Slice(string atlas, string key, Rect topRect)
+    public static Sprite Slice(string atlas, string key, Rect topRect, Vector4 border = default)
     {
         if (Sprites.TryGetValue(key, out var cached)) return cached;
         var texture = Get(atlas).texture;
@@ -34,7 +34,7 @@ public static class SuppliedMenuAssetLibrary
         var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
         if (!sprite)
         {
-            sprite = Sprite.Create(texture, rect, new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
+            sprite = Sprite.Create(texture, rect, new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect, border);
             sprite.name = key;
             AssetDatabase.CreateAsset(sprite, path);
         }
@@ -63,7 +63,9 @@ public static class SuppliedMenuAssetLibrary
             R("money", 40, 598, 1040, 195), R("bubble", 40, 812, 1040, 256), R("badge", 1120, 350, 320, 354));
         var nav = new List<Region>();
         var navNames = new[] { "home", "dress", "items", "characters", "quest", "map", "save", "settings" };
-        for (var i = 0; i < 8; i++) nav.Add(R(navNames[i], 192, 40 + i * 130, 168, i == 7 ? 118 : 134));
+        var navY = new[] { 42, 176, 306, 436, 565, 696, 823, 942 };
+        var navH = new[] { 128, 124, 123, 124, 125, 121, 111, 106 };
+        for (var i = 0; i < 8; i++) nav.Add(R(navNames[i], 197, navY[i], 158, navH[i]));
         nav.Add(R("selected", 914, 772, 355, 195));
         nav.Add(R("previous", 430, 772, 210, 200));
         nav.Add(R("next", 669, 772, 207, 200));
@@ -94,6 +96,8 @@ public static class SuppliedMenuAssetLibrary
         Single("map_controls", "menu_map", "ChatGPT Image 2026年9月7日 19_41_06.png", false);
         Single("save_background", "menu_save&load", "ChatGPT Image 2026年9月7日 20_30_33.png", false);
         Single("save_parts", "menu_save&load", "ChatGPT Image 2026年9月7日 20_30_38.png", false);
+        Single("save_extra", "menu_save&load", "ChatGPT Image 2026年9月7日 20_30_59.png", false);
+        Single("settings_final", "menu_option", "ChatGPT Image 2026年9月7日 20_39_57.png", false);
         Single("settings_parts", "menu_option", "ChatGPT Image 2026年9月7日 20_39_35.png", false);
         Single("settings_layout", "menu_option", "ChatGPT Image 2026年9月7日 20_39_45.png", false);
         AssetDatabase.SaveAssets();

@@ -318,8 +318,8 @@ public class DressMenuController : MonoBehaviour
         selectionInitialized = true;
     }
 
-    public void SelectPreviousOutfit() => SelectOutfit((selectedIndex + outfits.Length - 1) % outfits.Length);
-    public void SelectNextOutfit() => SelectOutfit((selectedIndex + 1) % outfits.Length);
+    public void SelectPreviousOutfit() { if (outfits != null && outfits.Length > 0) SelectOutfit((selectedIndex + outfits.Length - 1) % outfits.Length); }
+    public void SelectNextOutfit() { if (outfits != null && outfits.Length > 0) SelectOutfit((selectedIndex + 1) % outfits.Length); }
 
     private void RefreshOutfitPreview()
     {

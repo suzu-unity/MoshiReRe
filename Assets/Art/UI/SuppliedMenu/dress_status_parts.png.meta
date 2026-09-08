@@ -1,0 +1,211 @@
+fileFormatVersion: 2
+guid: e5cb438cc1353ee44ac6938531cbcd40
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4035791651249816263
+    second: dress_status_parts_0
+  - first:
+      213: 8971586364776135306
+    second: dress_status_parts_1
+  - first:
+      213: 4951483396029280831
+    second: dress_status_parts_2
+  - first:
+      213: -901070261490289244
+    second: dress_status_parts_3
+  - first:
+      213: -3897608396460765443
+    second: dress_status_parts_4
+  - first:
+      213: -6154243158868617400
+    second: dress_status_parts_5
+  - first:
+      213: 704085873065984728
+    second: dress_status_parts_6
+  - first:
+      213: -3340356597632332534
+    second: dress_status_parts_7
+  - first:
+      213: 2720589008047308057
+    second: dress_status_parts_8
+  - first:
+      213: 3532985342112099509
+    second: dress_status_parts_9
+  - first:
+      213: 7058463011052905635
+    second: dress_status_parts_10
+  - first:
+      213: -3311576391305470681
+    second: dress_status_parts_11
+  - first:
+      213: -2208445374641243598
+    second: dress_status_parts_12
+  - first:
+      213: -5789349259635831927
+    second: dress_status_parts_13
+  - first:
+      213: -3058025983326485121
+    second: dress_status_parts_14
+  - first:
+      213: -7595601527965053749
+    second: dress_status_parts_15
+  - first:
+      213: -6450412237885853226
+    second: dress_status_parts_16
+  - first:
+      213: -5194189411769984388
+    second: dress_status_parts
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: dress_status_parts
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1448
+        height: 1086
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7ada5fff388ae7b0800000000000000
+      internalID: -5194189411769984388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      dress_status_parts: -5194189411769984388
+      dress_status_parts_0: 4035791651249816263
+      dress_status_parts_1: 8971586364776135306
+      dress_status_parts_10: 7058463011052905635
+      dress_status_parts_11: -3311576391305470681
+      dress_status_parts_12: -2208445374641243598
+      dress_status_parts_13: -5789349259635831927
+      dress_status_parts_14: -3058025983326485121
+      dress_status_parts_15: -7595601527965053749
+      dress_status_parts_16: -6450412237885853226
+      dress_status_parts_2: 4951483396029280831
+      dress_status_parts_3: -901070261490289244
+      dress_status_parts_4: -3897608396460765443
+      dress_status_parts_5: -6154243158868617400
+      dress_status_parts_6: 704085873065984728
+      dress_status_parts_7: -3340356597632332534
+      dress_status_parts_8: 2720589008047308057
+      dress_status_parts_9: 3532985342112099509
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

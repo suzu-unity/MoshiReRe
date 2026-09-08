@@ -32,6 +32,9 @@ public class MapMenuController : MonoBehaviour
     [SerializeField] private Image[] locationImages;
     [SerializeField] private MapLocationPolygon[] locationPolygons;
     [SerializeField] private Button[] goButtons;
+    [SerializeField] private Sprite normalPinSprite;
+    [SerializeField] private Sprite selectedPinSprite;
+    [SerializeField] private bool onlyAllowConfiguredRoutes;
 
     [Header("Selected location details")]
     [SerializeField] private TMP_Text detailNameText;
@@ -110,6 +113,15 @@ public class MapMenuController : MonoBehaviour
         isDay = IsDay(lastObservedHour);
         ApplyLocationColors();
         ApplyDayNightBackground();
+        if (normalPinSprite && locationImages != null)
+            for (var i = 0; i < locationImages.Length; i++)
+                if (locationImages[i]) { locationImages[i].sprite = i == selectedIndex && selectedPinSprite ? selectedPinSprite : normalPinSprite; locationImages[i].color = Color.white; }
+        if (onlyAllowConfiguredRoutes && goButtons != null)
+        {
+            var launcher = GetComponent<MapRouteLauncher>();
+            var available = launcher && launcher.TryGetRoute(selectedIndex, out _);
+            foreach (var button in goButtons) if (button) button.interactable = available;
+        }
     }
 
     public void SelectLocation(int index)
@@ -136,8 +148,7 @@ public class MapMenuController : MonoBehaviour
         if (safetyFillImage)
             safetyFillImage.fillAmount = Mathf.Clamp01(location.safety);
 
-        ApplyLocationColors();
-        ApplyDayNightBackground();
+        RefreshTimeAndColors();
     }
 
     private void BindButtons()
@@ -248,8 +259,11 @@ public class MapMenuController : MonoBehaviour
     {
         return () =>
         {
-            SelectLocation(locationIndex);
-            OnGoSelected.Invoke(locationIndex);
+            var target = locationIndex < 0 ? selectedIndex : locationIndex;
+            if (target < 0) return;
+            SelectLocation(target);
+            if (onlyAllowConfiguredRoutes && (!GetComponent<MapRouteLauncher>() || !GetComponent<MapRouteLauncher>().TryGetRoute(target, out _))) return;
+            OnGoSelected.Invoke(target);
         };
     }
 

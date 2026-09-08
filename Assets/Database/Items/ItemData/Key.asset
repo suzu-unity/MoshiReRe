@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Key
   m_EditorClassIdentifier: 
   id: old_key
+  category: 1
   displayName: "\u53E4\u3073\u305F\u9375"
   icon: {fileID: 7094024636542941519, guid: d9c539eb337187d4383122b3bc776288, type: 3}
   summary: "\u672A\u89E3\u653E\u306E\u5834\u6240\u3084\u8A3C\u62E0\u7BB1\u306B\u95A2\u308F\u308B\u4EEE\u30A2\u30A4\u30C6\u30E0\u3002"

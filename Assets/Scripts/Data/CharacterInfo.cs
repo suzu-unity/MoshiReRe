@@ -31,6 +31,7 @@ public class CharacterInformationNodeDefinition
     public string title;
     public CharacterInformationNodeCategory category;
     [TextArea] public string content;
+    public Sprite image;
     public CharacterInformationConfidence initialConfidence = CharacterInformationConfidence.Unknown;
 }
 

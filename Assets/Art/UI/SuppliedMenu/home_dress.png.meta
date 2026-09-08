@@ -1,0 +1,191 @@
+fileFormatVersion: 2
+guid: 6e43014aba85e4146b66559f0e9395a2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2993024600287359650
+    second: home_dress_0
+  - first:
+      213: -7106156164603009762
+    second: home_dress_1
+  - first:
+      213: 8279949643443298703
+    second: home_dress_2
+  - first:
+      213: -4125069368288338571
+    second: home_dress_3
+  - first:
+      213: -2259205010056503523
+    second: home_dress_4
+  - first:
+      213: -4033672943328884737
+    second: home_dress_5
+  - first:
+      213: 4789581044237849196
+    second: home_dress_6
+  - first:
+      213: -8616822487176919411
+    second: home_dress_7
+  - first:
+      213: -4015796332162519418
+    second: home_dress_8
+  - first:
+      213: -4801034285890595245
+    second: home_dress_9
+  - first:
+      213: 4885067746319817879
+    second: home_dress_10
+  - first:
+      213: 7642831495009268751
+    second: home_dress_11
+  - first:
+      213: -8907969716982211009
+    second: home_dress
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: home_dress
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 126
+        width: 931
+        height: 1103
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3e96552db8806480800000000000000
+      internalID: -8907969716982211009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      home_dress: -8907969716982211009
+      home_dress_0: -2993024600287359650
+      home_dress_1: -7106156164603009762
+      home_dress_10: 4885067746319817879
+      home_dress_11: 7642831495009268751
+      home_dress_2: 8279949643443298703
+      home_dress_3: -4125069368288338571
+      home_dress_4: -2259205010056503523
+      home_dress_5: -4033672943328884737
+      home_dress_6: 4789581044237849196
+      home_dress_7: -8616822487176919411
+      home_dress_8: -4015796332162519418
+      home_dress_9: -4801034285890595245
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

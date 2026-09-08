@@ -16,7 +16,7 @@ public static partial class MenuRootV2Builder
         phone.localRotation = Quaternion.Euler(0, 0, -5);
         SuppliedImage(phone, "SuppliedReadingRoom", SuppliedMenuAssetLibrary.Get("home"), new Rect(0, 0, 565, 1004));
         var deadline = SuppliedImage(phone, "DeadlineFrame", SuppliedMenuAssetLibrary.Get("home_parts.deadline"), new Rect(28, 70, 254, 86));
-        var debtText = SuppliedLabel(deadline.transform, "DebtValue", "返済期限\nあと7日", new Rect(78, 22, 170, 58), 21, TextAlignmentOptions.Center);
+        var debtText = SuppliedLabel(deadline.transform, "DebtValue", "返済期限\nあと7日", new Rect(64, 9, 164, 62), 21, TextAlignmentOptions.Center);
         var stamina = SuppliedImage(phone, "StaminaFrame", SuppliedMenuAssetLibrary.Get("home_parts.stamina"), new Rect(285, 78, 244, 57));
         var staminaText = SuppliedLabel(stamina.transform, "StaminaValue", "85/100", new Rect(170, 24, 60, 22), 15, TextAlignmentOptions.Center);
         staminaText.color = Color.white;
@@ -39,16 +39,18 @@ public static partial class MenuRootV2Builder
         for (var i = 0; i < ids.Length; i++)
             SuppliedButton(phone, names[i], SuppliedMenuAssetLibrary.Get("home_" + ids[i]), positions[i], actions[targets[i]], SuppliedMenuAssetLibrary.Get("hover_" + ids[i]));
 
-        var banner = SuppliedButton(phone, "EventBanner", SuppliedMenuAssetLibrary.Get("event"), new Rect(42, 731, 485, 112), actions[4]);
-        var title = SuppliedLabel(banner.transform, "CurrentObjective", "初回ターゲット", new Rect(124, 30, 260, 34), 24, TextAlignmentOptions.Center);
+        var banner = SuppliedButton(phone, "EventBanner", SuppliedMenuAssetLibrary.Get("event"), new Rect(42, 691, 485, 171), actions[4]);
+        var title = SuppliedLabel(banner.transform, "CurrentObjective", "初回ターゲット", new Rect(124, 54, 209, 39), 23, TextAlignmentOptions.Center);
         title.color = Color.white;
-        var objective = SuppliedLabel(banner.transform, "ObjectiveDetail", "カフェ下調べ", new Rect(126, 65, 252, 26), 20, TextAlignmentOptions.Center);
+        var objective = SuppliedLabel(banner.transform, "ObjectiveDetail", "カフェ下調べ", new Rect(137, 110, 174, 26), 18, TextAlignmentOptions.Center);
         objective.color = Color.white;
+        title.overflowMode = TextOverflowModes.Ellipsis; objective.overflowMode = TextOverflowModes.Ellipsis;
+        Wire(banner.gameObject.AddComponent<MenuQuestBanner>(), ("title", title), ("objective", objective));
 
         var target = SuppliedButton(phone, "ReReTapTarget", null, new Rect(65, 283, 314, 433));
         target.image.color = Color.clear;
-        var bubble = SuppliedImage(phone, "ReReSpeechBubble", SuppliedMenuAssetLibrary.Get("home_parts.bubble"), new Rect(63, 260, 320, 102));
-        var message = SuppliedLabel(bubble.transform, "Comment", "", new Rect(30, 18, 263, 65), 27, TextAlignmentOptions.Center);
+        var bubble = SuppliedImage(phone, "ReReSpeechBubble", SuppliedMenuAssetLibrary.Get("home_parts.bubble"), new Rect(63, 260, 320, 79));
+        var message = SuppliedLabel(bubble.transform, "Comment", "", new Rect(27, 4, 263, 56), 23, TextAlignmentOptions.Center);
         Wire(page.gameObject.AddComponent<MenuHomeComment>(), ("characterButton", target), ("bubble", bubble.gameObject), ("text", message));
         bubble.gameObject.SetActive(false);
         return page;

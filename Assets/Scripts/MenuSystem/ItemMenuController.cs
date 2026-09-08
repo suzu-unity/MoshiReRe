@@ -7,10 +7,12 @@ using UnityEngine.UI;
 
 public class ItemMenuController : MonoBehaviour
 {
+    public enum Filter { All, Bag, Key, Gift }
     [Serializable]
     private struct ItemDraft
     {
         public string id;
+        public InventoryItemCategory category;
         public string displayName;
         [TextArea] public string description;
         [TextArea] public string summary;
@@ -57,6 +59,14 @@ public class ItemMenuController : MonoBehaviour
     [SerializeField] private InventoryDatabase inventoryDatabase;
     [SerializeField] private Sprite[] suppliedItemIcons;
     [SerializeField] private ItemDraft[] items;
+    [SerializeField] private Button[] filterButtons;
+    [SerializeField] private Sprite[] filterNormalSprites;
+    [SerializeField] private Sprite[] filterSelectedSprites;
+    [SerializeField] private TMP_Text filterEmptyText;
+    private Filter currentFilter;
+    private Vector2[] cardPositions;
+    public Filter CurrentFilter => currentFilter;
+    public int VisibleItemCount { get; private set; }
 
     private readonly int[] carryIndexes = new int[8];
     private int selectedIndex;
@@ -231,6 +241,7 @@ public class ItemMenuController : MonoBehaviour
             loadedItems.Add(new ItemDraft
             {
                 id = id,
+                category = item.category,
                 displayName = displayName,
                 summary = item.summary,
                 description = item.description,
@@ -274,6 +285,12 @@ public class ItemMenuController : MonoBehaviour
     private void BindButtons()
     {
         UnbindButtons();
+        if (filterButtons != null)
+            for (var i = 0; i < filterButtons.Length; i++)
+            {
+                var index = i;
+                if (filterButtons[i]) filterButtons[i].onClick.AddListener(() => SetFilter((Filter)index));
+            }
 
         for (var i = 0; i < itemButtons.Length; i++)
         {
@@ -357,11 +374,23 @@ public class ItemMenuController : MonoBehaviour
 
     private void RefreshItems()
     {
+        if (items == null || itemButtons == null) return;
+        if (cardPositions == null || cardPositions.Length != itemButtons.Length)
+        {
+            cardPositions = new Vector2[itemButtons.Length];
+            for (var i=0;i<itemButtons.Length;i++) if(itemButtons[i]) cardPositions[i]=((RectTransform)itemButtons[i].transform).anchoredPosition;
+        }
+        VisibleItemCount = 0;
         for (var i = 0; i < itemButtons.Length; i++)
         {
             var hasItem = i < items.Length;
+            var visible = hasItem && MatchesFilter(i);
             if (itemButtons[i])
-                itemButtons[i].gameObject.SetActive(hasItem);
+            {
+                itemButtons[i].gameObject.SetActive(visible);
+                if (visible) ((RectTransform)itemButtons[i].transform).anchoredPosition = cardPositions[VisibleItemCount];
+            }
+            if (visible) VisibleItemCount++;
 
             if (!hasItem)
                 continue;
@@ -375,6 +404,31 @@ public class ItemMenuController : MonoBehaviour
             if (itemHighlights != null && i < itemHighlights.Length && itemHighlights[i])
                 itemHighlights[i].gameObject.SetActive(i == selectedIndex);
         }
+        if (filterEmptyText) filterEmptyText.gameObject.SetActive(VisibleItemCount == 0);
+    }
+
+    private bool MatchesFilter(int index)
+    {
+        if (currentFilter == Filter.All) return true;
+        if (currentFilter == Filter.Key) return items[index].category == InventoryItemCategory.Key;
+        if (currentFilter == Filter.Gift) return items[index].category == InventoryItemCategory.Gift;
+        for (var i=0;i<carryCount;i++) if(carryIndexes[i]==index) return true;
+        return false;
+    }
+
+    public void SetFilter(Filter filter)
+    {
+        currentFilter = (Filter)Mathf.Clamp((int)filter, 0, 3);
+        if (filterButtons != null)
+            for(var i=0;i<filterButtons.Length;i++)
+                if(filterButtons[i] && filterNormalSprites != null && i<filterNormalSprites.Length)
+                    filterButtons[i].image.sprite = i==(int)currentFilter && filterSelectedSprites != null && i<filterSelectedSprites.Length ? filterSelectedSprites[i] : filterNormalSprites[i];
+        RefreshItems();
+        if (items != null)
+            for(var i=0;i<items.Length;i++) if(MatchesFilter(i)) { SelectItem(i); return; }
+        if(detailIconImage) { detailIconImage.sprite=null; detailIconImage.color=Color.clear; }
+        if(detailTitleText) detailTitleText.text="該当するアイテムはありません";
+        if(detailDescriptionText) detailDescriptionText.text="";
     }
 
     private void RefreshDetail()
@@ -480,6 +534,7 @@ public class ItemMenuController : MonoBehaviour
         carryIndexes[carryCount] = index;
         carryCount++;
         RefreshBag();
+        if (currentFilter == Filter.Bag) SetFilter(currentFilter);
 
         if (rereCommentText)
             rereCommentText.text = items[index].displayName + "をバッグに入れたよ。";
@@ -496,6 +551,7 @@ public class ItemMenuController : MonoBehaviour
         carryCount--;
         carryIndexes[carryCount] = -1;
         RefreshBag();
+        if (currentFilter == Filter.Bag) SetFilter(currentFilter);
 
         if (rereCommentText)
             rereCommentText.text = "Item returned to the list.";

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Naninovel;
 using TMPro;
 using UnityEngine;
@@ -13,17 +14,20 @@ public sealed class MenuSaveLoadController : MonoBehaviour
         [SerializeField] private Button selectButton;
         [SerializeField] private Button deleteButton;
         [SerializeField] private TextMeshProUGUI detailLabel;
+        [SerializeField] private RawImage preview;
 
-        public SlotView(Button selectButton, Button deleteButton, TextMeshProUGUI detailLabel)
+        public SlotView(Button selectButton, Button deleteButton, TextMeshProUGUI detailLabel, RawImage preview = null)
         {
             this.selectButton = selectButton;
             this.deleteButton = deleteButton;
             this.detailLabel = detailLabel;
+            this.preview = preview;
         }
 
         public Button SelectButton => selectButton;
         public Button DeleteButton => deleteButton;
         public TextMeshProUGUI DetailLabel => detailLabel;
+        public RawImage Preview => preview;
     }
 
     [SerializeField] private SlotView[] slots = Array.Empty<SlotView>();
@@ -35,6 +39,14 @@ public sealed class MenuSaveLoadController : MonoBehaviour
     [SerializeField] private GameObject confirmationPanel;
     [SerializeField] private TextMeshProUGUI confirmationLabel;
     [SerializeField] private TextMeshProUGUI modeLabel;
+    [SerializeField] private Toggle[] deleteSelections;
+    [SerializeField] private GameObject deleteActions;
+    [SerializeField] private Sprite saveNormalSprite, saveSelectedSprite, loadNormalSprite, loadSelectedSprite;
+    private readonly HashSet<int> selectedForDeletion = new HashSet<int>();
+    private bool deleteMode;
+    private int[] pendingBulkDelete;
+    public bool IsDeleteMode => deleteMode;
+    public int SelectedDeleteCount => selectedForDeletion.Count;
 
     private MenuRootV2UI menuRoot;
     private IStateManager stateManager;
@@ -65,6 +77,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private void OnEnable()
     {
+        ExitDeleteMode();
         HideConfirmation();
         Refresh().Forget();
     }
@@ -72,6 +85,12 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private void BindButtons()
     {
+        if (deleteSelections != null)
+            for (var i = 0; i < deleteSelections.Length; i++)
+            {
+                var index = i;
+                if (deleteSelections[i]) deleteSelections[i].onValueChanged.AddListener(value => SetDeleteSelected(index, value));
+            }
         if (saveModeButton) saveModeButton.onClick.AddListener(ShowSaveMode);
         if (loadModeButton) loadModeButton.onClick.AddListener(ShowLoadMode);
         if (backButton) backButton.onClick.AddListener(Back);
@@ -94,12 +113,14 @@ public sealed class MenuSaveLoadController : MonoBehaviour
         if (cancelButton) cancelButton.onClick.RemoveListener(HideConfirmation);
     }
 
-    public void ShowSaveMode() { saveMode = true; HideConfirmation(); Refresh().Forget(); }
-    public void ShowLoadMode() { saveMode = false; HideConfirmation(); Refresh().Forget(); }
+    public void ShowSaveMode() { saveMode = true; ExitDeleteMode(); HideConfirmation(); Refresh().Forget(); }
+    public void ShowLoadMode() { saveMode = false; ExitDeleteMode(); HideConfirmation(); Refresh().Forget(); }
     public void Back() { HideConfirmation(); menuRoot?.ShowTop(); }
 
     private async UniTask Refresh()
     {
+        if (saveModeButton && saveNormalSprite) saveModeButton.image.sprite = saveMode ? saveSelectedSprite : saveNormalSprite;
+        if (loadModeButton && loadNormalSprite) loadModeButton.image.sprite = saveMode ? loadNormalSprite : loadSelectedSprite;
         if (modeLabel) modeLabel.text = saveMode ? "セーブ / 記録する" : "ロード / 記録から再開";
         if (!TryGetStateManager()) return;
         for (var i = 0; i < slots.Length; i++)
@@ -107,14 +128,22 @@ public sealed class MenuSaveLoadController : MonoBehaviour
             var slotId = stateManager.Configuration.IndexToSaveSlotId(i + 1);
             var exists = stateManager.GameSlotManager.SaveSlotExists(slotId);
             var label = slots[i].DetailLabel;
+            if (slots[i].Preview) { slots[i].Preview.texture = null; slots[i].Preview.gameObject.SetActive(false); }
             if (label)
             {
                 if (!exists) label.text = $"SLOT {i + 1:00}\n空きスロット";
                 else
                 {
                     var state = await stateManager.GameSlotManager.Load(slotId);
+                    if (slots[i].Preview && state?.Thumbnail)
+                    {
+                        slots[i].Preview.texture = state.Thumbnail;
+                        slots[i].Preview.gameObject.SetActive(true);
+                        var aspect = slots[i].Preview.GetComponent<AspectRatioFitter>();
+                        if (aspect) aspect.aspectRatio = (float)state.Thumbnail.width / state.Thumbnail.height;
+                    }
                     var progress = state == null ? null : state.PlaybackSpot.ScriptPath;
-                    label.text = $"SLOT {i + 1:00}\n{state?.SaveDateTime:yyyy/MM/dd HH:mm}\n{(string.IsNullOrEmpty(progress) ? "進行状況の記録" : progress)}";
+                    label.text = $"SLOT {i + 1:00}  {MenuDaySaveBridge.FormatDay(state)}\n{state?.SaveDateTime:yyyy/MM/dd HH:mm}\n{(string.IsNullOrEmpty(progress) ? "進行状況の記録" : progress)}";
                 }
             }
             if (slots[i].DeleteButton) slots[i].DeleteButton.gameObject.SetActive(exists);
@@ -123,6 +152,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private void Select(int index)
     {
+        if (deleteMode) { SetDeleteSelected(index, !selectedForDeletion.Contains(index)); return; }
         if (!TryGetStateManager()) return;
         var slotId = stateManager.Configuration.IndexToSaveSlotId(index + 1);
         if (!saveMode && !stateManager.GameSlotManager.SaveSlotExists(slotId)) return;
@@ -149,6 +179,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private void HideConfirmation()
     {
+        pendingBulkDelete = null;
         pendingSlot = -1;
         if (confirmationPanel) confirmationPanel.SetActive(false);
         SetBackgroundInteractable(true);
@@ -156,6 +187,17 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private void Confirm()
     {
+        if (pendingBulkDelete != null)
+        {
+            var targets = pendingBulkDelete;
+            HideConfirmation();
+            if (TryGetStateManager())
+                foreach (var index in targets)
+                    stateManager.GameSlotManager.DeleteSaveSlot(stateManager.Configuration.IndexToSaveSlotId(index + 1));
+            ExitDeleteMode();
+            Refresh().Forget();
+            return;
+        }
         if (pendingSlot < 0) return;
         var slot = pendingSlot;
         var delete = pendingDelete;
@@ -186,6 +228,7 @@ public sealed class MenuSaveLoadController : MonoBehaviour
 
     private void SetBackgroundInteractable(bool interactable)
     {
+        if (deleteSelections != null) foreach (var selection in deleteSelections) if (selection) selection.interactable = interactable;
         if (saveModeButton) saveModeButton.interactable = interactable;
         if (loadModeButton) loadModeButton.interactable = interactable;
         if (backButton) backButton.interactable = interactable;
@@ -199,5 +242,40 @@ public sealed class MenuSaveLoadController : MonoBehaviour
     private bool TryGetStateManager()
     {
         return Engine.Initialized && Engine.TryGetService<IStateManager>(out stateManager);
+    }
+
+    public void EnterDeleteMode()
+    {
+        if (confirmationPanel && confirmationPanel.activeSelf) return;
+        deleteMode = true; selectedForDeletion.Clear();
+        if (deleteActions) deleteActions.SetActive(true);
+        if (deleteSelections != null) foreach (var selection in deleteSelections)
+            if (selection) { selection.SetIsOnWithoutNotify(false); selection.gameObject.SetActive(true); }
+    }
+
+    public void ExitDeleteMode()
+    {
+        deleteMode = false; selectedForDeletion.Clear(); pendingBulkDelete = null;
+        if (deleteActions) deleteActions.SetActive(false);
+        if (deleteSelections != null) foreach (var selection in deleteSelections)
+            if (selection) { selection.SetIsOnWithoutNotify(false); selection.gameObject.SetActive(false); }
+    }
+
+    public void SetDeleteSelected(int index, bool value)
+    {
+        if (!deleteMode || index < 0 || index >= slots.Length || (confirmationPanel && confirmationPanel.activeSelf)) return;
+        if (value) selectedForDeletion.Add(index); else selectedForDeletion.Remove(index);
+        if (deleteSelections != null && index < deleteSelections.Length && deleteSelections[index]) deleteSelections[index].SetIsOnWithoutNotify(value);
+    }
+
+    public void RequestBulkDelete()
+    {
+        if (!deleteMode || selectedForDeletion.Count == 0 || !TryGetStateManager()) return;
+        var targets = new List<int>();
+        foreach (var index in selectedForDeletion)
+            if (stateManager.GameSlotManager.SaveSlotExists(stateManager.Configuration.IndexToSaveSlotId(index + 1))) targets.Add(index);
+        if (targets.Count == 0) return;
+        ShowConfirmation(-1, true, $"選択した {targets.Count} 件のデータを削除しますか？\n削除した記録は戻せません。");
+        pendingBulkDelete = targets.ToArray();
     }
 }

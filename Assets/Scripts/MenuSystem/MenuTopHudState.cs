@@ -49,6 +49,7 @@ public sealed class MenuTopHudState : MonoBehaviour
 
     private readonly Dictionary<HudAction, MenuNotificationBadge> badges = new Dictionary<HudAction, MenuNotificationBadge>();
     private bool subscribedToQuest;
+    public int CurrentDay => initialDay;
 
     private void Awake()
     {

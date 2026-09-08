@@ -26,8 +26,10 @@ public static partial class MenuRootV2Builder
         var fitting = SuppliedImage(page, "FittingSpriteTint", standing[0], new Rect(275, 143, 419, 716));
         SuppliedImage(page, "SmallReRe", SuppliedMenuAssetLibrary.Get("rere"), new Rect(1317, 365, 213, 250));
         var comment = SuppliedLabel(page, "DressCommentText", "", new Rect(1291, 234, 285, 125), 24, TMPro.TextAlignmentOptions.Center);
-        var radarRoot = RectRoot("OutfitRadar", page);
+        var radarLayer = RectRoot("RadarOverlay", page); Stretch(radarLayer, Vector2.zero, Vector2.zero);
+        var radarRoot = RectRoot("OutfitRadar", radarLayer);
         Place(radarRoot, 866, 281, 226, 226);
+        radarRoot.pivot = new Vector2(.5f, .5f); radarRoot.anchoredPosition += new Vector2(113, -113);
         var radar = radarRoot.gameObject.AddComponent<RadarChart>();
         radar.color = new Color(.88f, .38f, .92f, .42f);
         radar.raycastTarget = false;

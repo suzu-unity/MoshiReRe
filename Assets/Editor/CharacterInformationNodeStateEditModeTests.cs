@@ -94,25 +94,19 @@ public class CharacterInformationNodeStateEditModeTests
         Assert.That(panel, Is.Not.Null);
 
         const System.Reflection.BindingFlags Flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-        var rowButtons = (Button[])typeof(CharacterInformationNodePanel).GetField("characterRowButtons", Flags).GetValue(panel);
-        var rowIndexes = (int[])typeof(CharacterInformationNodePanel).GetField("characterRowIndexes", Flags).GetValue(panel);
+        var presentation = prefab.GetComponentInChildren<MenuCharacterPresentation>(true);
+        var rowButtons = (Button[])typeof(MenuCharacterPresentation).GetField("rows", Flags).GetValue(presentation);
+        var characters = (CharacterInfo[])typeof(MenuCharacterPresentation).GetField("characters", Flags).GetValue(presentation);
         var menuDatabase = (CharacterDatabase)typeof(CharacterInformationNodePanel).GetField("characterDatabase", Flags).GetValue(panel);
-        Assert.That(rowButtons, Has.Length.EqualTo(12));
-        Assert.That(rowIndexes, Has.Length.EqualTo(rowButtons.Length));
+        Assert.That(rowButtons, Has.Length.EqualTo(menuDatabase.GetAll().Count));
+        Assert.That(characters, Has.Length.EqualTo(rowButtons.Length));
         Assert.That(menuDatabase, Is.Not.Null);
 
         var assigned = new HashSet<CharacterInfo>();
         for (var i = 0; i < rowButtons.Length; i++)
         {
-            var expectedCategory = i < 6 ? CharacterCategory.Oj : CharacterCategory.Itadaki;
-            if (rowIndexes[i] < 0)
-            {
-                Assert.That(rowButtons[i].interactable, Is.False, "Empty character rows must be disabled.");
-                continue;
-            }
-
-            var character = menuDatabase.GetAll()[rowIndexes[i]];
-            Assert.That(character.category, Is.EqualTo(expectedCategory));
+            var character = characters[i];
+            Assert.That(menuDatabase.GetAll(), Does.Contain(character));
             Assert.That(assigned.Add(character), Is.True, "A character must not be assigned to multiple fixed rows.");
             Assert.That(rowButtons[i].interactable, Is.True);
 

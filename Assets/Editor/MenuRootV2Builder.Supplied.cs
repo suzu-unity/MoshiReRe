@@ -44,6 +44,7 @@ public static partial class MenuRootV2Builder
         so.ApplyModifiedPropertiesWithoutUndo();
         BuildSuppliedNavigation(root, landscape, actions);
         BuildSuppliedLandscapeHud(landscape);
+        Wire(root.AddComponent<MenuDaySaveBridge>(), ("dayHud", landscape.GetComponent<MenuTopHudState>()));
         ConfigureOrientation(root.GetComponent<MenuRootV2OrientationTransition>(), portrait, landscape,
             pages[1].gameObject, pages[2].gameObject, pages[3].gameObject, pages[4].gameObject, pages[5].gameObject, pages[6].gameObject, pages[7].gameObject);
         landscape.gameObject.SetActive(false);
@@ -87,7 +88,7 @@ public static partial class MenuRootV2Builder
         if (hover)
         {
             button.transition = Selectable.Transition.SpriteSwap;
-            button.spriteState = new SpriteState { highlightedSprite = hover, pressedSprite = hover, selectedSprite = sprite, disabledSprite = sprite };
+            button.spriteState = new SpriteState { highlightedSprite = hover, pressedSprite = hover, selectedSprite = hover, disabledSprite = sprite };
         }
         var feedback = new SerializedObject(image.gameObject.AddComponent<MenuUIButtonHover>());
         SetFloat(feedback, "hoverScale", 1.025f);
@@ -101,8 +102,20 @@ public static partial class MenuRootV2Builder
     {
         var page = RectRoot(name, (RectTransform)parent);
         Stretch(page, Vector2.zero, Vector2.zero);
-        SuppliedImage(page, "SuppliedBackground", SuppliedMenuAssetLibrary.Get(background), new Rect(0, 0, 1672, 941));
+        var maskRoot = RectRoot("PhoneArtworkClip", page);
+        Stretch(maskRoot, Vector2.zero, Vector2.zero);
+        maskRoot.gameObject.AddComponent<MenuPhoneArtworkMask>().raycastTarget = false;
+        maskRoot.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+        SuppliedImage(maskRoot, "SuppliedBackground", SuppliedMenuAssetLibrary.Get(background), new Rect(0, 0, 1672, 941));
         return page;
+    }
+
+    private static Image SuppliedEmptyPanel(Transform parent, string name, Rect rect)
+    {
+        var sprite = SuppliedMenuAssetLibrary.Slice("settings_final", "empty_panel_sliced", new Rect(1030, 825, 224, 97), new Vector4(14, 14, 47, 18));
+        var panel = SuppliedImage(parent, name, sprite, rect);
+        panel.type = Image.Type.Sliced;
+        return panel;
     }
 
     private static void Wire(UnityEngine.Object component, params (string field, UnityEngine.Object value)[] fields)
@@ -125,6 +138,10 @@ public static partial class MenuRootV2Builder
     {
         var nav = RectRoot("PersistentNav", parent);
         Stretch(nav, Vector2.zero, Vector2.zero);
+        var navClip=RectRoot("NavigationArtworkClip", nav); Stretch(navClip, Vector2.zero, Vector2.zero);
+        navClip.gameObject.AddComponent<MenuPhoneArtworkMask>().raycastTarget=false;
+        navClip.gameObject.AddComponent<Mask>().showMaskGraphic=false;
+        SuppliedImage(navClip, "NavigationSurface", SuppliedMenuAssetLibrary.Slice("quest_background", "common_navigation_artwork", new Rect(42, 78, 200, 790)), new Rect(42, 78, 200, 790));
         var ids = new[] { "home", "dress", "items", "characters", "quest", "map", "save", "settings" };
         var labels = new[] { "", "着替え", "持ち物", "人物", "クエスト", "マップ", "", "" };
         var fields = new[] { "topButton", "statusButton", "itemsButton", "charactersButton", "questButton", "mapButton", "saveButton", "settingsButton" };
@@ -135,7 +152,7 @@ public static partial class MenuRootV2Builder
             var labelRoot = SuppliedImage(nav, "SelectedLabel" + i, SuppliedMenuAssetLibrary.Get("nav.selected"), new Rect(82, y, 165, 78));
             SuppliedLabel(labelRoot.transform, "PageName", labels[i], new Rect(66, 16, 97, 46), 24, TextAlignmentOptions.Center);
             expanded[i] = labelRoot.gameObject;
-            var button = SuppliedButton(nav, char.ToUpper(fields[i][0]) + fields[i].Substring(1), SuppliedMenuAssetLibrary.Get("nav." + ids[i]), new Rect(88, y, 84, 78), actions[i]);
+            var button = SuppliedButton(nav, char.ToUpper(fields[i][0]) + fields[i].Substring(1), SuppliedMenuAssetLibrary.Get("nav." + ids[i]), new Rect(88, y, 84, 78));
             icons[i] = button.image;
             marks[i] = RectRoot("MenuPageActiveMark", (RectTransform)button.transform).gameObject;
             Wire(root.GetComponent<MenuRootV2UI>(), (fields[i], button));
