@@ -19,8 +19,9 @@ public static class OfficeExplorationBuilder
     private const string OfficeMapId = "office";
     private const string InventoryDatabasePath = "Assets/Database/Items/InventoryDatabase.asset";
     private const string DeskItemPath = "Assets/Database/Items/ItemData/Key.asset";
-    private const string PlayerPortraitStripPath = "Assets/Art/ExplorationPrototype/player_casual_strip.png";
-    private const string NpcPortraitStripPath = "Assets/Art/ExplorationPrototype/npc_strip.png";
+    private const string PlayerPortraitStripPath = "Assets/Art/ExplorationPrototype/player_casual_strip_alpha.png";
+    private const string PlayerSuitPortraitStripPath = "Assets/Art/ExplorationPrototype/player_suit_strip_alpha.png";
+    private const string NpcPortraitStripPath = "Assets/Art/ExplorationPrototype/npc_strip_alpha.png";
     private const string PapaCafeBackgroundPath = BackgroundRoot + "/02_bakery_cafe.png";
     private const string CompanySeatedCgPath = "Assets/Art/ScenarioCG/PLACEHOLDER_REPLACE_ME_company_seated.png";
     private const string PapaCafeKeyCgPath = "Assets/Art/ScenarioCG/PLACEHOLDER_REPLACE_ME_papa_cafe_key.png";
@@ -73,6 +74,9 @@ public static class OfficeExplorationBuilder
         SetString(map, "mapId", OfficeMapId);
         SetObject(map, "player", player.transform);
         SetObject(map, "spriteAnimator", player.GetComponent<ExplorationSpriteAnimator>());
+        var mapSettings = new SerializedObject(map);
+        mapSettings.FindProperty("initialOutfit").enumValueIndex = (int)ExplorationOutfit.Wardrobe;
+        mapSettings.ApplyModifiedPropertiesWithoutUndo();
         var spawn = GameObject.Find("DefaultSpawn");
         if (spawn != null)
             SetString(spawn.GetComponent<ExplorationSpawnPoint>(), "spawnId", "entrance");
@@ -133,6 +137,8 @@ public static class OfficeExplorationBuilder
         {
             ("player_default", LoadSpriteFrame(PlayerPortraitStripPath, "PlayerCasual_01")),
             ("player_alt", LoadSpriteFrame(PlayerPortraitStripPath, "PlayerCasual_02")),
+            ("player_suit_default", LoadSpriteFrame(PlayerSuitPortraitStripPath, "PlayerSuit_01")),
+            ("player_suit_alt", LoadSpriteFrame(PlayerSuitPortraitStripPath, "PlayerSuit_02")),
             ("npc_default", LoadSpriteFrame(NpcPortraitStripPath, "Npc_01")),
             ("npc_alt", LoadSpriteFrame(NpcPortraitStripPath, "Npc_02")),
             ("rere_default", AssetDatabase.LoadAssetAtPath<Sprite>(ReRePortraitPath))

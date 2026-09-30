@@ -17,6 +17,8 @@ public class MenuRootV2UI : CustomUI
 
     [Header("Presentation")]
     [SerializeField] private MenuRootV2OrientationTransition orientationTransition;
+    [SerializeField, Tooltip("Full-screen tint behind the phone so the scene and dialogue UI recede. Alpha 0 disables it.")]
+    private Color backdropColor = new Color(0.02f, 0.02f, 0.07f, 0.5f);
 
     [Header("Navigation")]
     [SerializeField] private Button topButton;
@@ -61,8 +63,27 @@ public class MenuRootV2UI : CustomUI
     protected override void Awake()
     {
         base.Awake();
+        EnsureBackdrop();
         BindButtons();
         ShowPageImmediate(pageTop);
+    }
+
+    /// <summary>Adds a tint as the first child; it fades with this UI's own visibility.</summary>
+    private void EnsureBackdrop()
+    {
+        if (backdropColor.a <= 0f || transform.Find("MenuBackdrop"))
+            return;
+
+        var backdrop = new GameObject("MenuBackdrop", typeof(RectTransform), typeof(Image));
+        var rect = (RectTransform)backdrop.transform;
+        rect.SetParent(transform, false);
+        rect.SetAsFirstSibling();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = rect.offsetMax = Vector2.zero;
+        var image = backdrop.GetComponent<Image>();
+        image.color = backdropColor;
+        image.raycastTarget = false;
     }
 
     protected override void OnDestroy()

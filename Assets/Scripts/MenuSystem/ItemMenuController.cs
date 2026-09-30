@@ -63,6 +63,8 @@ public class ItemMenuController : MonoBehaviour
     [SerializeField] private Sprite[] filterNormalSprites;
     [SerializeField] private Sprite[] filterSelectedSprites;
     [SerializeField] private TMP_Text filterEmptyText;
+    [SerializeField, Tooltip("Optional presentation for stowing items. Auto-found on this object.")]
+    private ItemBagStowAnimator stowAnimator;
     private Filter currentFilter;
     private Vector2[] cardPositions;
     public Filter CurrentFilter => currentFilter;
@@ -164,6 +166,44 @@ public class ItemMenuController : MonoBehaviour
             bagZipOverlay.SetActive(false);
 
         pageRect = transform as RectTransform;
+        if (!stowAnimator) stowAnimator = GetComponent<ItemBagStowAnimator>();
+        EnsureBagStatusPlate();
+    }
+
+    /// <summary>Puts a small panel behind the bag status so it stays readable over the painted strap.</summary>
+    private void EnsureBagStatusPlate()
+    {
+        if (!bagStatusText || bagStatusText.transform.parent.Find("BagStatusPlate"))
+            return;
+
+        var textRect = bagStatusText.rectTransform;
+        var plate = new GameObject("BagStatusPlate", typeof(RectTransform), typeof(Image));
+        var plateRect = (RectTransform)plate.transform;
+        plateRect.SetParent(textRect.parent, false);
+        plateRect.SetSiblingIndex(textRect.GetSiblingIndex());
+        plateRect.anchorMin = textRect.anchorMin;
+        plateRect.anchorMax = textRect.anchorMax;
+        plateRect.pivot = textRect.pivot;
+        plateRect.anchoredPosition = textRect.anchoredPosition + new Vector2(textRect.rect.width * 0.5f - 90f, 2f);
+        plateRect.sizeDelta = new Vector2(180f, textRect.rect.height + 4f);
+
+        var surface = FindByName<Image>("ItemGridSurface");
+        var image = plate.GetComponent<Image>();
+        image.raycastTarget = false;
+        if (surface && surface.sprite)
+        {
+            image.sprite = surface.sprite;
+            image.type = Image.Type.Sliced;
+            image.color = new Color(1f, 1f, 1f, 0.95f);
+        }
+        else
+        {
+            image.color = new Color(1f, 1f, 1f, 0.9f);
+        }
+
+        bagStatusText.alignment = TextAlignmentOptions.Center;
+        bagStatusText.rectTransform.anchoredPosition = plateRect.anchoredPosition;
+        bagStatusText.rectTransform.sizeDelta = plateRect.sizeDelta;
     }
 
     private void ApplyZipSprites()
@@ -441,7 +481,7 @@ public class ItemMenuController : MonoBehaviour
             detailDescriptionText.text = string.IsNullOrWhiteSpace(item.description) ? item.summary : item.description;
         if (rereCommentText)
             rereCommentText.text = string.IsNullOrWhiteSpace(item.summary)
-                ? "Drag this item into the bag if you want to carry it."
+                ? "持っていくならバッグにドラッグしてね。"
                 : item.summary;
     }
 
@@ -473,13 +513,14 @@ public class ItemMenuController : MonoBehaviour
 
     public void EndItemDrag(int index, PointerEventData eventData)
     {
+        var dropWorld = dragGhostImage ? dragGhostImage.rectTransform.position : GetItemCardWorldPosition(index);
         if (dragGhostImage)
             dragGhostImage.gameObject.SetActive(false);
 
         if (IsPointerOverBag(eventData))
-            AddItemToBag(index);
+            AddItemToBag(index, dropWorld);
         else if (bagStatusText)
-            bagStatusText.text = carryCount + "/" + maxCarryItems + " packed";
+            bagStatusText.text = FormatBagStatus();
     }
 
     public void BeginBagDrag(int slotIndex, PointerEventData eventData)
@@ -508,6 +549,7 @@ public class ItemMenuController : MonoBehaviour
 
     public void EndBagDrag(int slotIndex, PointerEventData eventData)
     {
+        var dropWorld = dragGhostImage ? dragGhostImage.rectTransform.position : Vector3.zero;
         if (dragGhostImage)
             dragGhostImage.gameObject.SetActive(false);
 
@@ -515,30 +557,53 @@ public class ItemMenuController : MonoBehaviour
             return;
 
         if (!IsPointerOverBag(eventData))
+        {
+            var itemIndex = carryIndexes[slotIndex];
             RemoveItemFromBag(slotIndex);
+            if (stowAnimator && dragGhostImage && itemIndex >= 0 && itemIndex < items.Length)
+                stowAnimator.PlayReturn(dropWorld, GetItemCardWorldPosition(itemIndex),
+                    items[itemIndex].icon ? items[itemIndex].icon : items[itemIndex].detailImage, items[itemIndex].color);
+        }
         else if (bagStatusText)
-            bagStatusText.text = carryCount + "/" + maxCarryItems + " packed";
+            bagStatusText.text = FormatBagStatus();
     }
 
-    private void AddItemToBag(int index)
+    private void AddItemToBag(int index) => AddItemToBag(index, GetItemCardWorldPosition(index));
+
+    private void AddItemToBag(int index, Vector3 fromWorld)
     {
         if (carryCount >= Mathf.Min(maxCarryItems, carryIndexes.Length))
         {
-            if (bagStatusText) bagStatusText.text = "BAG is full.";
+            if (bagStatusText) bagStatusText.text = "バッグがいっぱい";
+            if (stowAnimator) stowAnimator.PlayRejected(bagDropArea, bagStatusText);
             return;
         }
 
         if (items == null || index < 0 || index >= items.Length)
             return;
 
+        var slotIndex = carryCount;
         carryIndexes[carryCount] = index;
         carryCount++;
         RefreshBag();
         if (currentFilter == Filter.Bag) SetFilter(currentFilter);
 
+        if (stowAnimator && bagSlotImages != null && slotIndex < bagSlotImages.Length && bagSlotImages[slotIndex])
+            stowAnimator.PlayStow(fromWorld, bagSlotImages[slotIndex],
+                items[index].icon ? items[index].icon : items[index].detailImage, items[index].color, bagDropArea);
+
         if (rereCommentText)
             rereCommentText.text = items[index].displayName + "をバッグに入れたよ。";
     }
+
+    private Vector3 GetItemCardWorldPosition(int index)
+    {
+        if (itemIconImages != null && index >= 0 && index < itemIconImages.Length && itemIconImages[index])
+            return itemIconImages[index].rectTransform.TransformPoint(itemIconImages[index].rectTransform.rect.center);
+        return bagDropArea ? bagDropArea.position : transform.position;
+    }
+
+    private string FormatBagStatus() => "バッグ " + carryCount + "/" + maxCarryItems;
 
     private void RemoveItemFromBag(int slotIndex)
     {
@@ -554,7 +619,7 @@ public class ItemMenuController : MonoBehaviour
         if (currentFilter == Filter.Bag) SetFilter(currentFilter);
 
         if (rereCommentText)
-            rereCommentText.text = "Item returned to the list.";
+            rereCommentText.text = "リストに戻したよ。";
     }
 
     private void EnsureDragGhost()
@@ -610,7 +675,7 @@ public class ItemMenuController : MonoBehaviour
         if (carryCount == 0)
         {
             if (bagStatusText)
-                bagStatusText.text = "No items packed yet.";
+                bagStatusText.text = "まだ何も入っていません";
             yield break;
         }
 
@@ -626,7 +691,7 @@ public class ItemMenuController : MonoBehaviour
             closedBagImage.gameObject.SetActive(false);
 
         if (zipMessageText)
-            zipMessageText.text = "Packing...";
+            zipMessageText.text = "しまっています…";
 
         RefreshPackedOverlayItems(true);
         SetZipperActorsVisible(true);
@@ -659,12 +724,12 @@ public class ItemMenuController : MonoBehaviour
             closedBagImage.gameObject.SetActive(true);
 
         if (zipMessageText)
-            zipMessageText.text = "BAG ready!";
+            zipMessageText.text = "準備OK！";
 
         SetZipperActorsVisible(false);
 
         if (bagStatusText)
-            bagStatusText.text = carryCount + "/" + maxCarryItems + " packed / ready";
+            bagStatusText.text = FormatBagStatus() + " 準備OK";
 
         yield return new WaitForSecondsRealtime(zipResultHoldSeconds);
 
@@ -847,10 +912,39 @@ public class ItemMenuController : MonoBehaviour
 
             if (bagSlotTexts != null && i < bagSlotTexts.Length && bagSlotTexts[i])
                 bagSlotTexts[i].text = filled ? items[carryIndexes[i]].displayName : "EMPTY";
+
+            SetSlotLocked(bagSlotImages[i], i >= maxCarryItems);
         }
 
         if (bagStatusText)
-            bagStatusText.text = carryCount + "/" + maxCarryItems + " packed";
+            bagStatusText.text = FormatBagStatus();
+    }
+
+    /// <summary>Dims slots beyond the carry limit so the eight painted slots read as the usable few.</summary>
+    private static void SetSlotLocked(Image slotIcon, bool locked)
+    {
+        var slot = slotIcon ? slotIcon.transform.parent : null;
+        if (!slot)
+            return;
+
+        var overlay = slot.Find("LockedOverlay");
+        if (!overlay && locked)
+        {
+            var go = new GameObject("LockedOverlay", typeof(RectTransform), typeof(Image));
+            var rect = (RectTransform)go.transform;
+            rect.SetParent(slot, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = new Vector2(4f, 4f);
+            rect.offsetMax = new Vector2(-4f, -4f);
+            var image = go.GetComponent<Image>();
+            image.color = new Color(0.16f, 0.1f, 0.3f, 0.5f);
+            image.raycastTarget = false;
+            overlay = rect;
+        }
+
+        if (overlay)
+            overlay.gameObject.SetActive(locked);
     }
 
     private static void ApplyItemImage(Image image, Sprite sprite, Color placeholderColor)

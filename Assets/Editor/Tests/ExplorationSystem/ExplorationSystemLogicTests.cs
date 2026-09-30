@@ -85,6 +85,50 @@ namespace MoshiReRe.EditorTests.ExplorationSystem
             Assert.That(SideScrollCamera.ClampHorizontalPosition(positionX, enabled, minX, maxX), Is.EqualTo(expected));
         }
 
+        [TestCase(0f, 4f, 20f, 30f, 0.1f, 2f)]    // accelerates gradually
+        [TestCase(4f, 0f, 20f, 30f, 0.1f, 1f)]    // brakes faster than it accelerates
+        [TestCase(4f, -4f, 20f, 30f, 0.1f, -0.8f)] // reversing uses the stronger turn brake
+        [TestCase(0f, 4f, 0f, 30f, 0.1f, 4f)]     // zero acceleration keeps the old instant start
+        [TestCase(4f, 0f, 20f, 0f, 0.1f, 0f)]     // zero deceleration keeps the old instant stop
+        public void StepVelocity_EasesTowardTarget(float current, float target, float accel, float decel, float dt, float expected)
+        {
+            Assert.That(ExplorationPlayerController.StepVelocity(current, target, accel, decel, 1.6f, dt),
+                Is.EqualTo(expected).Within(0.001f));
+        }
+
+        [TestCase(0f, 0.55f, 0.55f)]
+        [TestCase(1f, 0.55f, 1f)]
+        [TestCase(0.5f, 0f, 0.5f)]
+        public void CalculateWalkAnimationRate_FollowsSpeed(float speed, float minimum, float expected)
+        {
+            Assert.That(ExplorationSpriteAnimator.CalculateWalkAnimationRate(speed, minimum), Is.EqualTo(expected).Within(0.001f));
+        }
+
+        [TestCase(7.5f, 8f, 1.7f, 6.3f)]    // too close on the left: step back left
+        [TestCase(8.5f, 8f, 1.7f, 9.7f)]    // too close on the right: step back right
+        [TestCase(5f, 8f, 1.7f, 5f)]        // already far enough
+        [TestCase(7.5f, 8f, 0f, 7.5f)]      // props without a stand distance never move the player
+        public void CalculateStandX_KeepsConversationalDistance(float playerX, float targetX, float distance, float expected)
+        {
+            Assert.That(ExplorationInteractionController.CalculateStandX(playerX, targetX, distance), Is.EqualTo(expected).Within(0.001f));
+        }
+
+        [Test]
+        public void CalculateStandX_UsesOtherSideWhenBlockedByBounds()
+        {
+            var standX = ExplorationInteractionController.CalculateStandX(8.5f, 8f, 1.7f, x => Mathf.Clamp(x, -10f, 9f));
+            Assert.That(standX, Is.EqualTo(6.3f).Within(0.001f));
+        }
+
+        [TestCase("player_default", ExplorationOutfit.Wardrobe, "player_suit_default")]
+        [TestCase("player_default", ExplorationOutfit.Default, "player_default")]
+        [TestCase("npc_default", ExplorationOutfit.Wardrobe, "npc_default")]
+        [TestCase("player_suit_alt", ExplorationOutfit.Wardrobe, "player_suit_alt")]
+        public void GetOutfitVariantId_SwapsPlayerPortraitsForSuit(string id, ExplorationOutfit outfit, string expected)
+        {
+            Assert.That(ExplorationDialoguePortraits.GetOutfitVariantId(id, outfit), Is.EqualTo(expected));
+        }
+
         [TestCase(0f, 0.5f, 1f, 0f)]
         [TestCase(0f, 2f, 0.5f, 1.5f)]
         [TestCase(3f, 1f, 0.5f, 1.5f)]

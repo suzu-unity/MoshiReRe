@@ -155,7 +155,36 @@ namespace MoshiReRe.Exploration
 
         private Sprite ResolvePortrait(string variantId, Sprite fallback)
         {
+            var outfitVariant = GetOutfitVariantId(variantId, FindPlayerOutfit());
+            if (outfitVariant != variantId)
+            {
+                var outfitSprite = FindVariant(outfitVariant, interactionVariants, variants, null);
+                if (outfitSprite != null)
+                    return outfitSprite;
+            }
+
             return FindVariant(variantId, interactionVariants, variants, fallback);
+        }
+
+        /// <summary>Maps "player_x" to "player_suit_x" while the wardrobe outfit is worn.</summary>
+        public static string GetOutfitVariantId(string variantId, ExplorationOutfit outfit)
+        {
+            const string playerPrefix = "player_";
+            if (outfit != ExplorationOutfit.Wardrobe ||
+                string.IsNullOrWhiteSpace(variantId) ||
+                !variantId.StartsWith(playerPrefix, StringComparison.Ordinal) ||
+                variantId.StartsWith(playerPrefix + "suit_", StringComparison.Ordinal))
+                return variantId;
+
+            return playerPrefix + "suit_" + variantId.Substring(playerPrefix.Length);
+        }
+
+        private ExplorationOutfit FindPlayerOutfit()
+        {
+            var player = FindFirstObjectByType<ExplorationPlayerController>();
+            return player != null && player.SpriteAnimator != null
+                ? player.SpriteAnimator.Outfit
+                : ExplorationOutfit.Default;
         }
 
         private static Sprite FindVariantIn(string variantId, ExplorationPortraitVariant[] source)

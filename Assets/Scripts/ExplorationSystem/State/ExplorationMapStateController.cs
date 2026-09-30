@@ -11,6 +11,8 @@ namespace MoshiReRe.Exploration.State
         [SerializeField] private Transform player;
         [SerializeField] private ExplorationSpriteAnimator spriteAnimator;
         [SerializeField] private ExplorationSpawnPoint currentSpawnPoint;
+        [SerializeField, Tooltip("Outfit shown on a fresh visit. Saved map state overrides it.")]
+        private ExplorationOutfit initialOutfit = ExplorationOutfit.Default;
 
         public string MapId => mapId;
         public string SceneName => gameObject.scene.name;
@@ -31,7 +33,11 @@ namespace MoshiReRe.Exploration.State
                 spriteAnimator = player.GetComponent<ExplorationSpriteAnimator>();
         }
 
-        private void Awake() => ExplorationStateCoordinator.Instance.RegisterMap(this);
+        private void Awake()
+        {
+            spriteAnimator?.SetOutfit(initialOutfit);
+            ExplorationStateCoordinator.Instance.RegisterMap(this);
+        }
 
         private void OnEnable()
         {

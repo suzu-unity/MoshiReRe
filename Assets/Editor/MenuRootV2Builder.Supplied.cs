@@ -149,8 +149,8 @@ public static partial class MenuRootV2Builder
         for (var i = 0; i < 8; i++)
         {
             var y = 158 + i * 78;
-            var labelRoot = SuppliedImage(nav, "SelectedLabel" + i, SuppliedMenuAssetLibrary.Get("nav.selected"), new Rect(82, y, 165, 78));
-            SuppliedLabel(labelRoot.transform, "PageName", labels[i], new Rect(66, 16, 97, 46), 24, TextAlignmentOptions.Center);
+            var labelRoot = SuppliedImage(nav, "SelectedLabel" + i, SuppliedMenuAssetLibrary.Get("nav.selected"), new Rect(82, y, 190, 78));
+            SuppliedLabel(labelRoot.transform, "PageName", labels[i], new Rect(92, 16, 92, 46), 24, TextAlignmentOptions.Center);
             expanded[i] = labelRoot.gameObject;
             var button = SuppliedButton(nav, char.ToUpper(fields[i][0]) + fields[i].Substring(1), SuppliedMenuAssetLibrary.Get("nav." + ids[i]), new Rect(88, y, 84, 78));
             icons[i] = button.image;

@@ -98,3 +98,6 @@ tools/grok/__pycache__/
 
 # Coplay checkpoints
 Packages/Coplay/Editor/Checkpoints/
+
+# Local QA captures and intermediates
+/tmp/

@@ -14,16 +14,33 @@ namespace MoshiReRe.Exploration
         [SerializeField] private bool clampHorizontalPosition;
         [SerializeField] private float minX = -10f;
         [SerializeField] private float maxX = 10f;
+        [SerializeField, Min(0f), Tooltip("World units the camera leads ahead of a walking player. 0 disables look-ahead.")]
+        private float lookAheadDistance;
+        [SerializeField, Min(0.01f)] private float lookAheadSmoothTime = 0.45f;
 
         private float horizontalVelocity;
+        private ExplorationPlayerController targetPlayer;
+        private float lookAhead;
+        private float lookAheadVelocity;
+
+        private void Awake()
+        {
+            if (target != null)
+                targetPlayer = target.GetComponent<ExplorationPlayerController>();
+        }
 
         private void LateUpdate()
         {
             if (target == null)
                 return;
 
+            var desiredLookAhead = 0f;
+            if (lookAheadDistance > 0f && targetPlayer != null && targetPlayer.MovementSpeed > 0f)
+                desiredLookAhead = Mathf.Clamp(targetPlayer.VelocityX / targetPlayer.MovementSpeed, -1f, 1f) * lookAheadDistance;
+            lookAhead = Mathf.SmoothDamp(lookAhead, desiredLookAhead, ref lookAheadVelocity, lookAheadSmoothTime);
+
             var position = transform.position;
-            var followX = CalculateFollowX(position.x, target.position.x + horizontalOffset, horizontalDeadZone);
+            var followX = CalculateFollowX(position.x, target.position.x + horizontalOffset + lookAhead, horizontalDeadZone);
             var targetX = ClampHorizontalPosition(
                 followX,
                 clampHorizontalPosition,

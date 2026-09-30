@@ -198,6 +198,9 @@ public static class ExplorationPrototypeBuilder
         var interactions = player.AddComponent<ExplorationInteractionController>();
         SetObject(interactions, "player", controller);
         SetFloat(interactions, "interactionRadius", 1.55f);
+
+        var footsteps = player.AddComponent<ExplorationFootsteps>();
+        SetObject(footsteps, "player", controller);
         return player;
     }
 
@@ -384,6 +387,7 @@ public static class ExplorationPrototypeBuilder
         SetString(dialogue, "promptText", "話す");
         SetString(dialogue, "naninovelScriptPath", "Scenario/ExplorationPrototypeNpc");
         SetFloat(dialogue, "initializationTimeout", 2f);
+        SetFloat(dialogue, "standDistance", 1.7f);
         SetObject(dialogue, "fallbackOverlay", fallbackOverlay);
         SetString(dialogue, "fallbackSpeaker", "仮置きのNPC");
         SetStringArray(dialogue, "fallbackLines", new[]
@@ -516,6 +520,7 @@ public static class ExplorationPrototypeBuilder
         SetObject(follow, "target", target);
         SetFloat(follow, "smoothTime", 0.16f);
         SetFloat(follow, "horizontalDeadZone", 0.8f);
+        SetFloat(follow, "lookAheadDistance", 0.9f);
         SetBool(follow, "clampHorizontalPosition", true);
         SetFloat(follow, "minX", -3.95f);
         SetFloat(follow, "maxX", 3.95f);
@@ -561,6 +566,9 @@ public static class ExplorationPrototypeBuilder
         instructions.color = new Color32(239, 242, 248, 255);
         SetRect(instructions.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f),
             new Vector2(38f, -35f), new Vector2(850f, 56f), new Vector2(0f, 1f));
+        var controlsHint = instructions.gameObject.AddComponent<ExplorationControlsHint>();
+        SetObject(controlsHint, "hintText", instructions);
+        SetObject(controlsHint, "player", interactionController != null ? interactionController.Player : null);
 
         var panelObject = new GameObject("InteractionPrompt", typeof(RectTransform), typeof(Image));
         panelObject.transform.SetParent(canvasObject.transform, false);

@@ -15,9 +15,41 @@ namespace MoshiReRe.Exploration
     {
         [SerializeField] private string promptText = "調べる";
         [SerializeField] private bool interactable = true;
+        [SerializeField, Min(0f), Tooltip("When above 0, the player walks to at least this horizontal distance and faces this object before interacting. Use for standing characters.")]
+        private float standDistance;
+        [SerializeField, Tooltip("Optional point the interaction prompt floats above. Defaults to the top of visible sprites or the collider.")]
+        private Transform promptAnchor;
 
         public string PromptText => promptText;
         public bool IsAvailable => interactable && isActiveAndEnabled;
+        public float StandDistance => standDistance;
+
+        /// <summary>World position above which the interaction prompt should appear.</summary>
+        public Vector3 GetPromptAnchorPosition()
+        {
+            if (promptAnchor != null)
+                return promptAnchor.position;
+
+            var hasBounds = false;
+            var bounds = new Bounds(transform.position, Vector3.zero);
+            foreach (var spriteRenderer in GetComponentsInChildren<SpriteRenderer>())
+            {
+                if (!spriteRenderer.enabled || spriteRenderer.sprite == null)
+                    continue;
+                if (hasBounds) bounds.Encapsulate(spriteRenderer.bounds);
+                else { bounds = spriteRenderer.bounds; hasBounds = true; }
+            }
+
+            if (!hasBounds)
+            {
+                var collider = GetComponentInChildren<Collider2D>();
+                if (collider != null) { bounds = collider.bounds; hasBounds = true; }
+            }
+
+            return hasBounds
+                ? new Vector3(bounds.center.x, bounds.max.y, transform.position.z)
+                : transform.position;
+        }
 
         /// <summary>Updates the prompt for reusable authored map variants.</summary>
         public void ConfigurePrompt(string value)

@@ -401,6 +401,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationItemPickup
   promptText: "\u673A\u3092\u8ABF\u3079\u308B"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/OfficeExploration
   naninovelScriptLabel: Desk02
   initializationTimeout: 2
@@ -540,6 +542,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
   promptText: "\u673A\u3092\u8ABF\u3079\u308B"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/OfficeExploration
   naninovelScriptLabel: DeskGeneric
   initializationTimeout: 2
@@ -721,6 +725,16 @@ MonoBehaviour:
   promptRoot: {fileID: 679629533}
   promptText: {fileID: 553756145}
   promptFormat: "E\uFF1A{0}"
+  anchorToTarget: 1
+  worldCamera: {fileID: 0}
+  verticalGap: 18
+  screenEdgeMargin: 24
+  autoSizeWidth: 1
+  horizontalPadding: 34
+  minimumWidth: 150
+  popDuration: 0.2
+  bobAmplitude: 5
+  bobCyclesPerSecond: 1.1
 --- !u!1 &478084017
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,6 +880,8 @@ MonoBehaviour:
   clampHorizontalPosition: 1
   minX: -5.25
   maxX: 5.25
+  lookAheadDistance: 0.9
+  lookAheadSmoothTime: 0.45
 --- !u!81 &506946920
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1169,6 +1185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
   promptText: "\u51FA\u793E\u3059\u308B"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/ExplorationDoorWardrobe
   naninovelScriptLabel: 
   initializationTimeout: 2
@@ -1563,6 +1581,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
   promptText: "\u8A71\u3059"
   interactable: 1
+  standDistance: 1.7
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/ExplorationPrototypeNpc
   naninovelScriptLabel: 
   initializationTimeout: 2
@@ -1866,15 +1886,19 @@ MonoBehaviour:
   preserveAspect: 1
   variants:
   - id: player_default
-    sprite: {fileID: 27690642, guid: c10e1778a789c6047ab0cd6a7624e186, type: 3}
+    sprite: {fileID: 27690642, guid: 7fd3eabf598e467b8b3ff991ad46e6c5, type: 3}
   - id: player_alt
-    sprite: {fileID: 1532316574, guid: c10e1778a789c6047ab0cd6a7624e186, type: 3}
+    sprite: {fileID: 1532316574, guid: 7fd3eabf598e467b8b3ff991ad46e6c5, type: 3}
   - id: npc_default
-    sprite: {fileID: 658297751, guid: 335651d69f188824bab2859dae040ea3, type: 3}
+    sprite: {fileID: 658297751, guid: ec4b633425074658b51e262495930320, type: 3}
   - id: npc_alt
-    sprite: {fileID: 1775174064, guid: 335651d69f188824bab2859dae040ea3, type: 3}
+    sprite: {fileID: 1775174064, guid: ec4b633425074658b51e262495930320, type: 3}
   - id: rere_default
     sprite: {fileID: 21300000, guid: b17debbc03b44194e9332c41dcd395f6, type: 3}
+  - id: player_suit_default
+    sprite: {fileID: 280532663, guid: 12fca5cda7974c4d9245bb96d44c6328, type: 3}
+  - id: player_suit_alt
+    sprite: {fileID: 410042415, guid: 12fca5cda7974c4d9245bb96d44c6328, type: 3}
 --- !u!1 &1160107363
 GameObject:
   m_ObjectHideFlags: 0
@@ -1924,6 +1948,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
   promptText: "\u673A\u3092\u8ABF\u3079\u308B"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/OfficeExploration
   naninovelScriptLabel: DeskGeneric
   initializationTimeout: 2
@@ -2061,6 +2087,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
   promptText: "\u673A\u306B\u5EA7\u308B"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/OfficeExploration
   naninovelScriptLabel: Desk01
   initializationTimeout: 2
@@ -2160,6 +2188,7 @@ GameObject:
   - component: {fileID: 1312678543}
   - component: {fileID: 1312678545}
   - component: {fileID: 1312678544}
+  - component: {fileID: 1312678546}
   m_Layer: 0
   m_Name: Instructions
   m_TagString: Untagged
@@ -2285,6 +2314,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312678542}
   m_CullTransparentMesh: 1
+--- !u!114 &1312678546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312678542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d87b747b736f194bae05a05d4456ba1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationControlsHint
+  player: {fileID: 1539416053}
+  hintText: {fileID: 1312678544}
+  backdropColor: {r: 0.03, g: 0.07, b: 0.15, a: 0.72}
+  backdropPadding: {x: 22, y: 10}
+  walkSecondsBeforeHide: 1.2
+  idleSecondsBeforeReturn: 12
+  fadeDuration: 0.35
 --- !u!1 &1384712051
 GameObject:
   m_ObjectHideFlags: 0
@@ -2319,6 +2367,7 @@ MonoBehaviour:
   player: {fileID: 1539416055}
   spriteAnimator: {fileID: 1539416054}
   currentSpawnPoint: {fileID: 437583762}
+  initialOutfit: 1
 --- !u!4 &1384712053
 Transform:
   m_ObjectHideFlags: 0
@@ -2374,6 +2423,7 @@ GameObject:
   - component: {fileID: 1539416054}
   - component: {fileID: 1539416053}
   - component: {fileID: 1539416056}
+  - component: {fileID: 1539416057}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2394,6 +2444,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationPlayerController
   movementSpeed: 3.4
+  acceleration: 22
+  deceleration: 30
+  turnBrakeMultiplier: 1.6
   clampHorizontalPosition: 1
   minX: -8.1
   maxX: 8.1
@@ -2442,6 +2495,7 @@ MonoBehaviour:
   idleBreathScale: 0.006
   idleBreathCyclesPerSecond: 0.22
   cutoutRig: {fileID: 0}
+  minWalkAnimationRate: 0.55
 --- !u!4 &1539416055
 Transform:
   m_ObjectHideFlags: 0
@@ -2477,6 +2531,28 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   interactAction: {fileID: 0}
+  approachSpeedScale: 0.7
+  turnPause: 0.08
+--- !u!114 &1539416057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539416052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb8f977a70d81e748b0bdc9eafdab834, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationFootsteps
+  player: {fileID: 1539416053}
+  sfxPath: "SFX/\u9769\u9774\u3067\u6B69\u304F"
+  volume: 0.35
+  fadeInSeconds: 0.06
+  fadeOutSeconds: 0.18
+  startDelay: 0.08
+  stopDelay: 0.12
+  outfitsWithFootsteps: 01000000
 --- !u!1 &1583727797
 GameObject:
   m_ObjectHideFlags: 0
@@ -2752,6 +2828,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.NaninovelDialogueInteractable
   promptText: "\u673A\u3092\u8ABF\u3079\u308B"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/OfficeExploration
   naninovelScriptLabel: DeskGeneric
   initializationTimeout: 2
@@ -3120,6 +3198,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.ExplorationItemPickup
   promptText: "\u8ABF\u3079\u308B\uFF1A\u53E4\u3073\u305F\u9375"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   naninovelScriptPath: Scenario/ExplorationDummyItem
   naninovelScriptLabel: 
   initializationTimeout: 2
@@ -3308,6 +3388,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoshiReRe.Exploration.OutfitInteractable
   promptText: "\u8ABF\u3079\u308B\uFF1A\u58C1\u306E\u30B9\u30FC\u30C4"
   interactable: 1
+  standDistance: 0
+  promptAnchor: {fileID: 0}
   targetAnimator: {fileID: 1539416054}
   outfit: 1
 --- !u!61 &2016391627

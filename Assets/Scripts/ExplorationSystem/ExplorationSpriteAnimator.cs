@@ -28,9 +28,12 @@ namespace MoshiReRe.Exploration
         [SerializeField, Min(0.01f)] private float idleBreathCyclesPerSecond = 0.22f;
         [SerializeField, Tooltip("Optional cutout rig. When assigned, it replaces frame sprites while preserving this component's public API.")]
         private ExplorationCutoutRigController cutoutRig;
+        [SerializeField, Range(0f, 1f), Tooltip("Lowest walk-cycle rate while accelerating or braking, relative to framesPerSecond.")]
+        private float minWalkAnimationRate = 0.55f;
 
         private ExplorationOutfit outfit;
         private bool walking;
+        private float walkSpeed01 = 1f;
         private float walkElapsed;
         private bool settling;
         private int settleStartFrame;
@@ -74,7 +77,7 @@ namespace MoshiReRe.Exploration
 
             if (walking)
             {
-                walkElapsed += Time.deltaTime;
+                walkElapsed += Time.deltaTime * CalculateWalkAnimationRate(walkSpeed01, minWalkAnimationRate);
                 RestoreVisualScale();
                 RefreshSprite();
                 return;
@@ -110,6 +113,15 @@ namespace MoshiReRe.Exploration
 
             BeginSettling();
             RefreshSprite();
+        }
+
+        /// <summary>Normalized movement speed (0-1) so the walk cycle does not slide while easing in or out.</summary>
+        public void SetWalkSpeed(float normalizedSpeed) => walkSpeed01 = Mathf.Clamp01(normalizedSpeed);
+
+        public static float CalculateWalkAnimationRate(float normalizedSpeed, float minimumRate)
+        {
+            var min = Mathf.Clamp01(minimumRate);
+            return Mathf.Lerp(min, 1f, Mathf.Clamp01(normalizedSpeed));
         }
 
         public void SetFacingRight(bool facingRight)

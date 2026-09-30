@@ -10,6 +10,11 @@ public static partial class MenuRootV2Builder
         var page = SuppliedPage(parent, "PageItems", "items_background");
         SuppliedEmptyPanel(page, "ItemGridSurface", new Rect(255, 277, 667, 554));
         var controller = page.gameObject.AddComponent<ItemMenuController>();
+        var stowAnimator = page.gameObject.AddComponent<ItemBagStowAnimator>();
+        var stowSettings = new SerializedObject(stowAnimator);
+        stowSettings.FindProperty("bagSilhouette").objectReferenceValue =
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/SuppliedMenu/Generated/bag_stow_flash.png");
+        stowSettings.ApplyModifiedPropertiesWithoutUndo();
         var database = FindFirstAssetOfType<InventoryDatabase>();
         var filterButtons = new Button[4]; var normalTabs = new Sprite[4]; var selectedTabs = new Sprite[4];
         var tabX = new[] { 209, 413, 619, 821 };
